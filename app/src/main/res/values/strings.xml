@@ -1,3 +1,15 @@
 <resources>
     <string name="app_name">Get2gether</string>
+    <string name="sample_text">NOT SPECIFIED</string>
+    <string name="user_name">Username</string>
+    <string name="continue_button">Continue</string>
+    <string name="create_acc_button">Create Account</string>
+    <string name="login_button">Login</string>
+    <string name="help_option">Help</string>
+    <string name="about_option">About</string>
+    <string name="logoff_option">Log off</string>
+    <string name="clean"> </string>
+    <string name="groups">Groups</string>
+    <string name="friends">Friends</string>
+    <string name="profile">Profile</string>
 </resources>

@@ -1,0 +1,88 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/activity_main_menu"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.oestjacobsen.android.get2gether.view.MainMenuActivity"
+    android:orientation="vertical"
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/main_menu_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorBackground"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:title="@string/clean"
+        />
+
+    <ImageView
+        android:id="@+id/logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/logo"
+        android:background="@android:color/transparent"
+        android:scaleType="fitXY"
+        android:layout_centerHorizontal="true"
+        android:adjustViewBounds="true"
+        />
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_height="match_parent"
+        android:layout_width="match_parent">
+
+        <ImageButton
+            android:id="@+id/my_groups_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/mygroups"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/profile_button"
+            app:layout_constraintLeft_toLeftOf="@+id/friends_button"
+
+            app:layout_constraintHorizontal_bias="0.8"
+            app:layout_constraintVertical_bias="0.0"/>
+
+        <ImageButton
+            android:id="@+id/profile_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/profile"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintBottom_toTopOf="@+id/my_groups_button"
+            app:layout_constraintLeft_toLeftOf="@+id/friends_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintHorizontal_bias="0.7"
+            />
+
+        <ImageButton
+            android:id="@+id/friends_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/friends"
+            android:scaleType="fitXY"
+            android:background="@android:color/transparent"
+            android:adjustViewBounds="true"
+
+            app:layout_constraintRight_toLeftOf="@+id/profile_button"
+            app:layout_constraintBottom_toBottomOf="@+id/my_groups_button"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintVertical_bias="0.4"/>
+
+    </android.support.constraint.ConstraintLayout>
+
+</LinearLayout>

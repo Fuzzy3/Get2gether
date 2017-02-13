@@ -7,13 +7,29 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        android:theme="@style/NoActionBarTheme">
+        <activity android:name=".view.login.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN"/>
 
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
+        </activity>
+        <activity android:name=".view.login.PincodeActivity">
+        </activity>
+        <activity android:name=".view.MainMenuActivity">
+        </activity>
+        <activity android:name=".view.groups.GroupsActivity">
+        </activity>
+        <activity android:name=".view.friends.FriendsActivity">
+        </activity>
+        <activity android:name=".view.profile.ProfileActivity">
+        </activity>
+        <activity android:name=".view.options.AboutActivity"
+            android:launchMode="singleTask">
+        </activity>
+        <activity android:name=".view.options.HelpActivity"
+            android:launchMode="singleTask">
         </activity>
     </application>
 
