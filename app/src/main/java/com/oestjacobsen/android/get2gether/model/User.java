@@ -1,5 +1,6 @@
 package com.oestjacobsen.android.get2gether.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,17 +13,17 @@ public class User {
     private List<User> mFriends;
     private List<Group> mGroups;
     private List<User> mPendingInvites;
-    private int mPassword;
+    private String mPassword;
 
     public User() {
+        mUUID = UUID.randomUUID();
+        mFriends = new ArrayList<>();
+        mGroups = new ArrayList<>();
+        mPendingInvites = new ArrayList<>();
     }
 
     public UUID getUUID() {
         return mUUID;
-    }
-
-    public void setUUID(UUID UUID) {
-        mUUID = UUID;
     }
 
     public String getUsername() {
@@ -73,11 +74,11 @@ public class User {
         mPendingInvites = pendingInvites;
     }
 
-    public int getPassword() {
+    public String getPassword() {
         return mPassword;
     }
 
-    public void setPassword(int password) {
+    public void setPassword(String password) {
         mPassword = password;
     }
 }

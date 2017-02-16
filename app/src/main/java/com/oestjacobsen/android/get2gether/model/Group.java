@@ -1,6 +1,7 @@
 package com.oestjacobsen.android.get2gether.model;
 
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -12,12 +13,14 @@ public class Group {
     private List<User> mParticipants;
     private boolean mActive;
 
-    public UUID getUUID() {
-        return mUUID;
+    public Group() {
+        mUUID = UUID.randomUUID();
+        mParticipants = new ArrayList<>();
+        mActive = false;
     }
 
-    public void setUUID(UUID UUID) {
-        mUUID = UUID;
+    public UUID getUUID() {
+        return mUUID;
     }
 
     public String getGroupTitle() {
@@ -38,6 +41,10 @@ public class Group {
 
     public List<User> getParticipants() {
         return mParticipants;
+    }
+
+    public void addParticipant(User user) {
+        mParticipants.add(user);
     }
 
     public void setParticipants(List<User> participants) {
