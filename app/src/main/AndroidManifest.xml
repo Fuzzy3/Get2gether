@@ -23,12 +23,20 @@
         </activity>
         <activity android:name=".view.friends.FriendsActivity">
         </activity>
-        <activity android:name=".view.profile.ProfileActivity">
-        </activity>
-        <activity android:name=".view.options.AboutActivity"
+        <activity
+            android:name=".view.profile.ProfileActivity"
             android:launchMode="singleTask">
         </activity>
-        <activity android:name=".view.options.HelpActivity"
+        <activity
+            android:name=".view.options.AboutActivity"
+            android:launchMode="singleTask">
+        </activity>
+        <activity
+            android:name=".view.options.HelpActivity"
+            android:launchMode="singleTask">
+        </activity>
+        <activity
+            android:name=".view.profile.EditProfileActivity"
             android:launchMode="singleTask">
         </activity>
     </application>

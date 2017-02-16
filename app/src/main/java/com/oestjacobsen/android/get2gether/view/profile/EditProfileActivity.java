@@ -2,7 +2,6 @@ package com.oestjacobsen.android.get2gether.view.profile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -10,28 +9,28 @@ import android.view.MenuItem;
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
-import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ProfileActivity extends UserBaseActivity {
+public class EditProfileActivity extends UserBaseActivity {
 
-    @BindView(R.id.profile_toolbar) Toolbar mToolbar;
+    @BindView(R.id.edit_profile_toolbar) Toolbar mToolbar;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_profile);
+        setContentView(R.layout.activity_edit_profile);
+
         setupView();
     }
 
     private void setupView() {
         ButterKnife.bind(this);
 
-        setToolbar(mToolbar, "Profile");
+        setToolbar(mToolbar, "Edit Profile");
 
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -40,7 +39,7 @@ public class ProfileActivity extends UserBaseActivity {
     }
 
     public static Intent newIntent(Context packageContext) {
-        Intent i = new Intent(packageContext, ProfileActivity.class);
+        Intent i = new Intent(packageContext, EditProfileActivity.class);
         return i;
     }
 
@@ -57,8 +56,8 @@ public class ProfileActivity extends UserBaseActivity {
         }
     }
 
-    @OnClick(R.id.floating_button_editprofile)
+    @OnClick(R.id.floating_button_acceptprofile)
     public void onClickEdit() {
-        startActivity(EditProfileActivity.newIntent(this));
+        startActivity(ProfileActivity.newIntent(this));
     }
 }
