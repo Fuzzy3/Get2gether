@@ -5,4 +5,7 @@
     <color name="colorAccent">#256eff</color>
     <color name="colorBackground">@color/background_floating_material_dark</color>
     <color name="colorFloatingButton">#5b79ff</color>
+    <color name="colorHighlight">#F7921C</color>
+    <color name="colorGroupActive">#049107</color>
+    <color name="colorGroupInActive">#c11313</color>
 </resources>

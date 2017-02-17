@@ -19,9 +19,13 @@
         </activity>
         <activity android:name=".view.MainMenuActivity">
         </activity>
-        <activity android:name=".view.groups.GroupsActivity">
+        <activity
+            android:name=".view.groups.GroupsActivity"
+            android:launchMode="singleTask">
         </activity>
-        <activity android:name=".view.friends.FriendsActivity">
+        <activity
+            android:name=".view.friends.FriendsActivity"
+            android:launchMode="singleTask">
         </activity>
         <activity
             android:name=".view.profile.ProfileActivity"
@@ -37,6 +41,10 @@
         </activity>
         <activity
             android:name=".view.profile.EditProfileActivity"
+            android:launchMode="singleTask">
+        </activity>
+        <activity
+            android:name=".view.friends.AddFriendActivity"
             android:launchMode="singleTask">
         </activity>
     </application>

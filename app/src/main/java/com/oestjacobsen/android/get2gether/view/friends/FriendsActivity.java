@@ -4,19 +4,33 @@ import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
 import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class FriendsActivity extends UserBaseActivity {
 
     @BindView(R.id.friends_toolbar) Toolbar mToolbar;
+    @BindView(R.id.friends_recycler_view) RecyclerView mRecyclerView;
+
+    private final FriendsPresenter mPresenter = new FriendsPresenterImpl();
+    private FriendsAdapter mAdapter;
 
 
     @Override
@@ -25,23 +39,34 @@ public class FriendsActivity extends UserBaseActivity {
         setContentView(R.layout.activity_friends);
 
         setupView();
+        updateUI();
     }
+
 
     private void setupView() {
         ButterKnife.bind(this);
 
-        setToolbar(mToolbar, "Friends");
-
+        setToolbar(mToolbar, "Add Friend");
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
+
 
     public static Intent newIntent(Context packageContext) {
         Intent i = new Intent(packageContext, FriendsActivity.class);
         return i;
     }
+
+
+    private void updateUI() {
+        mAdapter = new FriendsAdapter(mPresenter.getFriends());
+        mRecyclerView.setAdapter(mAdapter);
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -53,6 +78,55 @@ public class FriendsActivity extends UserBaseActivity {
             }
             default:
                 return super.onOptionsItemSelected(item);
+        }
+    }
+
+
+    @OnClick(R.id.floating_button_add_friend)
+    public void onClickAddFriend() {
+        startActivity(AddFriendActivity.newIntent(this));
+    }
+
+
+
+    //Adapter and viewholder for recyclerview
+    public class FriendHolder extends RecyclerView.ViewHolder {
+        @BindView(R.id.friends_row_fullname) TextView mFullname;
+        @BindView(R.id.friends_row_username) TextView mUsername;
+
+        public FriendHolder(View itemView) {
+            super(itemView);
+            ButterKnife.bind(this, itemView);
+        }
+
+    }
+
+    public class FriendsAdapter extends RecyclerView.Adapter<FriendHolder> {
+
+        private List<User> mFriends;
+
+        public FriendsAdapter(List<User> friends) {
+            mFriends = friends;
+        }
+
+        @Override
+        public FriendHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+            LayoutInflater layoutInflater = LayoutInflater.from(parent.getContext());
+            View view = layoutInflater.inflate(R.layout.friends_list_row, parent, false);
+
+            return new FriendHolder(view);
+        }
+
+        @Override
+        public void onBindViewHolder(FriendHolder holder, int position) {
+            User friend = mFriends.get(position);
+            holder.mFullname.setText(friend.getFullName());
+            holder.mUsername.setText(friend.getUsername());
+        }
+
+        @Override
+        public int getItemCount() {
+            return mFriends.size();
         }
     }
 

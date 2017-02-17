@@ -12,9 +12,12 @@
     <string name="groups">Groups</string>
     <string name="friends">Friends</string>
     <string name="profile">Profile</string>
-    <string name="profile_user">User</string>
+    <string name="profile_user">Name</string>
     <string name="profile_username">Username</string>
     <string name="profile_description">Description</string>
     <string name="profile_password">Password</string>
     <string name="profile_repeat_password">Repeat password</string>
+    <string name="search_text">Search</string>
+    <string name="add_friends_text">Find friend</string>
+    <string name="active">Active</string>
 </resources>

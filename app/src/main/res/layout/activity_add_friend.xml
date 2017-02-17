@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:id="@+id/activity_add_friend"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context="com.oestjacobsen.android.get2gether.view.friends.FriendsActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/friends_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/colorBackground"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        android:title="@string/friends"
+        />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="12dp"
+        android:layout_below="@id/friends_toolbar">
+
+        <TextView
+            android:id="@+id/search_friend_textview"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/small_text"
+            android:text="@string/add_friends_text"
+            android:paddingTop="@dimen/text_separation"/>
+
+        <EditText
+            android:id="@+id/search_friend_edittext"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/search_friend_textview"
+            android:paddingTop="@dimen/text_separation"
+            android:textSize="@dimen/large_text"
+            android:maxLines="1"/>
+
+        <Button
+            android:id="@+id/search_friend_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/search_text"
+            android:layout_below="@id/search_friend_edittext"
+            android:layout_alignParentRight="true"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/add_friend_recyclerview"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/search_friend_button"
+            android:scrollbars="vertical" />
+
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/ic_done_black_24dp"
+        app:backgroundTint="@color/colorFloatingButton"
+        app:fabSize="normal"
+        android:id="@+id/floating_button_add_selected_friend"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="30dp"/>
+
+</RelativeLayout>

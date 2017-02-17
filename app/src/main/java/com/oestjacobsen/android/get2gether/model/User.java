@@ -9,7 +9,6 @@ public class User {
     private UUID mUUID;
     private String mUsername;
     private String mFullName;
-    private String mAbout;
     private List<User> mFriends;
     private List<Group> mGroups;
     private List<User> mPendingInvites;
@@ -40,14 +39,6 @@ public class User {
 
     public void setFullName(String fullName) {
         mFullName = fullName;
-    }
-
-    public String getAbout() {
-        return mAbout;
-    }
-
-    public void setAbout(String about) {
-        mAbout = about;
     }
 
     public List<User> getFriends() {

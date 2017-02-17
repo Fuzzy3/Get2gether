@@ -1,7 +1,5 @@
 package com.oestjacobsen.android.get2gether.model;
 
-import android.provider.ContactsContract;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +7,7 @@ import java.util.List;
 
 public class TestData {
 
-    public List<User> getTestUsers(){
+    public static List<User> getTestUsers(){
         List<User> testUsers = new ArrayList<>();
 
         User u01 = new User();
@@ -19,34 +17,34 @@ public class TestData {
         testUsers.add(u01);
 
         User u02 = new User();
-        u01.setUsername("hanzi");
-        u01.setFullName("Hans Larsen");
-        u01.setPassword("2222");
+        u02.setUsername("hanzi");
+        u02.setFullName("Hans Larsen");
+        u02.setPassword("2222");
         testUsers.add(u02);
 
         User u03 = new User();
-        u01.setUsername("princess_line");
-        u01.setFullName("Line Balmer");
-        u01.setPassword("9898");
+        u03.setUsername("princess_line");
+        u03.setFullName("Line Balmer");
+        u03.setPassword("9898");
         testUsers.add(u03);
 
         User u04 = new User();
-        u01.setUsername("Admin");
-        u01.setFullName("Søren Oest Jacobsen");
-        u01.setPassword("1551");
+        u04.setUsername("Admin");
+        u04.setFullName("Søren Oest Jacobsen");
+        u04.setPassword("1551");
         testUsers.add(u04);
 
         User u05 = new User();
-        u01.setUsername("das_robot");
-        u01.setFullName("Jeppe Jepsen");
-        u01.setPassword("1111");
+        u05.setUsername("das_robot");
+        u05.setFullName("Jeppe Jepsen");
+        u05.setPassword("1111");
         testUsers.add(u05);
 
         return testUsers;
     }
 
 
-    public List<Group> getTestGroups() {
+    public static List<Group> getTestGroups() {
         List<Group> testGroups = new ArrayList<>();
 
         Group g01 = new Group();
