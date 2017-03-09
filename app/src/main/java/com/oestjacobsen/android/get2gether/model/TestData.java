@@ -52,6 +52,21 @@ public class TestData {
         g01.setGroupDesc("Class trip to the zoo");
         testGroups.add(g01);
 
+        Group g02 = new Group();
+        g02.setGroupTitle("John Lennon Concert");
+        g02.setGroupDesc("The friends are going to a Concert!");
+        testGroups.add(g02);
+
+        Group g03 = new Group();
+        g03.setGroupTitle("School trip 3.A");
+        g03.setGroupDesc("Group to check up on students");
+        testGroups.add(g03);
+
+        Group g04 = new Group();
+        g04.setGroupTitle("Friend group");
+        g04.setGroupDesc("Group for the awesome school group");
+        testGroups.add(g04);
+
         return testGroups;
     }
 }

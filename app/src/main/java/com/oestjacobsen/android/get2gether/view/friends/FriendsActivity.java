@@ -99,6 +99,10 @@ public class FriendsActivity extends UserBaseActivity {
             ButterKnife.bind(this, itemView);
         }
 
+        public void bindFriend(User friend) {
+            mFullname.setText(friend.getFullName());
+            mUsername.setText(friend.getUsername());
+        }
     }
 
     public class FriendsAdapter extends RecyclerView.Adapter<FriendHolder> {
@@ -120,8 +124,7 @@ public class FriendsActivity extends UserBaseActivity {
         @Override
         public void onBindViewHolder(FriendHolder holder, int position) {
             User friend = mFriends.get(position);
-            holder.mFullname.setText(friend.getFullName());
-            holder.mUsername.setText(friend.getUsername());
+            holder.bindFriend(friend);
         }
 
         @Override

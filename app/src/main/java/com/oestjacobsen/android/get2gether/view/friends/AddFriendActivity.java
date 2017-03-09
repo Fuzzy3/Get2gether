@@ -5,8 +5,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.content.res.ResourcesCompat;
-import android.support.v7.view.menu.MenuAdapter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -16,7 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
-import android.widget.Toast;
+
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.User;
@@ -77,9 +75,6 @@ public class AddFriendActivity extends UserBaseActivity {
         }
     }
 
-    public void setSelectedUser(int Id) {
-
-    }
 
 
     @Override
