@@ -6,13 +6,13 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.Manifest;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -23,7 +23,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
-import com.oestjacobsen.android.get2gether.Manifest;
 import com.oestjacobsen.android.get2gether.R;
 
 import butterknife.ButterKnife;
@@ -39,21 +38,17 @@ public class SelectedGroupMapFragment extends SupportMapFragment implements
     private LatLng mLatLon;
     private GoogleMap mGoogleMap;
     private Marker mCurrLocMarker;
-    private static final int MY_PERMISSION_ACCESS_COURSE_LOCATION = 0;
+    private static final int PERMISSION_REQUEST_CODE = 1111;
 
-
-
-
-
-
-
-
-
-    @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group_map, container, false);
         ButterKnife.bind(this, view);
+
+        if(!havePermissions()) {
+            Log.i(TAG, "REQUESTING PERMISSIONS");
+            requestPermissions();
+        }
 
         return view;
     }
@@ -96,20 +91,30 @@ public class SelectedGroupMapFragment extends SupportMapFragment implements
 
     }
 
-    private void checkPermissions() {
-        if ( Build.VERSION.SDK_INT >= 23 &&
-                ContextCompat.checkSelfPermission( getContext(), android.Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
-                ContextCompat.checkSelfPermission( getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+        }
+    }
+
+    private boolean havePermissions() {
+        return ( Build.VERSION.SDK_INT >= 23 &&
+                ContextCompat.checkSelfPermission( getContext(), Manifest.permission.ACCESS_FINE_LOCATION ) != PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission( getContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED);
+
+    }
+
+    private void requestPermissions() {
+        if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) &&
+           ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+        } else {
             ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
-                    SelectedGroupMapFragment.MY_PERMISSION_ACCESS_COURSE_LOCATION );
+                    SelectedGroupMapFragment.PERMISSION_REQUEST_CODE);
         }
 
-        if ( ContextCompat.checkSelfPermission( getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION ) != PackageManager.PERMISSION_GRANTED ) {
-
-            ActivityCompat.requestPermissions( getActivity(), new String[] {  android.Manifest.permission.ACCESS_COARSE_LOCATION  },
-                    SelectedGroupMapFragment.MY_PERMISSION_ACCESS_COURSE_LOCATION );
-        }
     }
 
 
