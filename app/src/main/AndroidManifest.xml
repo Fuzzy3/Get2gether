@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest package="com.oestjacobsen.android.get2gether"
-          xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.oestjacobsen.android.get2gether">
 
     <application
         android:allowBackup="true"
@@ -10,43 +10,35 @@
         android:theme="@style/NoActionBarTheme">
         <activity android:name=".view.login.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.login.PincodeActivity">
-        </activity>
-        <activity android:name=".view.MainMenuActivity">
-        </activity>
+        <activity android:name=".view.login.PincodeActivity"></activity>
+        <activity android:name=".view.MainMenuActivity"></activity>
         <activity
             android:name=".view.groups.GroupsActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".view.friends.FriendsActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".view.profile.ProfileActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".view.options.AboutActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".view.options.HelpActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".view.profile.EditProfileActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
         <activity
             android:name=".view.friends.AddFriendActivity"
-            android:launchMode="singleTask">
-        </activity>
+            android:launchMode="singleTask"></activity>
+        <activity android:name=".view.groups.SelectedGroupActivity"></activity>
     </application>
 
 </manifest>

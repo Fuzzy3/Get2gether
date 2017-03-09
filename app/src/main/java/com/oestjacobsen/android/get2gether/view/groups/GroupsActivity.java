@@ -105,7 +105,7 @@ public class GroupsActivity extends UserBaseActivity {
 
         @Override
         public void onClick(View view) {
-            Log.i(TAG, "Group: " + mTitle.getText().toString() + " clicked!");
+            startActivity(SelectedGroupActivity.newIntent(GroupsActivity.this));
         }
     }
 
