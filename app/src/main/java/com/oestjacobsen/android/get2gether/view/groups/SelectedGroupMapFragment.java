@@ -14,23 +14,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.Manifest;
-import android.widget.Toast;
+
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-import com.google.android.gms.maps.MapsInitializer;
 import com.google.android.gms.maps.OnMapReadyCallback;
-import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.oestjacobsen.android.get2gether.R;
@@ -39,7 +36,8 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 
 
-public class SelectedGroupMapFragment extends Fragment {
+public class SelectedGroupMapFragment extends Fragment implements
+        GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener, LocationListener {
 
 
     @BindView(R.id.selected_group_mapview) MapView mMapView;
@@ -48,8 +46,10 @@ public class SelectedGroupMapFragment extends Fragment {
     private GoogleApiClient mGoogleApiClient;
     private Location mLastLocation;
     private LatLng mLatLon;
+    private LocationRequest mLocationRequest;
     private GoogleMap mGoogleMap;
-    private Marker mCurrLocMarker;
+    private MarkerOptions mCurrentLocationMarker;
+    private boolean launchedMapFirstTime;
     private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
     private static final int FINE_PERMISSION_REQUEST_CODE = 2222;
 
@@ -58,14 +58,10 @@ public class SelectedGroupMapFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_group_map, container, false);
         ButterKnife.bind(this, view);
+        launchedMapFirstTime = true;
         mMapView.onCreate(savedInstanceState);
         buildGoogleApiClient();
         checkPermission();
-        /*try {
-            MapsInitializer.initialize(getActivity().getApplicationContext());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }*/
 
         Log.i(TAG, "Getting map async");
         mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -74,12 +70,7 @@ public class SelectedGroupMapFragment extends Fragment {
                 Log.i(TAG, "OnMapReady");
                 mGoogleMap = googleMap;
                 updateUI();
-                /*if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                        && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                    return;
-                }*/
-                //mGoogleMap.setMyLocationEnabled(true);
-                //mGoogleApiClient.connect();
+
             }
         });
 
@@ -88,28 +79,38 @@ public class SelectedGroupMapFragment extends Fragment {
         return view;
     }
 
+    private void createLocationRequest() {
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+    }
+
     private void updateUI() {
         Log.i(TAG, "UPDATE UI");
-        checkPermission();
-        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);                   }
-        if (mLastLocation != null) {
-            //place marker at current position
-            //mGoogleMap.clear();
+
+        if (mLastLocation != null && mGoogleMap != null) {
+            Log.i(TAG, "Animating Map");
             mLatLon = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
             //LatLngBounds bounds = new LatLngBounds.Builder().include(mLatLon).build();
-            MarkerOptions currentLocationMarker = new MarkerOptions().position(mLatLon);
+            mCurrentLocationMarker = new MarkerOptions().position(mLatLon);
             mGoogleMap.clear();
-            mGoogleMap.addMarker(currentLocationMarker);
-            CameraPosition pos = new CameraPosition.Builder()
-                    .target(mLatLon)
-                    .zoom(17)
-                    .build();
+            mGoogleMap.addMarker(mCurrentLocationMarker);
 
-            mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+
+            if(launchedMapFirstTime) {
+                CameraPosition pos = new CameraPosition.Builder()
+                        .target(mLatLon)
+                        .zoom(17)
+                        .build();
+
+                mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(pos));
+                launchedMapFirstTime = false;
+            }
         }
 
-
     }
+
 
     public static SelectedGroupMapFragment newInstance() {
         SelectedGroupMapFragment mapFragment = new SelectedGroupMapFragment();
@@ -117,89 +118,41 @@ public class SelectedGroupMapFragment extends Fragment {
         return mapFragment;
     }
 
-    /*
-    @Override
-    public void onConnected(@Nullable Bundle bundle) {
-        Log.i(TAG, "onConnected");
-        if (ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            return;
-        }
-        Log.i(TAG, "Permissions granted");
 
-        Location mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);
-
-        if (mLastLocation != null) {
-            //place marker at current position
-            //mGoogleMap.clear();
-            mLatLon = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            MarkerOptions markerOptions = new MarkerOptions();
-            markerOptions.position(mLatLon);
-            markerOptions.title("Current Position");
-            markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-            mCurrLocMarker = mGoogleMap.addMarker(markerOptions);
-        }
-
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(5000); //5 seconds
-        mLocationRequest.setFastestInterval(3000); //3 seconds
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
-        //mLocationRequest.setSmallestDisplacement(0.1F); //1/10 meter
-
-        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Toast.makeText(getActivity(), "onConnectionSuspended", Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Toast.makeText(getActivity(), "onConnectionFailed", Toast.LENGTH_SHORT).show();
-    }*/
-
-    /*@Override
-    public void onLocationChanged(Location location) {
-        //place marker at current position
-        //mGoogleMap.clear();
-        if (mCurrLocMarker != null) {
-            mCurrLocMarker.remove();
-        }
-        mLatLon = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(mLatLon);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocMarker = mGoogleMap.addMarker(markerOptions);
-
-        Toast.makeText(getActivity(), "Location Changed", Toast.LENGTH_SHORT).show();
-
-        //zoom to current position:
-        mGoogleMap.moveCamera(CameraUpdateFactory.newLatLngZoom(mLatLon, 11));
-
-        //If you only need one location, unregister the listener
-        //LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
-
-    }*/
 
 
     protected synchronized void buildGoogleApiClient() {
         Log.i(TAG, "BuildGoogleApiClient");
         mGoogleApiClient = new GoogleApiClient.Builder(getActivity())
                 .addApi(LocationServices.API)
-                .addConnectionCallbacks(new GoogleApiClient.ConnectionCallbacks() {
-                    @Override
-                    public void onConnected(@Nullable Bundle bundle) {
-                        checkPermission();
-                        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(mGoogleApiClient);                   }
-
-                    @Override
-                    public void onConnectionSuspended(int i) {
-                        //something
-                    }
-                })
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
                 .build();
+    }
+
+    private void startLocationUpdates() {
+        checkPermission();
+        Log.i(TAG,"startLocationUpdates");
+        LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+        checkPermission();
+        Log.i(TAG, "onConnected");
+
+        createLocationRequest();
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        startLocationUpdates();
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+        //something
     }
 
 
@@ -290,4 +243,14 @@ public class SelectedGroupMapFragment extends Fragment {
         mMapView.onLowMemory();
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        mLastLocation = location;
+        updateUI();
+    }
 }
