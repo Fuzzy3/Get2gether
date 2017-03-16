@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.oestjacobsen.android.get2gether">
+<manifest package="com.oestjacobsen.android.get2gether"
+          xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:allowBackup="true"
@@ -17,35 +17,39 @@
 
         <activity android:name=".view.login.MainActivity">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+                <action android:name="android.intent.action.MAIN"/>
 
-                <category android:name="android.intent.category.LAUNCHER" />
+                <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".view.login.PincodeActivity"></activity>
-        <activity android:name=".view.MainMenuActivity"></activity>
+        <activity android:name=".view.login.PincodeActivity"/>
+        <activity android:name=".view.MainMenuActivity"/>
         <activity
             android:name=".view.groups.GroupsActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".view.friends.FriendsActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".view.profile.ProfileActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".view.options.AboutActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".view.options.HelpActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".view.profile.EditProfileActivity"
-            android:launchMode="singleTask"></activity>
+            android:launchMode="singleTask"/>
         <activity
             android:name=".view.friends.AddFriendActivity"
-            android:launchMode="singleTask"></activity>
-        <activity android:name=".view.groups.SelectedGroupActivity"></activity>
+            android:launchMode="singleTask"/>
+        <activity android:name=".view.groups.SelectedGroupActivity"/>
+        <activity android:name=".view.groups.NewGroupActivity">
+        </activity>
+        <activity android:name=".view.groups.AddGroupMemberActivity">
+        </activity>
     </application>
 
 </manifest>

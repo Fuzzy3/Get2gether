@@ -2,7 +2,6 @@ package com.oestjacobsen.android.get2gether.view.friends;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -14,9 +13,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
-import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
 
 import java.util.List;
 
@@ -29,7 +28,7 @@ public class FriendsActivity extends UserBaseActivity {
     @BindView(R.id.friends_toolbar) Toolbar mToolbar;
     @BindView(R.id.friends_recycler_view) RecyclerView mRecyclerView;
 
-    private final FriendsPresenter mPresenter = new FriendsPresenterImpl();
+    private FriendsPresenter mPresenter;
     private FriendsAdapter mAdapter;
 
 
@@ -37,7 +36,7 @@ public class FriendsActivity extends UserBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
-
+        mPresenter = new FriendsPresenterImpl(RealmDatabase.get(this));
         setupView();
         updateUI();
     }

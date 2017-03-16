@@ -29,7 +29,7 @@
 
 
     <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_create_black_24dp"
+        android:src="@drawable/ic_add_black_24dp"
         app:backgroundTint="@color/colorFloatingButton"
         app:fabSize="normal"
         android:id="@+id/floating_button_add_friend"

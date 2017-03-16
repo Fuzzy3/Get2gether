@@ -5,23 +5,27 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class Group {
+import io.realm.RealmList;
+import io.realm.RealmObject;
 
-    private UUID mUUID;
+public class Group extends RealmObject {
+
+    private String mUUID;
     private String mGroupTitle;
     private String mGroupDesc;
-    private List<User> mParticipants;
+    private RealmList<User> mParticipants;
     private boolean mActive;
 
     public Group() {
-        mUUID = UUID.randomUUID();
-        mParticipants = new ArrayList<>();
+        mUUID = UUID.randomUUID().toString();
+        mParticipants = new RealmList<>();
         mActive = false;
     }
 
-    public UUID getUUID() {
+    public String getUUID() {
         return mUUID;
     }
+
 
     public String getGroupTitle() {
         return mGroupTitle;
@@ -47,7 +51,7 @@ public class Group {
         mParticipants.add(user);
     }
 
-    public void setParticipants(List<User> participants) {
+    public void setParticipants(RealmList<User> participants) {
         mParticipants = participants;
     }
 

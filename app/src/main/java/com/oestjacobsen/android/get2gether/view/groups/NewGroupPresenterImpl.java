@@ -1,4 +1,4 @@
-package com.oestjacobsen.android.get2gether.view.friends;
+package com.oestjacobsen.android.get2gether.view.groups;
 
 import com.oestjacobsen.android.get2gether.model.TestData;
 import com.oestjacobsen.android.get2gether.model.User;
@@ -6,8 +6,11 @@ import com.oestjacobsen.android.get2gether.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddFriendPresenterImpl implements AddFriendPresenter {
+/**
+ * Created by mr_oj on 16/03/2017.
+ */
 
+public class NewGroupPresenterImpl implements NewGroupPresenter {
 
     @Override
     public List<User> getUsersMatchingString(String input) {
@@ -30,6 +33,4 @@ public class AddFriendPresenterImpl implements AddFriendPresenter {
     public List<User> getAllUsers() {
         return TestData.getTestUsers();
     }
-
-
 }

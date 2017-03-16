@@ -1,4 +1,4 @@
-package com.oestjacobsen.android.get2gether.view.friends;
+package com.oestjacobsen.android.get2gether.view.groups;
 
 import android.content.Context;
 import android.content.Intent;
@@ -15,75 +15,46 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
-
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.User;
+import com.oestjacobsen.android.get2gether.view.BaseActivity;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddFriendActivity extends UserBaseActivity {
+public class AddGroupMemberActivity extends UserBaseActivity {
 
-    @BindView(R.id.friends_toolbar) Toolbar mToolbar;
-    @BindView(R.id.add_friend_recyclerview) RecyclerView mRecyclerView;
-    @BindView(R.id.search_friend_edittext) EditText mSearchInput;
+    @BindView(R.id.new_group_search_friend_edittext)
+    EditText mSearchInput;
+    @BindView(R.id.new_group_selectfriend_recyclerview)
+    RecyclerView mRecyclerView;
+    @BindView(R.id.add_group_member_toolbar)
+    Toolbar mToolbar;
 
-    private final AddFriendPresenter mPresenter = new AddFriendPresenterImpl();
-    private AddFriendAdapter mAdapter;
-    private List<User> mSearchResult = new ArrayList<>();
+    private final AddGroupMemberPresenter mPresenter = new AddGroupMemberPresenterImpl();
+    private List<User> mSearchResult;
+    private AddGroupMemberAdapter mAdapter;
     private User mSelectedUser;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_friend);
+        setContentView(R.layout.activity_add_group_member);
+
 
         setupView();
         updateUI();
     }
 
-    private void setupView() {
-        ButterKnife.bind(this);
-
-        setToolbar(mToolbar, "Add Friend");
-        if(getSupportActionBar() != null) {
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-            getSupportActionBar().setDisplayShowHomeEnabled(true);
-        }
-
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-    }
-
-    private void updateUI() {
-        if(mAdapter == null) {
-            mAdapter = new AddFriendAdapter(mSearchResult);
-            mRecyclerView.setAdapter(mAdapter);
-        } else {
-            mAdapter.setSearch(mSearchResult);
-            mAdapter.notifyDataSetChanged();
-        }
-    }
-
-    public static Intent newIntent(Context packageContext) {
-        Intent i = new Intent(packageContext, AddFriendActivity.class);
-        return i;
-    }
-
-
-
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-            {
+            case android.R.id.home: {
                 finish();
                 return true;
             }
@@ -92,24 +63,49 @@ public class AddFriendActivity extends UserBaseActivity {
         }
     }
 
-    @OnClick(R.id.floating_button_add_selected_friend)
-    public void onClickAddSelectedFriend() {
-        //ADD USER
-        startActivity(FriendsActivity.newIntent(this));
+
+    private void setupView() {
+        ButterKnife.bind(this);
+
+        setToolbar(mToolbar, "New Group");
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setDisplayShowHomeEnabled(true);
+        }
+
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    @OnClick(R.id.search_friend_button)
-    public void onClickSearchFriend() {
-        String input = mSearchInput.getText().toString();
-        mSearchResult = mPresenter.getUsersMatchingString(input);
-        updateUI();
+    private void updateUI() {
+        if (mAdapter == null) {
+            mSearchResult = mPresenter.getAllUsers();
+            mAdapter = new AddGroupMemberAdapter(mSearchResult);
+            mRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.setSearch(mSearchResult);
+            mAdapter.notifyDataSetChanged();
+        }
     }
+
+    public static Intent newIntent(Context packageContext) {
+        Intent i = new Intent(packageContext, AddGroupMemberActivity.class);
+        return i;
+    }
+
+    @OnClick(R.id.floating_button_add_member)
+    public void onClickAddMember() {
+        //ADD USER
+        finish();
+    }
+
 
     public class UserHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         private int mPosition;
 
-        @BindView(R.id.friends_row_fullname) TextView mFullname;
-        @BindView(R.id.friends_row_username) TextView mUsername;
+        @BindView(R.id.friends_row_fullname)
+        TextView mFullname;
+        @BindView(R.id.friends_row_username)
+        TextView mUsername;
 
         public UserHolder(View itemView) {
             super(itemView);
@@ -118,13 +114,13 @@ public class AddFriendActivity extends UserBaseActivity {
         }
 
         public void bindUser(User user, int position) {
+            mSelectedUser = user;
             mFullname.setText(user.getFullName());
             mUsername.setText(user.getUsername());
             mPosition = position;
 
-            if(mAdapter.getSelected_position() == mPosition) {
-                itemView.setBackgroundColor(ContextCompat.getColor(AddFriendActivity.this, R.color.colorHighlight));
-                mSelectedUser = user;
+            if (mAdapter.getSelected_position() == mPosition) {
+                itemView.setBackgroundColor(ContextCompat.getColor(AddGroupMemberActivity.this, R.color.colorHighlight));
             } else {
                 itemView.setBackgroundColor(Color.TRANSPARENT);
             }
@@ -133,7 +129,7 @@ public class AddFriendActivity extends UserBaseActivity {
         @Override
         public void onClick(View view) {
             mAdapter.notifyDataSetChanged();
-            if(mPosition == mAdapter.getPrevious_position()) {
+            if (mPosition == mAdapter.getPrevious_position()) {
                 mAdapter.setSelected_position(-1);
                 mAdapter.setPrevious_position(-1);
             } else {
@@ -144,13 +140,14 @@ public class AddFriendActivity extends UserBaseActivity {
         }
     }
 
-    public class AddFriendAdapter extends RecyclerView.Adapter<UserHolder>  {
+
+    public class AddGroupMemberAdapter extends RecyclerView.Adapter<UserHolder> {
 
         private int selected_position = -1;
         private int previous_position = -1;
         private List<User> mUsers;
 
-        public AddFriendAdapter(List<User> users) {
+        public AddGroupMemberAdapter(List<User> users) {
             mUsers = users;
         }
 
@@ -193,5 +190,8 @@ public class AddFriendActivity extends UserBaseActivity {
         public void setPrevious_position(int previous_position) {
             this.previous_position = previous_position;
         }
+
     }
+
+
 }

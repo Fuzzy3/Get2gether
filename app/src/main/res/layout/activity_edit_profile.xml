@@ -33,7 +33,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_user"
-            android:textSize="12sp"
+            android:textSize="@dimen/small_text"
             />
 
         <EditText
@@ -41,14 +41,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/clean"
-            android:textSize="16sp"/>
+            android:textSize="@dimen/large_text"/>
 
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_username"
-            android:textSize="12sp"
+            android:textSize="@dimen/small_text"
             android:paddingTop="@dimen/text_separation"/>
 
         <EditText
@@ -56,13 +56,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/clean"
-            android:textSize="16sp"/>
+            android:textSize="@dimen/large_text"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_password"
-            android:textSize="12sp"
+            android:textSize="@dimen/small_text"
             android:paddingTop="@dimen/text_separation"/>
 
         <EditText
@@ -71,13 +71,13 @@
             android:layout_height="wrap_content"
             android:text="@string/clean"
             android:inputType="textPassword"
-            android:textSize="16sp"/>
+            android:textSize="@dimen/large_text"/>
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/profile_repeat_password"
-            android:textSize="12sp"
+            android:textSize="@dimen/small_text"
             android:paddingTop="@dimen/text_separation"/>
 
         <EditText
@@ -86,7 +86,7 @@
             android:layout_height="wrap_content"
             android:text="@string/clean"
             android:inputType="textPassword"
-            android:textSize="16sp"/>
+            android:textSize="@dimen/large_text"/>
 
 
     </LinearLayout>

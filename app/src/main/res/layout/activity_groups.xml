@@ -6,7 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context="com.oestjacobsen.android.get2gether.view.groups.GroupsActivity">
+    tools:context="com.oestjacobsen.android.get2gether.view.groups.GroupsActivity"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_groups_toolbar"
@@ -26,5 +27,16 @@
         android:padding="16dp"
         android:scrollbars="vertical"
         />
+
+    <android.support.design.widget.FloatingActionButton
+        android:src="@drawable/ic_add_black_24dp"
+        app:backgroundTint="@color/colorFloatingButton"
+        app:fabSize="normal"
+        android:id="@+id/floating_button_new_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_margin="30dp"/>
 
 </RelativeLayout>

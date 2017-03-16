@@ -4,26 +4,32 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class User {
+import io.realm.RealmList;
+import io.realm.RealmObject;
 
-    private UUID mUUID;
+public class User extends RealmObject {
+
+    private String mUUID;
     private String mUsername;
     private String mFullName;
-    private List<User> mFriends;
-    private List<Group> mGroups;
-    private List<User> mPendingInvites;
+    private RealmList<User> mFriends;
+    private RealmList<Group> mGroups;
+    private RealmList<User> mPendingInvites;
     private String mPassword;
+    private double mLatitude;
+    private double mLongitude;
 
     public User() {
-        mUUID = UUID.randomUUID();
-        mFriends = new ArrayList<>();
-        mGroups = new ArrayList<>();
-        mPendingInvites = new ArrayList<>();
+        mUUID = UUID.randomUUID().toString();
+        mFriends = new RealmList<>();
+        mGroups = new RealmList<>();
+        mPendingInvites = new RealmList<>();
     }
 
-    public UUID getUUID() {
+    public String getUUID() {
         return mUUID;
     }
+
 
     public String getUsername() {
         return mUsername;
@@ -45,7 +51,7 @@ public class User {
         return mFriends;
     }
 
-    public void setFriends(List<User> friends) {
+    public void setFriends(RealmList<User> friends) {
         mFriends = friends;
     }
 
@@ -53,7 +59,7 @@ public class User {
         return mGroups;
     }
 
-    public void setGroups(List<Group> groups) {
+    public void setGroups(RealmList<Group> groups) {
         mGroups = groups;
     }
 
@@ -61,7 +67,7 @@ public class User {
         return mPendingInvites;
     }
 
-    public void setPendingInvites(List<User> pendingInvites) {
+    public void setPendingInvites(RealmList<User> pendingInvites) {
         mPendingInvites = pendingInvites;
     }
 

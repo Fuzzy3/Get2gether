@@ -1,13 +1,15 @@
-package com.oestjacobsen.android.get2gether.view.friends;
+package com.oestjacobsen.android.get2gether.view.groups;
 
 
 import com.oestjacobsen.android.get2gether.model.User;
 
 import java.util.List;
 
-public interface AddFriendPresenter {
+public interface NewGroupPresenter {
+
 
     List<User> getUsersMatchingString(String input);
+
 
     List<User> getAllUsers();
 

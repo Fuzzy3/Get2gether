@@ -21,12 +21,14 @@ import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.TestData;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.friends.AddFriendActivity;
 import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
 
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class GroupsActivity extends UserBaseActivity {
 
@@ -72,6 +74,11 @@ public class GroupsActivity extends UserBaseActivity {
     public static Intent newIntent(Context packageContext) {
         Intent i = new Intent(packageContext, GroupsActivity.class);
         return i;
+    }
+
+    @OnClick(R.id.floating_button_new_group)
+    public void onClickNewGroup() {
+        startActivity(NewGroupActivity.newIntent(this));
     }
 
 
