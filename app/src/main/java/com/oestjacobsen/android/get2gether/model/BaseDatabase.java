@@ -1,14 +1,18 @@
 package com.oestjacobsen.android.get2gether.model;
 
 
-import io.realm.OrderedRealmCollection;
+
+import java.util.List;
 
 public interface BaseDatabase {
 
-    OrderedRealmCollection<User> getAllUsers();
-    User getUser(String username);
+    List<User> getAllUsers();
+    User getUserFromUsername(String username);
+    User getUserFromUUID(String UUID);
     void addUser(User user);
     void removeUser(User user);
+
+    List<User> getUsersMatchingString(String input);
 
     void addGroup(Group group);
     void removeGroup(Group group);

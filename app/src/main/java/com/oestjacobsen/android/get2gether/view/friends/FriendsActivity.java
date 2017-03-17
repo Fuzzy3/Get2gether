@@ -12,6 +12,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.oestjacobsen.android.get2gether.InMemorySession;
+import com.oestjacobsen.android.get2gether.CurrentUser;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
@@ -23,20 +25,22 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FriendsActivity extends UserBaseActivity {
+public class FriendsActivity extends UserBaseActivity implements FriendsMVP.FriendsView{
 
     @BindView(R.id.friends_toolbar) Toolbar mToolbar;
     @BindView(R.id.friends_recycler_view) RecyclerView mRecyclerView;
 
-    private FriendsPresenter mPresenter;
+    private FriendsMVP.FriendsPresenter mPresenter;
     private FriendsAdapter mAdapter;
+
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
-        mPresenter = new FriendsPresenterImpl(RealmDatabase.get(this));
+        mPresenter = new FriendsPresenterImpl(RealmDatabase.get(this), this);
+
         setupView();
         updateUI();
     }

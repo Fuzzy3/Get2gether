@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.EditText;
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
@@ -14,9 +15,10 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class EditProfileActivity extends UserBaseActivity {
+public class EditProfileActivity extends UserBaseActivity implements EditProfileMVP.EditProfileView {
 
     @BindView(R.id.edit_profile_toolbar) Toolbar mToolbar;
+
 
 
     @Override

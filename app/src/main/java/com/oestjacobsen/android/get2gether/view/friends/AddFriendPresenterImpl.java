@@ -1,19 +1,36 @@
 package com.oestjacobsen.android.get2gether.view.friends;
 
+import com.oestjacobsen.android.get2gether.CurrentUser;
+import com.oestjacobsen.android.get2gether.InMemorySession;
+import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.TestData;
 import com.oestjacobsen.android.get2gether.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class AddFriendPresenterImpl implements AddFriendPresenter {
+public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
+    private BaseDatabase mDatabase;
+    private AddFriendMVP.AddFriendView mView;
+    private CurrentUser mSessionUser;
+    private User mCurrentUser;
+
+
+    public AddFriendPresenterImpl(BaseDatabase database, AddFriendMVP.AddFriendView view) {
+        mDatabase = database;
+        mView = view;
+
+        mSessionUser = InMemorySession.get();
+        mCurrentUser = mSessionUser.getUser();
+    }
 
     @Override
     public List<User> getUsersMatchingString(String input) {
-        List<User> UsersMatching = new ArrayList<>();
 
-        if (input.equals(null) || input.equals("")) {
+        List<User> UsersMatching =  mDatabase.getUsersMatchingString(input);
+
+        /*if (input.equals(null) || input.equals("")) {
             return UsersMatching;
         } else {
             for (User u : TestData.getTestUsers()) {
@@ -22,7 +39,8 @@ public class AddFriendPresenterImpl implements AddFriendPresenter {
                     UsersMatching.add(u);
                 }
             }
-        }
+        }*/
+
         return UsersMatching;
     }
 

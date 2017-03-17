@@ -37,7 +37,7 @@
             />
 
         <EditText
-            android:id="@+id/profile_user"
+            android:id="@+id/edit_profile_user"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/clean"
@@ -52,7 +52,7 @@
             android:paddingTop="@dimen/text_separation"/>
 
         <EditText
-            android:id="@+id/profile_username"
+            android:id="@+id/edit_profile_username"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/clean"
@@ -66,7 +66,7 @@
             android:paddingTop="@dimen/text_separation"/>
 
         <EditText
-            android:id="@+id/profile_password"
+            android:id="@+id/edit_profile_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/clean"
@@ -81,7 +81,7 @@
             android:paddingTop="@dimen/text_separation"/>
 
         <EditText
-            android:id="@+id/profile_repeat_password"
+            android:id="@+id/edit_profile_repeat_password"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/clean"

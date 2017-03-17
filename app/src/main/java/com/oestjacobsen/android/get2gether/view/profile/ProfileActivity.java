@@ -2,29 +2,37 @@ package com.oestjacobsen.android.get2gether.view.profile;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.widget.TextView;
 
+import com.oestjacobsen.android.get2gether.InMemorySession;
+import com.oestjacobsen.android.get2gether.CurrentUser;
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
-import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ProfileActivity extends UserBaseActivity {
+public class ProfileActivity extends UserBaseActivity  {
 
     @BindView(R.id.profile_toolbar) Toolbar mToolbar;
+    @BindView(R.id.profile_user) TextView mProfileName;
+    @BindView(R.id.profile_username) TextView mProfileUsername;
+    @BindView(R.id.profile_password) TextView mProfilePassword;
 
+    private CurrentUser mSessionUser;
+    private User mCurrentUser;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
+
+
         setupView();
     }
 
@@ -37,6 +45,13 @@ public class ProfileActivity extends UserBaseActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
+
+        mSessionUser = InMemorySession.get();
+        mCurrentUser = mSessionUser.getUser();
+
+        mProfileName.setText(mCurrentUser.getFullName());
+        mProfileUsername.setText(mCurrentUser.getUsername());
+        mProfilePassword.setText(mCurrentUser.getPassword());
     }
 
     public static Intent newIntent(Context packageContext) {

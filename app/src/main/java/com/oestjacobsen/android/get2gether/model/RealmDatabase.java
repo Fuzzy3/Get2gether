@@ -3,8 +3,11 @@ package com.oestjacobsen.android.get2gether.model;
 
 import android.content.Context;
 
+import java.util.List;
+
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
+import io.realm.RealmList;
 import io.realm.RealmResults;
 
 public class RealmDatabase implements BaseDatabase {
@@ -26,8 +29,9 @@ public class RealmDatabase implements BaseDatabase {
     }
 
     //----------USER FUNCTIONS------------
-    public OrderedRealmCollection<User> getAllUsers() {
-        return mRealm.where(User.class).findAll();
+    public List<User> getAllUsers() {
+        OrderedRealmCollection results =  mRealm.where(User.class).findAll();
+        return mRealm.copyFromRealm(results);
     }
 
     public void addUser(User user) {
@@ -54,9 +58,26 @@ public class RealmDatabase implements BaseDatabase {
         });
     }
 
-    public User getUser(String username) {
+    @Override
+    public List<User> getUsersMatchingString(String input) {
+        final String fInput = input;
+        OrderedRealmCollection<User> results = mRealm.where(User.class).beginsWith("mFullName", fInput).findAll();
+        return mRealm.copyFromRealm(results);
+    }
+
+
+    public User getUserFromUsername(String username) {
         final String fUsername = username;
         RealmResults<User> rows = mRealm.where(User.class).equalTo("mUsername", fUsername).findAll();
+        if (rows.size() > 0) {
+            return rows.get(0);
+        }
+        return null;
+    }
+
+    public User getUserFromUUID(String UUID) {
+        final String fUUID = UUID;
+        RealmResults<User> rows = mRealm.where(User.class).equalTo("mUUID", fUUID).findAll();
         if (rows.size() > 0) {
             return rows.get(0);
         }

@@ -17,6 +17,7 @@ import android.widget.TextView;
 
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
 
@@ -27,13 +28,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddFriendActivity extends UserBaseActivity {
+public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.AddFriendView {
 
     @BindView(R.id.friends_toolbar) Toolbar mToolbar;
     @BindView(R.id.add_friend_recyclerview) RecyclerView mRecyclerView;
     @BindView(R.id.search_friend_edittext) EditText mSearchInput;
 
-    private final AddFriendPresenter mPresenter = new AddFriendPresenterImpl();
+    private AddFriendMVP.AddFriendPresenter mPresenter;
     private AddFriendAdapter mAdapter;
     private List<User> mSearchResult = new ArrayList<>();
     private User mSelectedUser;
@@ -43,7 +44,7 @@ public class AddFriendActivity extends UserBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
-
+        mPresenter = new AddFriendPresenterImpl(RealmDatabase.get(this), this);
         setupView();
         updateUI();
     }
@@ -74,8 +75,6 @@ public class AddFriendActivity extends UserBaseActivity {
         Intent i = new Intent(packageContext, AddFriendActivity.class);
         return i;
     }
-
-
 
 
 

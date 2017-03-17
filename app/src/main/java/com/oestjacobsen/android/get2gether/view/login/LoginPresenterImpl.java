@@ -1,20 +1,26 @@
 package com.oestjacobsen.android.get2gether.view.login;
 
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
+import com.oestjacobsen.android.get2gether.model.User;
 
-/**
- * Created by mr_oj on 16/03/2017.
- */
 
-public class LoginPresenterImpl implements LoginPresenter {
+
+public class LoginPresenterImpl implements LoginMVP.LoginPresenter {
     BaseDatabase mDatabase;
+    LoginMVP.LoginView mLoginView;
 
-    public LoginPresenterImpl(BaseDatabase database) {
+    public LoginPresenterImpl(BaseDatabase database, LoginMVP.LoginView loginview) {
         mDatabase = database;
+        mLoginView = loginview;
     }
 
     @Override
     public void authenticateUsername(String username) {
-        mDatabase
+        User loginUser = mDatabase.getUserFromUsername(username.trim());
+        if(loginUser != null) {
+            mLoginView.usernameAcquired(loginUser.getUUID());
+        } else {
+            mLoginView.showToast("Username not found");
+        }
     }
 }
