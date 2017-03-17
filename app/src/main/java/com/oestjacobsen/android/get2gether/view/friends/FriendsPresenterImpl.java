@@ -16,7 +16,6 @@ public class FriendsPresenterImpl implements FriendsPresenter {
 
 
     public List<User> getFriends() {
-
         return mDatabase.getAllUsers();
     }
 
