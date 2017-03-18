@@ -28,7 +28,8 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
     @Override
     public List<User> getUsersMatchingString(String input) {
 
-        List<User> UsersMatching =  mDatabase.getUsersMatchingString(input);
+        String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1);
+        List<User> UsersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
 
         /*if (input.equals(null) || input.equals("")) {
             return UsersMatching;
