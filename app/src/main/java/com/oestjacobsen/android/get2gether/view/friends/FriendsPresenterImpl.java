@@ -1,11 +1,10 @@
 package com.oestjacobsen.android.get2gether.view.friends;
 
-import com.oestjacobsen.android.get2gether.CurrentUser;
-import com.oestjacobsen.android.get2gether.InMemorySession;
+import com.oestjacobsen.android.get2gether.UserManager;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 
-import java.util.Collection;
 import java.util.List;
 
 
@@ -13,7 +12,7 @@ public class FriendsPresenterImpl implements FriendsMVP.FriendsPresenter {
 
     private BaseDatabase mDatabase;
     private FriendsMVP.FriendsView mView;
-    private CurrentUser mSessionUser;
+    private UserManager mSessionUser;
     private User mCurrentUser;
 
 
@@ -21,7 +20,7 @@ public class FriendsPresenterImpl implements FriendsMVP.FriendsPresenter {
         mDatabase = database;
         mView = view;
 
-        mSessionUser = InMemorySession.get();
+        mSessionUser = UserManagerImpl.get();
         mCurrentUser = mSessionUser.getUser();
     }
 

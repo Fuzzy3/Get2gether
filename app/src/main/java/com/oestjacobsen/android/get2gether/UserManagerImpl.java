@@ -3,19 +3,19 @@ package com.oestjacobsen.android.get2gether;
 
 import com.oestjacobsen.android.get2gether.model.User;
 
-public class InMemorySession implements CurrentUser {
+public class UserManagerImpl implements UserManager {
     private User mUser;
-    private static InMemorySession mInMemorySession;
+    private static UserManagerImpl mUserManagerImpl;
 
-    private InMemorySession() {
+    private UserManagerImpl() {
 
     }
 
-    public static InMemorySession get() {
-        if(mInMemorySession == null ){
-            mInMemorySession = new InMemorySession();
+    public static UserManagerImpl get() {
+        if(mUserManagerImpl == null ){
+            mUserManagerImpl = new UserManagerImpl();
         }
-        return mInMemorySession;
+        return mUserManagerImpl;
     }
 
     @Override

@@ -1,7 +1,7 @@
 package com.oestjacobsen.android.get2gether.view.friends;
 
-import com.oestjacobsen.android.get2gether.CurrentUser;
-import com.oestjacobsen.android.get2gether.InMemorySession;
+import com.oestjacobsen.android.get2gether.UserManager;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.TestData;
 import com.oestjacobsen.android.get2gether.model.User;
@@ -9,13 +9,11 @@ import com.oestjacobsen.android.get2gether.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
-import butterknife.OnClick;
-
 public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     private BaseDatabase mDatabase;
     private AddFriendMVP.AddFriendView mView;
-    private CurrentUser mSessionUser;
+    private UserManager mSessionUser;
     private User mCurrentUser;
 
 
@@ -23,7 +21,7 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
         mDatabase = database;
         mView = view;
 
-        mSessionUser = InMemorySession.get();
+        mSessionUser = UserManagerImpl.get();
         mCurrentUser = mSessionUser.getUser();
     }
 
@@ -31,11 +29,19 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
     public List<User> getUsersMatchingString(String input) {
 
         String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1); //First letter to uppercase before query
-        List<User> UsersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
+        List<User> usersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
+        List<User> filterFriendsList = new ArrayList<>();
 
+        for(User friend : usersMatching) {
+            if(!listContains(mCurrentUser.getFriends(), friend)) {
+                filterFriendsList.add(friend);
+            }
+        }
 
-        return UsersMatching;
+        return filterFriendsList;
     }
+
+
 
     @Override
     public List<User> getAllUsers() {
@@ -44,8 +50,24 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     @Override
     public void addFriend(User friend) {
-        mCurrentUser.addFriend(friend);
+        //Checking if friend is already a friend
+        for(User friendInList : mCurrentUser.getFriends()) {
+            if(friendInList.getUUID().equals(friend.getUUID())) {
+                return;
+            }
+        }
+
+        mDatabase.addFriend(mCurrentUser, friend);
+        mView.updateUI();
     }
 
+    private boolean listContains(List<User> list, User user) {
+        for (User friend : list) {
+            if(friend.getUUID().equals(user.getUUID())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 }

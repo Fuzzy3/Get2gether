@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -35,6 +36,9 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         mPresenter = new LoginPresenterImpl(RealmDatabase.get(this), this);
         setupView();
 
+        if(mUsernameInput.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     public static Intent newIntent(Context packageContext) {

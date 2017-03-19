@@ -12,8 +12,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.oestjacobsen.android.get2gether.InMemorySession;
-import com.oestjacobsen.android.get2gether.CurrentUser;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;

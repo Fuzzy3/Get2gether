@@ -7,8 +7,8 @@ import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.widget.TextView;
 
-import com.oestjacobsen.android.get2gether.InMemorySession;
-import com.oestjacobsen.android.get2gether.CurrentUser;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
+import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
@@ -24,7 +24,7 @@ public class ProfileActivity extends UserBaseActivity  {
     @BindView(R.id.profile_username) TextView mProfileUsername;
     @BindView(R.id.profile_password) TextView mProfilePassword;
 
-    private CurrentUser mSessionUser;
+    private UserManager mSessionUser;
     private User mCurrentUser;
 
     @Override
@@ -46,7 +46,7 @@ public class ProfileActivity extends UserBaseActivity  {
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
 
-        mSessionUser = InMemorySession.get();
+        mSessionUser = UserManagerImpl.get();
         mCurrentUser = mSessionUser.getUser();
 
         mProfileName.setText(mCurrentUser.getFullName());

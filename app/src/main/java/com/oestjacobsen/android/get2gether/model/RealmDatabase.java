@@ -16,7 +16,10 @@ public class RealmDatabase implements BaseDatabase {
     private static RealmDatabase mRealmDatabase;
 
     public RealmDatabase() {
-        addTestData();
+        RealmResults results = mRealm.where(User.class).findAll();
+        if(results.size() == 0) {
+            addTestData();
+        }
     }
 
     public static RealmDatabase get(Context context) {
@@ -60,15 +63,17 @@ public class RealmDatabase implements BaseDatabase {
 
     @Override
     public void addFriend(User user, User friend) {
-        final User fUser = user;
-        final User fFriend = friend;
+        mRealm.beginTransaction();
+        user.addFriend(friend);
+        mRealm.commitTransaction();
+        /*final User fFriend = friend;
         mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                 User currentUser = realm.where(User.class).equalTo("mUUID", fUser.getUUID()).findFirst();
                 currentUser.addFriend(fFriend);
             }
-        });
+        });*/
 
     }
 
