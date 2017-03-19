@@ -61,7 +61,8 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    private void updateUI() {
+    @Override
+    public void updateUI() {
         if(mAdapter == null) {
             mAdapter = new AddFriendAdapter(mSearchResult);
             mRecyclerView.setAdapter(mAdapter);
@@ -93,8 +94,8 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     @OnClick(R.id.floating_button_add_selected_friend)
     public void onClickAddSelectedFriend() {
-        //ADD USER
-        startActivity(FriendsActivity.newIntent(this));
+        mPresenter.addFriend(mSelectedUser);
+        finish();
     }
 
     @OnClick(R.id.search_friend_button)

@@ -11,6 +11,7 @@ public interface BaseDatabase {
     User getUserFromUUID(String UUID);
     void addUser(User user);
     void removeUser(User user);
+    void addFriend(User user, User friend);
 
     List<User> getUsersMatchingString(String input);
 

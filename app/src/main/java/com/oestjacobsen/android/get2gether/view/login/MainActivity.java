@@ -8,6 +8,7 @@ import android.view.MenuItem;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FacebookAuthCredential;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
@@ -21,6 +22,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
     private String TAG = MainActivity.class.getSimpleName();
     private LoginMVP.LoginPresenter mPresenter;
+
 
     @BindView(R.id.login_toolbar) Toolbar mToolbar;
     @BindView(R.id.username_edit_text)

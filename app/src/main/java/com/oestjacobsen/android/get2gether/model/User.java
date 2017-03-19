@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import io.realm.RealmList;
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
 
 public class User extends RealmObject {
 
+    @PrimaryKey
     private String mUUID;
     private String mUsername;
     private String mFullName;
@@ -93,5 +95,13 @@ public class User extends RealmObject {
 
     public void setLongitude(double longitude) {
         mLongitude = longitude;
+    }
+
+    public void addFriend(User friend) {
+        mFriends.add(friend);
+    }
+
+    public void removeFriend(User friend) {
+        mFriends.remove(friend);
     }
 }

@@ -59,6 +59,20 @@ public class RealmDatabase implements BaseDatabase {
     }
 
     @Override
+    public void addFriend(User user, User friend) {
+        final User fUser = user;
+        final User fFriend = friend;
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                User currentUser = realm.where(User.class).equalTo("mUUID", fUser.getUUID()).findFirst();
+                currentUser.addFriend(fFriend);
+            }
+        });
+
+    }
+
+    @Override
     public List<User> getUsersMatchingString(String input) {
         final String fInput = input;
         OrderedRealmCollection<User> results = mRealm.where(User.class).beginsWith("mFullName", fInput).findAll();

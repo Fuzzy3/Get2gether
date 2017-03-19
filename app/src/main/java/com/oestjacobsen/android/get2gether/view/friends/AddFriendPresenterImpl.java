@@ -9,6 +9,8 @@ import com.oestjacobsen.android.get2gether.model.User;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.OnClick;
+
 public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     private BaseDatabase mDatabase;
@@ -28,19 +30,9 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
     @Override
     public List<User> getUsersMatchingString(String input) {
 
-        String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1);
+        String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1); //First letter to uppercase before query
         List<User> UsersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
 
-        /*if (input.equals(null) || input.equals("")) {
-            return UsersMatching;
-        } else {
-            for (User u : TestData.getTestUsers()) {
-                if (input.length() == 1 && input.trim().toLowerCase().startsWith(u.getFullName().trim().toLowerCase().substring(0,1)) ||
-                        input.length() > 1 && u.getFullName().trim().toLowerCase().contains(input.trim().toLowerCase())) {
-                    UsersMatching.add(u);
-                }
-            }
-        }*/
 
         return UsersMatching;
     }
@@ -48,6 +40,11 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
     @Override
     public List<User> getAllUsers() {
         return TestData.getTestUsers();
+    }
+
+    @Override
+    public void addFriend(User friend) {
+        mCurrentUser.addFriend(friend);
     }
 
 
