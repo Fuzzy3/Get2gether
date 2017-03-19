@@ -20,6 +20,7 @@ public class User extends RealmObject {
     private String mPassword;
     private double mLatitude;
     private double mLongitude;
+    private RealmList<GroupIdHelperClass> mActiveGroups;
 
     public User() {
         mUUID = UUID.randomUUID().toString();
@@ -103,5 +104,40 @@ public class User extends RealmObject {
 
     public void removeFriend(User friend) {
         mFriends.remove(friend);
+    }
+
+    public void addGroup(Group group) {
+        mGroups.add(group);
+        mActiveGroups.add(new GroupIdHelperClass(group));
+    }
+
+    public RealmList<GroupIdHelperClass> getActiveGroups() {
+        return mActiveGroups;
+    }
+
+    public void removeGroupFromActiveGroups(Group group) {
+        GroupIdHelperClass removeGroup = null;
+
+        for(GroupIdHelperClass id : mActiveGroups) {
+            if(group.getUUID().equals(id.toString())) {
+                removeGroup = id;
+            }
+        }
+        if (removeGroup != null) {
+            mActiveGroups.remove(removeGroup);
+        }
+    }
+
+    public void addGroupToActiveGroups(Group group) {
+        mActiveGroups.add(new GroupIdHelperClass(group));
+    }
+
+    public boolean checkActive(Group group) {
+        for(GroupIdHelperClass id : mActiveGroups) {
+            if (group.getUUID().equals(id.toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 }

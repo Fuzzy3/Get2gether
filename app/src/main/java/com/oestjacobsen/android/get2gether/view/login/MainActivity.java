@@ -36,9 +36,6 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         mPresenter = new LoginPresenterImpl(RealmDatabase.get(this), this);
         setupView();
 
-        if(mUsernameInput.requestFocus()) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
     }
 
     public static Intent newIntent(Context packageContext) {
@@ -56,6 +53,9 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
     private void setupView(){
         ButterKnife.bind(this);
 
+        if(mUsernameInput.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     @Override

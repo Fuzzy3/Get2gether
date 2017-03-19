@@ -41,6 +41,14 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
         return filterFriendsList;
     }
 
+    private boolean listContains(List<User> list, User user) {
+        for (User friend : list) {
+            if(friend.getUUID().equals(user.getUUID())) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 
     @Override
@@ -58,16 +66,9 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
         }
 
         mDatabase.addFriend(mCurrentUser, friend);
-        mView.updateUI();
+        mView.finished();
     }
 
-    private boolean listContains(List<User> list, User user) {
-        for (User friend : list) {
-            if(friend.getUUID().equals(user.getUUID())) {
-                return true;
-            }
-        }
-        return false;
-    }
+
 
 }

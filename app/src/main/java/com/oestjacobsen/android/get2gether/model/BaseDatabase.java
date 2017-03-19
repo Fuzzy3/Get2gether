@@ -12,11 +12,14 @@ public interface BaseDatabase {
     void addUser(User user);
     void removeUser(User user);
     void addFriend(User user, User friend);
-
+    void setActiveGroup(User user, Group group, boolean active);
     List<User> getUsersMatchingString(String input);
 
-    void addGroup(Group group);
+    void addGroupToUser(Group group, User user);
+
     void removeGroup(Group group);
+    void updateOrAddGroup(Group group);
+
 
 
 

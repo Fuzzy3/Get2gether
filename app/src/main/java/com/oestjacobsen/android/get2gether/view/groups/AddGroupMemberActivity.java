@@ -16,6 +16,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.Group;
+import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.BaseActivity;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
@@ -27,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddGroupMemberActivity extends UserBaseActivity {
+public class AddGroupMemberActivity extends UserBaseActivity implements AddGroupMemberMVP.AddGroupMemberView{
 
     @BindView(R.id.new_group_search_friend_edittext)
     EditText mSearchInput;
@@ -36,7 +38,8 @@ public class AddGroupMemberActivity extends UserBaseActivity {
     @BindView(R.id.add_group_member_toolbar)
     Toolbar mToolbar;
 
-    private final AddGroupMemberPresenter mPresenter = new AddGroupMemberPresenterImpl();
+    private static final String GROUP_UUID_ARGS = "CURRENT_GROUP_UUID";
+    private AddGroupMemberMVP.AddGroupMemberPresenter mPresenter;
     private List<User> mSearchResult;
     private AddGroupMemberAdapter mAdapter;
     private User mSelectedUser;
@@ -45,7 +48,7 @@ public class AddGroupMemberActivity extends UserBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_group_member);
-
+        mPresenter = new AddGroupMemberPresenterImpl(RealmDatabase.get(this), this);
 
         setupView();
         updateUI();
@@ -62,7 +65,6 @@ public class AddGroupMemberActivity extends UserBaseActivity {
                 return super.onOptionsItemSelected(item);
         }
     }
-
 
     private void setupView() {
         ButterKnife.bind(this);

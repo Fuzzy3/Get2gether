@@ -38,9 +38,7 @@ public class PincodeActivity extends BaseActivity implements PincodeMVP.PincodeV
         setContentView(R.layout.activity_pincode);
         mPresenter = new PincodePresenterImpl(RealmDatabase.get(this), this);
         setupView();
-        if(mPasswordInput.requestFocus()) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
+
     }
 
     public static Intent newIntent(Context packageContext, String UUID) {
@@ -70,6 +68,10 @@ public class PincodeActivity extends BaseActivity implements PincodeMVP.PincodeV
             getSupportActionBar().setDisplayShowHomeEnabled(true);
         }
         getSupportActionBar().setTitle("");
+
+        if(mPasswordInput.requestFocus()) {
+            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+        }
     }
 
     @Override

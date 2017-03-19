@@ -17,7 +17,7 @@
         android:layout_width="70dp"
         android:layout_height="70dp"
         android:layout_alignParentRight="true"
-        android:backgroundTint="@color/colorGroupActive"
+        android:background="@color/colorGroupActive"
         />
 
     <TextView

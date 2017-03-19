@@ -16,18 +16,11 @@ public class Group extends RealmObject {
     private String mGroupTitle;
     private String mGroupDesc;
     private RealmList<User> mParticipants;
-    private boolean mActive;
 
     public Group() {
         mUUID = UUID.randomUUID().toString();
         mParticipants = new RealmList<>();
-        mActive = false;
     }
-
-    public String getUUID() {
-        return mUUID;
-    }
-
 
     public String getGroupTitle() {
         return mGroupTitle;
@@ -45,7 +38,7 @@ public class Group extends RealmObject {
         mGroupDesc = groupDesc;
     }
 
-    public List<User> getParticipants() {
+    public RealmList<User> getParticipants() {
         return mParticipants;
     }
 
@@ -53,15 +46,11 @@ public class Group extends RealmObject {
         mParticipants.add(user);
     }
 
+    public String getUUID() {
+        return mUUID;
+    }
+
     public void setParticipants(RealmList<User> participants) {
         mParticipants = participants;
-    }
-
-    public boolean isActive() {
-        return mActive;
-    }
-
-    public void setActive(boolean active) {
-        mActive = active;
     }
 }

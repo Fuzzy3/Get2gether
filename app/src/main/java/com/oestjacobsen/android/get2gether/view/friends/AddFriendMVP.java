@@ -17,7 +17,7 @@ public interface AddFriendMVP {
     }
 
     public interface AddFriendView {
-        void updateUI();
+        void finished();
     }
 
 }

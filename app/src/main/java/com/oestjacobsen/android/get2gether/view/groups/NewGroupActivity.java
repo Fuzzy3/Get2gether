@@ -17,6 +17,8 @@ import android.widget.EditText;
 import android.widget.TextView;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.Group;
+import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
 import com.oestjacobsen.android.get2gether.view.friends.AddFriendActivity;
@@ -29,7 +31,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NewGroupActivity extends UserBaseActivity {
+public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.NewGroupView{
 
     @BindView(R.id.new_group_name_edit_text)
     EditText mNameEditText;
@@ -39,10 +41,11 @@ public class NewGroupActivity extends UserBaseActivity {
     Toolbar mToolbar;
     @BindView(R.id.new_group_show_members_recyclerview) RecyclerView mRecyclerView;
 
-    private final NewGroupPresenter mPresenter = new NewGroupPresenterImpl();
+    private NewGroupMVP.NewGroupPresenter mPresenter;
     private User mSelectedUser;
+    private Group mCurrentGroup;
     private NewGroupAdapter mAdapter;
-    private List<User> mSearchResult = new ArrayList<>();
+    private List<User> mMembers = new ArrayList<>();
 
     private final String TAG = NewGroupActivity.class.getSimpleName();
 
@@ -51,7 +54,8 @@ public class NewGroupActivity extends UserBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_group);
-
+        mPresenter = new NewGroupPresenterImpl(RealmDatabase.get(this), this);
+        mCurrentGroup = mPresenter.newGroup();
         setupView();
         updateUI();
     }
@@ -83,11 +87,11 @@ public class NewGroupActivity extends UserBaseActivity {
 
     private void updateUI() {
         if (mAdapter == null) {
-            mSearchResult = mPresenter.getAllUsers();
-            mAdapter = new NewGroupAdapter(mSearchResult);
+            //mMembers = mPresenter.getUsersInGroup();
+            mAdapter = new NewGroupAdapter(mMembers);
             mRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.setSearch(mSearchResult);
+            mAdapter.setSearch(mMembers);
             mAdapter.notifyDataSetChanged();
         }
     }
@@ -110,7 +114,15 @@ public class NewGroupActivity extends UserBaseActivity {
 
     @OnClick(R.id.floating_button_new_group_done)
     public void onClickFinish() {
+        String groupTitle = mNameEditText.getText().toString();
+        String description = mAboutEditText.getText().toString();
+        mPresenter.updateGroup(mCurrentGroup, groupTitle, description, mMembers);
         finish();
+    }
+
+    @Override
+    public void finished(String groupUUID) {
+
     }
 
 

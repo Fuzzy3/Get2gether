@@ -1,37 +1,44 @@
 package com.oestjacobsen.android.get2gether.view.groups;
 
+import com.oestjacobsen.android.get2gether.UserManager;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
+import com.oestjacobsen.android.get2gether.model.BaseDatabase;
+import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.TestData;
 import com.oestjacobsen.android.get2gether.model.User;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by mr_oj on 16/03/2017.
- */
 
-public class AddGroupMemberPresenterImpl implements AddGroupMemberPresenter {
+public class AddGroupMemberPresenterImpl implements AddGroupMemberMVP.AddGroupMemberPresenter {
+
+    private BaseDatabase mDatabase;
+    private AddGroupMemberMVP.AddGroupMemberView mView;
+    private UserManager mUserManager;
+    private User mCurrentUser;
+
+
+    public AddGroupMemberPresenterImpl(BaseDatabase database, AddGroupMemberMVP.AddGroupMemberView view) {
+        mDatabase = database;
+        mView = view;
+        mUserManager = UserManagerImpl.get();
+        mCurrentUser = mUserManager.getUser();
+    }
 
     @Override
     public List<User> getUsersMatchingString(String input) {
-        List<User> UsersMatching = new ArrayList<>();
-
-        if (input.equals(null) || input.equals("")) {
-            return UsersMatching;
-        } else {
-            for (User u : TestData.getTestUsers()) {
-                if (input.length() == 1 && input.trim().toLowerCase().startsWith(u.getFullName().trim().toLowerCase().substring(0, 1)) ||
-                        input.length() > 1 && u.getFullName().trim().toLowerCase().contains(input.trim().toLowerCase())) {
-                    UsersMatching.add(u);
-                }
-            }
-        }
-        return UsersMatching;
+        return null;
     }
 
     @Override
     public List<User> getAllUsers() {
-        return TestData.getTestUsers();
+        return null;
+    }
+
+    @Override
+    public void addMember(Group group, User member) {
+
     }
 }
 

@@ -66,15 +66,6 @@ public class RealmDatabase implements BaseDatabase {
         mRealm.beginTransaction();
         user.addFriend(friend);
         mRealm.commitTransaction();
-        /*final User fFriend = friend;
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                User currentUser = realm.where(User.class).equalTo("mUUID", fUser.getUUID()).findFirst();
-                currentUser.addFriend(fFriend);
-            }
-        });*/
-
     }
 
     @Override
@@ -103,15 +94,54 @@ public class RealmDatabase implements BaseDatabase {
         return null;
     }
 
-    //------------GROUP FUNCTIONS--------------
-    public void addGroup(Group group) {
+    @Override
+    public void setActiveGroup(User user, final Group group, boolean active) {
+        final User fUser = user;
         final Group fGroup = group;
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                mRealm.copyToRealm(fGroup);
-            }
-        });
+        if(active) {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    fUser.addGroupToActiveGroups(group);
+                }
+            });
+        } else {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    fUser.removeGroupFromActiveGroups(group);
+                }
+            });
+        }
+    }
+
+    //------------GROUP FUNCTIONS--------------
+    //If no such group exists, it creates one
+    public void updateOrAddGroup(Group group) {
+        final Group fGroup = group;
+        final RealmResults<Group> groupAlreadyExist = mRealm.where(Group.class).equalTo("mUUID", fGroup.getUUID()).findAll();
+
+        //Group already exists and we just need to update data
+        if(groupAlreadyExist.size() > 0) {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    groupAlreadyExist.get(0).setGroupTitle(fGroup.getGroupTitle());
+                    groupAlreadyExist.get(0).setGroupDesc(fGroup.getGroupDesc());
+                    groupAlreadyExist.get(0).setParticipants(fGroup.getParticipants());
+                }
+            });
+        }
+        //Group doesn't exist and we need to create a new object in the database
+        else {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    mRealm.copyToRealm(fGroup);
+                }
+            });
+        }
+
     }
 
     public void removeGroup(Group group) {
@@ -125,6 +155,15 @@ public class RealmDatabase implements BaseDatabase {
                 }
             }
         });
+    }
+
+    @Override
+    public void addGroupToUser(Group group, User user) {
+        final Group fGroup = group;
+        final User fUser = user;
+        mRealm.beginTransaction();
+        fUser.addGroup(fGroup);
+        mRealm.commitTransaction();
     }
 
 
@@ -167,22 +206,22 @@ public class RealmDatabase implements BaseDatabase {
         Group g01 = new Group();
         g01.setGroupTitle("Home");
         g01.setGroupDesc("Class trip to the zoo");
-        addGroup(g01);
+        updateOrAddGroup(g01);
 
         Group g02 = new Group();
         g02.setGroupTitle("The Beach");
         g02.setGroupDesc("The friends are going to a Concert!");
-        addGroup(g02);
+        updateOrAddGroup(g02);
 
         Group g03 = new Group();
         g03.setGroupTitle("London");
         g03.setGroupDesc("Group to check up on students");
-        addGroup(g03);
+        updateOrAddGroup(g03);
 
         Group g04 = new Group();
         g04.setGroupTitle("School Party");
         g04.setGroupDesc("Group for the awesome school group");
-        addGroup(g04);
+        updateOrAddGroup(g04);
     }
 
 }
