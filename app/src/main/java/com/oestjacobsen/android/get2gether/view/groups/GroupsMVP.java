@@ -11,7 +11,7 @@ public interface GroupsMVP {
     public interface GroupsPresenter {
         List<Group> getGroups();
         void setActive(Group group, boolean active);
-        boolean getActive(Group group);
+        boolean isActive(Group group);
         void showActiveGroups();
 
 

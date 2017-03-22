@@ -38,18 +38,27 @@ public class GroupsPresenterImpl implements GroupsMVP.GroupsPresenter {
     }
 
     @Override
-    public boolean getActive(Group group) {
-        return mCurrentUser.checkActive(group);
+    public boolean isActive(Group group) {
+        for(GroupIdHelperClass groupHelper : mCurrentUser.getActiveGroups()) {
+            if(groupHelper.getGroupUUID().equals(group.getUUID())) {
+                return groupHelper.isActive();
+            }
+        }
+        Log.i(group.getGroupTitle() + "", "didn't find id");
+        return false;
     }
 
     @Override
     public void showActiveGroups() {
-        for(GroupIdHelperClass id : mCurrentUser.getActiveGroups()) {
-            for(Group group : mCurrentUser.getGroups()) {
-                if(id.toString().equals(group.getUUID())) {
-                    Log.d("TEST", "Active: " + group.getGroupTitle());
-                }
-            }
+        for(Group group : mCurrentUser.getGroups()) {
+            Log.i("PRINTING GROUPS", group.getGroupTitle());
         }
+        Log.i("-------BREAK-----", "-------BREAK------");
+        for(GroupIdHelperClass id : mCurrentUser.getActiveGroups()) {
+            Log.i(id.isActive() + "", id.getGroupUUID());
+            Log.i("ownuuid", id.getUUID() + "");
+            Log.i("new", "-----");
+        }
+
     }
 }

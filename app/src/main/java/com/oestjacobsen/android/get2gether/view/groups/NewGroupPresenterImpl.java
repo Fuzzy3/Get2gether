@@ -65,9 +65,8 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
         for(User participant : participants) {
             group.addParticipant(participant);
         }
-
+        mDatabase.addGroupToUser(group, mCurrentUser);
         mDatabase.updateOrAddGroup(group);
-
     }
 
     @Override
@@ -79,8 +78,6 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
     public Group newGroup() {
         Group group = new Group();
         group.addParticipant(mCurrentUser);
-        mDatabase.updateOrAddGroup(group);
-        mDatabase.addGroupToUser(group, mCurrentUser);
         return group;
     }
 

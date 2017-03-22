@@ -27,6 +27,7 @@ public class User extends RealmObject {
         mFriends = new RealmList<>();
         mGroups = new RealmList<>();
         mPendingInvites = new RealmList<>();
+        mActiveGroups = new RealmList<>();
     }
 
     public String getUUID() {
@@ -106,34 +107,27 @@ public class User extends RealmObject {
         mFriends.remove(friend);
     }
 
-    public void addGroup(Group group) {
+    public void addGroup(Group group, GroupIdHelperClass groupHelper) {
         mGroups.add(group);
-        mActiveGroups.add(new GroupIdHelperClass(group));
+        mActiveGroups.add(groupHelper);
     }
 
     public RealmList<GroupIdHelperClass> getActiveGroups() {
         return mActiveGroups;
     }
 
-    public void removeGroupFromActiveGroups(Group group) {
-        RealmList<GroupIdHelperClass> listWithoutGroup = new RealmList<>();
-
-        for(GroupIdHelperClass id : mActiveGroups) {
-            if(!group.getUUID().equals(id.toString())) {
-                listWithoutGroup.add(id);
+    public GroupIdHelperClass getGroupHelper(String mUUID) {
+        for(GroupIdHelperClass groupHelper : mActiveGroups) {
+            if (groupHelper.getGroupUUID().equals(mUUID)) {
+                return groupHelper;
             }
         }
-
-        mActiveGroups = listWithoutGroup;
-    }
-
-    public void addGroupToActiveGroups(Group group) {
-        mActiveGroups.add(new GroupIdHelperClass(group));
+        return null;
     }
 
     public boolean checkActive(Group group) {
         for(GroupIdHelperClass id : mActiveGroups) {
-            if (group.getUUID().equals(id.toString())) {
+            if (group.getUUID().equals(id.getGroupUUID())) {
                 return true;
             }
         }

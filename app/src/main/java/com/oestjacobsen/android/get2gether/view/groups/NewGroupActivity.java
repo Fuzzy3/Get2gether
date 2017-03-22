@@ -56,6 +56,7 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         setContentView(R.layout.activity_new_group);
         mPresenter = new NewGroupPresenterImpl(RealmDatabase.get(this), this);
         mCurrentGroup = mPresenter.newGroup();
+        //mMembers.add(mCurrentGroup.getParticipants().first());
         setupView();
         updateUI();
     }

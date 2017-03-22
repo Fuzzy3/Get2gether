@@ -121,7 +121,7 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
         }
 
         private int getActiveColor(Group group) {
-            if(mPresenter.getActive(group)) {
+            if(mPresenter.isActive(group)) {
                 Log.i(TAG, "GREEN");
                 return Color.GREEN;
             } else {
@@ -133,8 +133,8 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
         @OnClick(R.id.group_active_button)
         public void onActiveClick() {
             Log.i(TAG, mCurrentGroup.getGroupTitle() + " Clicked");
-            Log.i(TAG, mPresenter.getActive(mCurrentGroup) + ": state of active");
-            mPresenter.setActive(mCurrentGroup, !mPresenter.getActive(mCurrentGroup));
+            Log.i(TAG, mPresenter.isActive(mCurrentGroup) + ": state of active");
+            mPresenter.setActive(mCurrentGroup, !mPresenter.isActive(mCurrentGroup));
             mPresenter.showActiveGroups();
             updateUI();
         }

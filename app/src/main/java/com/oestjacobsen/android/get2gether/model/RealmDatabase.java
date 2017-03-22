@@ -3,10 +3,14 @@ package com.oestjacobsen.android.get2gether.model;
 
 import android.content.Context;
 
+import com.oestjacobsen.android.get2gether.UserManager;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
+
 import java.util.List;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
@@ -14,6 +18,7 @@ public class RealmDatabase implements BaseDatabase {
 
     private static Realm mRealm;
     private static RealmDatabase mRealmDatabase;
+
 
     public RealmDatabase() {
         RealmResults results = mRealm.where(User.class).findAll();
@@ -95,21 +100,15 @@ public class RealmDatabase implements BaseDatabase {
     }
 
     @Override
-    public void setActiveGroup(User user, final Group group, boolean active) {
+    public void setActiveGroup(User user, final Group group, final boolean active) {
         final User fUser = user;
         final Group fGroup = group;
-        if(active) {
+        final GroupIdHelperClass fGroupHelper = fUser.getGroupHelper(fGroup.getUUID());
+        if (fGroupHelper != null) {
             mRealm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    fUser.addGroupToActiveGroups(group);
-                }
-            });
-        } else {
-            mRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    fUser.removeGroupFromActiveGroups(group);
+                        fGroupHelper.setActive(active);
                 }
             });
         }
@@ -161,9 +160,17 @@ public class RealmDatabase implements BaseDatabase {
     public void addGroupToUser(Group group, User user) {
         final Group fGroup = group;
         final User fUser = user;
-        mRealm.beginTransaction();
-        fUser.addGroup(fGroup);
-        mRealm.commitTransaction();
+        GroupIdHelperClass groupHelper = fUser.getGroupHelper(fGroup.getUUID());
+        if(groupHelper == null) {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    final GroupIdHelperClass fGroupHelper = new GroupIdHelperClass(fGroup);
+                    mRealm.copyToRealm(fGroupHelper);
+                    fUser.addGroup(fGroup,fGroupHelper);
+                }
+            });
+        }
     }
 
 
