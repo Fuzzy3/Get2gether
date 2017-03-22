@@ -116,16 +116,15 @@ public class User extends RealmObject {
     }
 
     public void removeGroupFromActiveGroups(Group group) {
-        GroupIdHelperClass removeGroup = null;
+        RealmList<GroupIdHelperClass> listWithoutGroup = new RealmList<>();
 
         for(GroupIdHelperClass id : mActiveGroups) {
-            if(group.getUUID().equals(id.toString())) {
-                removeGroup = id;
+            if(!group.getUUID().equals(id.toString())) {
+                listWithoutGroup.add(id);
             }
         }
-        if (removeGroup != null) {
-            mActiveGroups.remove(removeGroup);
-        }
+
+        mActiveGroups = listWithoutGroup;
     }
 
     public void addGroupToActiveGroups(Group group) {
