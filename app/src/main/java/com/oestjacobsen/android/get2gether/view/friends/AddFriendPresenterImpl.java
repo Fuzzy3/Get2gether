@@ -33,7 +33,7 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
         List<User> filterFriendsList = new ArrayList<>();
 
         for(User friend : usersMatching) {
-            if(!listContains(mCurrentUser.getFriends(), friend)) {
+            if(!listContains(mCurrentUser.getFriends(), friend) && (!friend.getUUID().equals(mCurrentUser.getUUID()))) {
                 filterFriendsList.add(friend);
             }
         }
@@ -53,19 +53,27 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     @Override
     public List<User> getAllUsers() {
-        return mDatabase.getAllUsers();
+        List<User> filterFriendsList = new ArrayList<>();
+        for(User user : mDatabase.getAllUsers()) {
+            if(!listContains(mCurrentUser.getFriends(), user) && (!user.getUUID().equals(mCurrentUser.getUUID()))) {
+                filterFriendsList.add(user);
+            }
+        }
+        return filterFriendsList;
     }
 
     @Override
-    public void addFriend(User friend) {
+    public void addFriendInvite(User friend) {
         //Checking if friend is already a friend
         for(User friendInList : mCurrentUser.getFriends()) {
             if(friendInList.getUUID().equals(friend.getUUID())) {
+                mView.showToast("you are already friends with: " + friend.getFullName());
                 return;
             }
         }
-
-        mDatabase.addFriend(mCurrentUser, friend);
+        mDatabase.addPendingInvite(mCurrentUser, friend);
+        //mDatabase.addFriend(mCurrentUser, friend);
+        mView.showToast("Friend invite send to " + friend.getFullName());
         mView.finished();
     }
 

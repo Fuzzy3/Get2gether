@@ -2,7 +2,9 @@ package com.oestjacobsen.android.get2gether.view.friends;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -10,13 +12,17 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.groups.NewGroupActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -27,9 +33,12 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
 
     @BindView(R.id.friends_toolbar) Toolbar mToolbar;
     @BindView(R.id.friends_recycler_view) RecyclerView mRecyclerView;
-
+    @BindView(R.id.add_pending_friend_button) Button mAddPendingFriendButton;
+    private List<User> mFriendsAndPending = new ArrayList<>();
     private FriendsMVP.FriendsPresenter mPresenter;
     private FriendsAdapter mAdapter;
+    private User mSelectedUser;
+    private int mPendingStarting = 0;
 
 
 
@@ -40,7 +49,6 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
         mPresenter = new FriendsPresenterImpl(RealmDatabase.get(this), this);
 
         setupView();
-        updateUI();
     }
 
 
@@ -54,6 +62,8 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
         }
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        mAddPendingFriendButton.setVisibility(View.INVISIBLE);
+        mPresenter.getFriendsAndPending();
     }
 
 
@@ -64,8 +74,16 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
 
 
     private void updateUI() {
-        mAdapter = new FriendsAdapter(mPresenter.getFriends());
-        mRecyclerView.setAdapter(mAdapter);
+        if(mAdapter == null) {
+            mAdapter = new FriendsAdapter(mFriendsAndPending);
+            mAdapter.setPendingStartingPos(mPendingStarting);
+            mRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.setFriendsList(mFriendsAndPending);
+            mAdapter.setPendingStartingPos(mPendingStarting);
+            mAdapter.notifyDataSetChanged();
+        }
+
     }
 
 
@@ -83,32 +101,87 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
     }
 
 
-    @OnClick(R.id.floating_button_add_friend)
+    @OnClick(R.id.add_friend_button)
     public void onClickAddFriend() {
         startActivity(AddFriendActivity.newIntent(this));
     }
 
+    @OnClick(R.id.add_pending_friend_button)
+    public void onClickAddPending() {
+        mPresenter.addPendingFriend(mSelectedUser);
+    }
 
+
+    @Override
+    public void showFriendsAndPending(List<User> friendsandpending, int pendingStartingPosition) {
+        mFriendsAndPending = friendsandpending;
+        mPendingStarting = pendingStartingPosition;
+        mSelectedUser = null;
+        mAddPendingFriendButton.setVisibility(View.INVISIBLE);
+        updateUI();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
+    }
 
     //Adapter and viewholder for recyclerview
-    public class FriendHolder extends RecyclerView.ViewHolder {
+    public class FriendHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.friends_row_fullname) TextView mFullname;
         @BindView(R.id.friends_row_username) TextView mUsername;
+        private boolean mIsPending;
+        private int mPosition;
+
 
         public FriendHolder(View itemView) {
             super(itemView);
+            itemView.setOnClickListener(this);
             ButterKnife.bind(this, itemView);
         }
 
-        public void bindFriend(User friend) {
+        public void bindFriend(User friend, boolean isPending) {
+            mIsPending = isPending;
             mFullname.setText(friend.getFullName());
             mUsername.setText(friend.getUsername());
+            if(mIsPending) {
+                if (mAdapter.getSelected_position() == mPosition) {
+                    itemView.setBackgroundColor(ContextCompat.getColor(FriendsActivity.this, R.color.colorHighlight));
+                    mSelectedUser = friend;
+                } else {
+                    itemView.setBackgroundColor(ContextCompat.getColor(FriendsActivity.this, R.color.colorPending));
+                }
+            } else {
+                itemView.setBackgroundColor(Color.TRANSPARENT);
+            }
+        }
+
+        @Override
+        public void onClick(View view) {
+            if(mIsPending){
+                mAdapter.notifyDataSetChanged();
+                if (mPosition == mAdapter.getPrevious_position()) {
+                    mAdapter.setSelected_position(-1);
+                    mAdapter.setPrevious_position(-1);
+                    mAddPendingFriendButton.setVisibility(View.INVISIBLE);
+
+                } else {
+                    mAdapter.setSelected_position(mPosition);
+                    mAdapter.setPrevious_position(mPosition);
+                    mAddPendingFriendButton.setVisibility(View.VISIBLE);
+                }
+                mAdapter.notifyDataSetChanged();
+            }
         }
     }
 
     public class FriendsAdapter extends RecyclerView.Adapter<FriendHolder> {
 
         private List<User> mFriends;
+        private int mPendingStartingPos = 0;
+        private int selected_position = -1;
+        private int previous_position = -1;
+
 
         public FriendsAdapter(List<User> friends) {
             mFriends = friends;
@@ -125,13 +198,41 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
         @Override
         public void onBindViewHolder(FriendHolder holder, int position) {
             User friend = mFriends.get(position);
-            holder.bindFriend(friend);
+            if(position >= mPendingStartingPos) {
+                holder.bindFriend(friend, true);
+            } else {
+                holder.bindFriend(friend, false);
+            }
         }
 
         @Override
         public int getItemCount() {
             return mFriends.size();
         }
+
+        public void setFriendsList(List<User> friends) {
+            mFriends = friends;
+        }
+        public void setPendingStartingPos(int startpos) {
+            mPendingStartingPos = startpos;
+        }
+
+        public int getSelected_position() {
+            return selected_position;
+        }
+
+        public void setSelected_position(int selected_position) {
+            this.selected_position = selected_position;
+        }
+
+        public int getPrevious_position() {
+            return previous_position;
+        }
+
+        public void setPrevious_position(int previous_position) {
+            this.previous_position = previous_position;
+        }
+
     }
 
 }

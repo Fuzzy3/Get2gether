@@ -70,6 +70,7 @@ public class RealmDatabase implements BaseDatabase {
     public void addFriend(User user, User friend) {
         mRealm.beginTransaction();
         user.addFriend(friend);
+        mRealm.copyToRealmOrUpdate(user);
         mRealm.commitTransaction();
     }
 
@@ -173,7 +174,24 @@ public class RealmDatabase implements BaseDatabase {
         }
     }
 
+    @Override
+    public void addPendingInvite(User user, User friend) {
+        mRealm.beginTransaction();
+        friend.addPendingInvite(user);
+        mRealm.copyToRealmOrUpdate(friend);
+        mRealm.commitTransaction();
+    }
 
+    @Override
+    public void addPendingFriend(User user, User friend) {
+        mRealm.beginTransaction();
+        user.removePendingFriend(friend);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+        addFriend(friend, user);
+        addFriend(user, friend);
+
+    }
 
     //TESTDATA
     private void addTestData() {

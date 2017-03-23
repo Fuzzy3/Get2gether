@@ -30,4 +30,6 @@
     <string name="add_member_text">Add member</string>
     <string name="members">Members:</string>
     <string name="remove_member_text">Remove Member</string>
+    <string name="add_pending_friend_button_text">Add Pending Friend</string>
+    <string name="add_new_friend_button_text">Add New Friend</string>
 </resources>

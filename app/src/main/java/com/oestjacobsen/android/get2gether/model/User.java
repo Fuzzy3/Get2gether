@@ -8,7 +8,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class User extends RealmObject {
+public class User extends RealmObject  {
 
     @PrimaryKey
     private String mUUID;
@@ -20,6 +20,7 @@ public class User extends RealmObject {
     private String mPassword;
     private double mLatitude;
     private double mLongitude;
+    private int outGoingInvites = 0;
     private RealmList<GroupIdHelperClass> mActiveGroups;
 
     public User() {
@@ -73,6 +74,10 @@ public class User extends RealmObject {
 
     public void setPendingInvites(RealmList<User> pendingInvites) {
         mPendingInvites = pendingInvites;
+    }
+
+    public void addPendingInvite(User user) {
+        mPendingInvites.add(user);
     }
 
     public String getPassword() {
@@ -132,5 +137,17 @@ public class User extends RealmObject {
             }
         }
         return false;
+    }
+
+
+    public void removePendingFriend(User friend) {
+        RealmList<User> newPendingList = new RealmList<>();
+        for(User pending : mPendingInvites) {
+            if(!pending.getUUID().equals(friend.getUUID())) {
+                newPendingList.add(friend);
+            }
+        }
+
+        mPendingInvites = newPendingList;
     }
 }

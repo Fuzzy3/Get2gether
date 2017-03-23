@@ -20,7 +20,7 @@ public interface BaseDatabase {
     void removeGroup(Group group);
     void updateOrAddGroup(Group group);
 
+    void addPendingInvite(User user, User friend);
 
-
-
+    void addPendingFriend(User user, User friend);
 }

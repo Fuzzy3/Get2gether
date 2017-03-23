@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.oestjacobsen.android.get2gether.R;
@@ -94,7 +95,7 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     @OnClick(R.id.floating_button_add_selected_friend)
     public void onClickAddSelectedFriend() {
-        mPresenter.addFriend(mSelectedUser);
+        mPresenter.addFriendInvite(mSelectedUser);
     }
 
 
@@ -109,6 +110,11 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
     @Override
     public void finished() {
         finish();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 

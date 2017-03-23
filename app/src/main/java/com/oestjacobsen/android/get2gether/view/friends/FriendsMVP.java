@@ -9,12 +9,16 @@ public interface FriendsMVP {
 
     public interface FriendsPresenter {
 
-        List<User> getFriends();
+        void getFriendsAndPending();
+
+        void addPendingFriend(User mSelectedUser);
     }
 
     public interface FriendsView {
 
+        void showFriendsAndPending(List<User> friendsandpending, int pendingStartingPosition);
 
+        void showToast(String msg);
     }
 
 }

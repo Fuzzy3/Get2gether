@@ -12,12 +12,13 @@ public interface AddFriendMVP {
 
         List<User> getAllUsers();
 
-        void addFriend(User friend);
+        void addFriendInvite(User friend);
 
     }
 
     public interface AddFriendView {
         void finished();
+        void showToast(String msg);
     }
 
 }

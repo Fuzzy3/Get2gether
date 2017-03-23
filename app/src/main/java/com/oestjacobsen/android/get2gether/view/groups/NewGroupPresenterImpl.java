@@ -64,6 +64,7 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
         group.setGroupDesc(description);
         for(User participant : participants) {
             group.addParticipant(participant);
+            //Add pending groupinvite
         }
         mDatabase.addGroupToUser(group, mCurrentUser);
         mDatabase.updateOrAddGroup(group);
