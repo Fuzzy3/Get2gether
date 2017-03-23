@@ -12,4 +12,4 @@ logge ind, finde venner, oprette grupper og søge (placering af andre i gruppen)
 
 
 
-Get2gether bliver udviklet i forbinde med et bachelorprojekt på IT-Universitetet i København.
+Get2gether bliver udviklet i forbindelse med et bachelorprojekt på IT-Universitetet i København.
