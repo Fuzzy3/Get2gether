@@ -17,11 +17,13 @@ public interface NewGroupMVP {
         User getUserFromUUID(String UUID);
 
 
+        void removeMemberFromList(List<User> list, User user);
     }
 
     public interface NewGroupView {
 
-        void finished(String groupUUID);
+        void finished();
+        void memberSuccesfullyRemoved(List<User> newlist);
 
     }
 

@@ -32,4 +32,6 @@
     <string name="remove_member_text">Remove Member</string>
     <string name="add_pending_friend_button_text">Add Pending Friend</string>
     <string name="add_new_friend_button_text">Add New Friend</string>
+    <string name="create_new_group_button_text">Create Group</string>
+    <string name="add_pending_group_button_text">Add Pending Group</string>
 </resources>

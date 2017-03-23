@@ -6,6 +6,7 @@ import android.content.Context;
 import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.UserManagerImpl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.OrderedRealmCollection;
@@ -167,7 +168,7 @@ public class RealmDatabase implements BaseDatabase {
                 @Override
                 public void execute(Realm realm) {
                     final GroupIdHelperClass fGroupHelper = new GroupIdHelperClass(fGroup);
-                    mRealm.copyToRealm(fGroupHelper);
+                    mRealm.copyToRealmOrUpdate(fGroupHelper);
                     fUser.addGroup(fGroup,fGroupHelper);
                 }
             });
@@ -191,6 +192,32 @@ public class RealmDatabase implements BaseDatabase {
         addFriend(friend, user);
         addFriend(user, friend);
 
+    }
+
+    @Override
+    public void addPendingGroupInvite(User user, Group group) {
+        mRealm.beginTransaction();
+        user.addPendingGroupInvite(group);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+    }
+
+    @Override
+    public void addPendingGroup(User user, Group group) {
+        mRealm.beginTransaction();
+        user.removePendingGroup(group);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+        addGroupToUser(group, user);
+    }
+
+    @Override
+    public List<User> getParticipantsOfGroup(String uuid) {
+        RealmResults<Group> result = mRealm.where(Group.class).equalTo("mUUID", uuid).findAll();
+        if(result.size() > 0) {
+            return result.get(0).getParticipants();
+        }
+        return new RealmList<User>();
     }
 
     //TESTDATA

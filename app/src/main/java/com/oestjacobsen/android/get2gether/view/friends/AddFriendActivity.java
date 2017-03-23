@@ -95,7 +95,11 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     @OnClick(R.id.floating_button_add_selected_friend)
     public void onClickAddSelectedFriend() {
-        mPresenter.addFriendInvite(mSelectedUser);
+        if(mSelectedUser != null) {
+            mPresenter.addFriendInvite(mSelectedUser);
+        } else {
+            Toast.makeText(this, "No friend selected", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -149,9 +153,11 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
             if(mPosition == mAdapter.getPrevious_position()) {
                 mAdapter.setSelected_position(-1);
                 mAdapter.setPrevious_position(-1);
+                mSelectedUser = null;
             } else {
                 mAdapter.setSelected_position(mPosition);
                 mAdapter.setPrevious_position(mPosition);
+
             }
             mAdapter.notifyDataSetChanged();
         }

@@ -28,15 +28,22 @@
         android:scrollbars="vertical"
         />
 
-    <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_add_black_24dp"
-        app:backgroundTint="@color/colorFloatingButton"
-        app:fabSize="normal"
-        android:id="@+id/floating_button_new_group"
+    <Button
+        android:id="@+id/groups_create_new_group_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
+        android:text="@string/create_new_group_button_text"
         android:layout_margin="30dp"/>
+
+    <Button
+        android:id="@+id/button_add_pending_group"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/groups_create_new_group_button"
+        android:text="@string/add_pending_group_button_text"
+        android:layout_marginBottom="30dp"/>
 
 </RelativeLayout>

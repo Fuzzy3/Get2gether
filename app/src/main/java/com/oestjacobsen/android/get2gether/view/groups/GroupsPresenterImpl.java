@@ -10,6 +10,7 @@ import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.GroupIdHelperClass;
 import com.oestjacobsen.android.get2gether.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class GroupsPresenterImpl implements GroupsMVP.GroupsPresenter {
@@ -28,8 +29,16 @@ public class GroupsPresenterImpl implements GroupsMVP.GroupsPresenter {
     }
 
     @Override
-    public List<Group> getGroups() {
-        return mCurrentUser.getGroups();
+    public void getGroupsAndPending() {
+        List<Group> groupsAndPending = new ArrayList<>();
+        for(Group group : mCurrentUser.getGroups()) {
+            groupsAndPending.add(group);
+        }
+        for(Group pending: mCurrentUser.getPendingGroupInvites()) {
+            groupsAndPending.add(pending);
+        }
+
+        mView.showGroupsAndPending(groupsAndPending, mCurrentUser.getGroups().size());
     }
 
     @Override
@@ -46,6 +55,16 @@ public class GroupsPresenterImpl implements GroupsMVP.GroupsPresenter {
         }
         Log.i(group.getGroupTitle() + "", "didn't find id");
         return false;
+    }
+
+    @Override
+    public void addPendingGroup(Group group) {
+        if(!mCurrentUser.getPendingGroupInvites().contains(group)) {
+            return;
+        }
+        mDatabase.addPendingGroup(mCurrentUser, group);
+        mView.showToast(group.getGroupTitle() + "added to your list of groups");
+        getGroupsAndPending();
     }
 
     @Override

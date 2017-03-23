@@ -14,13 +14,16 @@ public interface BaseDatabase {
     void addFriend(User user, User friend);
     void setActiveGroup(User user, Group group, boolean active);
     List<User> getUsersMatchingString(String input);
-
     void addGroupToUser(Group group, User user);
-
     void removeGroup(Group group);
     void updateOrAddGroup(Group group);
-
     void addPendingInvite(User user, User friend);
-
     void addPendingFriend(User user, User friend);
+    void addPendingGroupInvite(User user, Group group);
+
+
+
+    List<User> getParticipantsOfGroup(String uuid);
+
+    void addPendingGroup(User mCurrentUser, Group group);
 }

@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
@@ -109,20 +110,38 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
 
     @OnClick(R.id.new_group_remove_member_button)
     public void onClickRemoveSelectedFriend() {
-        Log.i(TAG, mSelectedUser.getFullName() + " Removed");
+        if(mSelectedUser != null) {
+            mPresenter.removeMemberFromList(mMembers, mSelectedUser);
+        } else {
+            Toast.makeText(this, "Select a user to delete", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
 
     @OnClick(R.id.floating_button_new_group_done)
     public void onClickFinish() {
-        String groupTitle = mNameEditText.getText().toString();
-        String description = mAboutEditText.getText().toString();
-        mPresenter.updateGroup(mCurrentGroup, groupTitle, description, mMembers);
+        if(!mNameEditText.getText().toString().equals("")) {
+            String groupTitle = mNameEditText.getText().toString();
+            String description = mAboutEditText.getText().toString();
+            mPresenter.updateGroup(mCurrentGroup, groupTitle, description, mMembers);
+        } else {
+            Toast.makeText(this, "Group needs a name", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void finished() {
         finish();
     }
 
     @Override
-    public void finished(String groupUUID) {
-
+    public void memberSuccesfullyRemoved(List<User> newlist) {
+        mMembers = newlist;
+        mSelectedUser = null;
+        mAdapter.setSelected_position(-1);
+        updateUI();
     }
 
     @Override

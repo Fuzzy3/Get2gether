@@ -60,14 +60,18 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
 
     @Override
     public void updateGroup(Group group, String title, String description, List<User> participants) {
+        List<User> oldParticipants = mDatabase.getParticipantsOfGroup(group.getUUID());
         group.setGroupTitle(title);
         group.setGroupDesc(description);
         for(User participant : participants) {
-            group.addParticipant(participant);
-            //Add pending groupinvite
+            if(!listContains(oldParticipants, participant)) {
+                group.addParticipant(participant);
+                mDatabase.addPendingGroupInvite(participant, group);
+            }
         }
         mDatabase.addGroupToUser(group, mCurrentUser);
         mDatabase.updateOrAddGroup(group);
+        mView.finished();
     }
 
     @Override
@@ -87,6 +91,16 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
         return mDatabase.getUserFromUUID(UUID);
     }
 
+    @Override
+    public void removeMemberFromList(List<User> list, User removeUser) {
+        List<User> newMembersList = new ArrayList<>();
+        for(User user : list) {
+            if(!removeUser.getUUID().equals(user.getUUID())) {
+                newMembersList.add(user);
+            }
+        }
 
+        mView.memberSuccesfullyRemoved(newMembersList);
 
+    }
 }

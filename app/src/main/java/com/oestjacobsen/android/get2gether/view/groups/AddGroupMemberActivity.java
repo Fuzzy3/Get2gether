@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
@@ -92,8 +93,12 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
 
     @OnClick(R.id.new_group_search_friend_button)
     public void onClickSearchButton() {
-        String searchInput = mSearchInput.getText().toString();
-        mSearchResult = mPresenter.getFriendsMatchingString(searchInput);
+        if(!mSearchInput.getText().toString().equals("")) {
+            String searchInput = mSearchInput.getText().toString();
+            mSearchResult = mPresenter.getFriendsMatchingString(searchInput);
+        } else {
+            mSearchResult = mPresenter.getAllFriends();
+        }
         updateUI();
     }
 
@@ -104,12 +109,17 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
 
     @OnClick(R.id.floating_button_add_member)
     public void onClickAddMember() {
-        Intent i = new Intent();
-        Bundle extra = new Bundle();
-        extra.putString("UUID", mSelectedUser.getUUID());
-        i.putExtras(extra);
-        setResult(1, i);
-        finish();
+        if(mSelectedUser != null) {
+            Intent i = new Intent();
+            Bundle extra = new Bundle();
+            extra.putString("UUID", mSelectedUser.getUUID());
+            i.putExtras(extra);
+            setResult(1, i);
+            finish();
+        } else {
+            Toast.makeText(this, "No friend selected", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
 
@@ -128,7 +138,6 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
         }
 
         public void bindUser(User user, int position) {
-            mSelectedUser = user;
             mFullname.setText(user.getFullName());
             mUsername.setText(user.getUsername());
             mPosition = position;
@@ -147,6 +156,7 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
             if (mPosition == mAdapter.getPrevious_position()) {
                 mAdapter.setSelected_position(-1);
                 mAdapter.setPrevious_position(-1);
+                mSelectedUser = null;
             } else {
                 mAdapter.setSelected_position(mPosition);
                 mAdapter.setPrevious_position(mPosition);

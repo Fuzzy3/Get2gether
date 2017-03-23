@@ -17,10 +17,10 @@ public class User extends RealmObject  {
     private RealmList<User> mFriends;
     private RealmList<Group> mGroups;
     private RealmList<User> mPendingInvites;
+    private RealmList<Group> mPendingGroupInvites;
     private String mPassword;
     private double mLatitude;
     private double mLongitude;
-    private int outGoingInvites = 0;
     private RealmList<GroupIdHelperClass> mActiveGroups;
 
     public User() {
@@ -35,6 +35,17 @@ public class User extends RealmObject  {
         return mUUID;
     }
 
+    public RealmList<Group> getPendingGroupInvites() {
+        return mPendingGroupInvites;
+    }
+
+    public void setPendingGroupInvites(RealmList<Group> mPendingGroupInvites) {
+        this.mPendingGroupInvites = mPendingGroupInvites;
+    }
+
+    public void addPendingGroupInvite(Group group) {
+        mPendingGroupInvites.add(group);
+    }
 
     public String getUsername() {
         return mUsername;
@@ -149,5 +160,16 @@ public class User extends RealmObject  {
         }
 
         mPendingInvites = newPendingList;
+    }
+
+    public void removePendingGroup(Group group) {
+        RealmList<Group> newPendingList = new RealmList<>();
+        for(Group pending : mPendingGroupInvites) {
+            if(!pending.getUUID().equals(group.getUUID())) {
+                newPendingList.add(pending);
+            }
+        }
+
+        mPendingGroupInvites = newPendingList;
     }
 }
