@@ -23,6 +23,7 @@ import com.oestjacobsen.android.get2gether.view.BaseActivity;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
 import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -80,13 +81,20 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
 
     private void updateUI() {
         if (mAdapter == null) {
-            mSearchResult = mPresenter.getAllUsers();
+            mSearchResult = mPresenter.getAllFriends();
             mAdapter = new AddGroupMemberAdapter(mSearchResult);
             mRecyclerView.setAdapter(mAdapter);
         } else {
             mAdapter.setSearch(mSearchResult);
             mAdapter.notifyDataSetChanged();
         }
+    }
+
+    @OnClick(R.id.new_group_search_friend_button)
+    public void onClickSearchButton() {
+        String searchInput = mSearchInput.getText().toString();
+        mSearchResult = mPresenter.getFriendsMatchingString(searchInput);
+        updateUI();
     }
 
     public static Intent newIntent(Context packageContext) {
@@ -96,7 +104,11 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
 
     @OnClick(R.id.floating_button_add_member)
     public void onClickAddMember() {
-        //ADD USER
+        Intent i = new Intent();
+        Bundle extra = new Bundle();
+        extra.putString("UUID", mSelectedUser.getUUID());
+        i.putExtras(extra);
+        setResult(1, i);
         finish();
     }
 
@@ -123,6 +135,7 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
 
             if (mAdapter.getSelected_position() == mPosition) {
                 itemView.setBackgroundColor(ContextCompat.getColor(AddGroupMemberActivity.this, R.color.colorHighlight));
+                mSelectedUser = user;
             } else {
                 itemView.setBackgroundColor(Color.TRANSPARENT);
             }

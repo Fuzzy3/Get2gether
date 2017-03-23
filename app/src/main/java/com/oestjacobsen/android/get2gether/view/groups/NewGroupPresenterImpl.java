@@ -81,5 +81,11 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
         return group;
     }
 
+    @Override
+    public User getUserFromUUID(String UUID) {
+        return mDatabase.getUserFromUUID(UUID);
+    }
+
+
 
 }

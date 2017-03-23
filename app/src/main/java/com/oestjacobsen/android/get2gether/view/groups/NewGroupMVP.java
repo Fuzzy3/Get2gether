@@ -14,6 +14,7 @@ public interface NewGroupMVP {
         void updateGroup(Group group, String title, String description, List<User> participants);
         List<User> getUsersInGroup(Group group);
         Group newGroup();
+        User getUserFromUUID(String UUID);
 
 
     }

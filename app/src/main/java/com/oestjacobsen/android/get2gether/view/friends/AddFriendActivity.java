@@ -36,7 +36,7 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     private AddFriendMVP.AddFriendPresenter mPresenter;
     private AddFriendAdapter mAdapter;
-    private List<User> mSearchResult = new ArrayList<>();
+    private List<User> mSearchResult;
     private User mSelectedUser;
 
 
@@ -63,6 +63,7 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     public void updateUI() {
         if(mAdapter == null) {
+            mSearchResult = mPresenter.getAllUsers();
             mAdapter = new AddFriendAdapter(mSearchResult);
             mRecyclerView.setAdapter(mAdapter);
         } else {

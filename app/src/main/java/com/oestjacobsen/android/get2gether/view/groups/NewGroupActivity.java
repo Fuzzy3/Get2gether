@@ -104,8 +104,7 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
 
     @OnClick(R.id.new_group_add_member_button)
     public void onClickGoToAddMember() {
-
-        startActivity(AddGroupMemberActivity.newIntent(this));
+        startActivityForResult(AddGroupMemberActivity.newIntent(this), 1);
     }
 
     @OnClick(R.id.new_group_remove_member_button)
@@ -124,6 +123,18 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
     @Override
     public void finished(String groupUUID) {
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == 1) {
+            Bundle extra = data.getExtras();
+            String UserUUID = extra.getString("UUID").trim();
+            mMembers.add(mPresenter.getUserFromUUID(UserUUID));
+            updateUI();
+        }
     }
 
 

@@ -27,14 +27,25 @@ public class AddGroupMemberPresenterImpl implements AddGroupMemberMVP.AddGroupMe
     }
 
     @Override
-    public List<User> getUsersMatchingString(String input) {
-        return null;
+    public List<User> getFriendsMatchingString(String input) {
+        String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1); //First letter to uppercase before query
+        List<User> filterFriendsList = new ArrayList<>();
+
+        for(User friend : mCurrentUser.getFriends()) {
+            if(friend.getFullName().startsWith(uppercaseInput)) {
+                filterFriendsList.add(friend);
+            }
+        }
+
+        return filterFriendsList;
     }
 
     @Override
-    public List<User> getAllUsers() {
-        return null;
+    public List<User> getAllFriends() {
+        return mCurrentUser.getFriends();
     }
+
+
 
     @Override
     public void addMember(Group group, User member) {

@@ -53,7 +53,7 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     @Override
     public List<User> getAllUsers() {
-        return TestData.getTestUsers();
+        return mDatabase.getAllUsers();
     }
 
     @Override
