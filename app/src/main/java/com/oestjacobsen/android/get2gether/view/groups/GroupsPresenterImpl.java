@@ -63,7 +63,7 @@ public class GroupsPresenterImpl implements GroupsMVP.GroupsPresenter {
             return;
         }
         mDatabase.addPendingGroup(mCurrentUser, group);
-        mView.showToast(group.getGroupTitle() + "added to your list of groups");
+        mView.showToast(group.getGroupTitle() + " added to your list of groups");
         getGroupsAndPending();
     }
 

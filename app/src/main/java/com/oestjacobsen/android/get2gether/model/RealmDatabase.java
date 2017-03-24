@@ -157,7 +157,7 @@ public class RealmDatabase implements BaseDatabase {
     public void removeGroupFromUser(Group group, User user) {
         mRealm.beginTransaction();
         group.removeMember(user);
-        user.removeGroup(group);
+        user.removeGroup(group, user.getGroupHelper(group.getUUID()));
         mRealm.copyToRealmOrUpdate(group);
         mRealm.copyToRealmOrUpdate(user);
         mRealm.commitTransaction();

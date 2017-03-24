@@ -162,7 +162,7 @@ public class User extends RealmObject  {
         setPendingInvites(newPendingList);
     }
 
-    public void removeGroup(Group removeGroup) {
+    public void removeGroup(Group removeGroup, GroupIdHelperClass groupHelper) {
         RealmList<Group> newGroupList = new RealmList<>();
         for(Group group : mGroups) {
             if(!group.getUUID().equals(removeGroup.getUUID())) {
@@ -170,6 +170,14 @@ public class User extends RealmObject  {
             }
         }
         mGroups = newGroupList;
+
+        RealmList<GroupIdHelperClass> newGroupHelperList = new RealmList<>();
+        for(GroupIdHelperClass oldGroupHelper : mActiveGroups) {
+            if(!oldGroupHelper.getUUID().equals(groupHelper.getUUID())) {
+                newGroupHelperList.add(oldGroupHelper);
+            }
+        }
+        mActiveGroups = newGroupHelperList;
     }
 
     public void removePendingGroup(Group group) {
