@@ -3,6 +3,7 @@ package com.oestjacobsen.android.get2gether.view.groups;
 import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface NewGroupMVP {
@@ -18,12 +19,17 @@ public interface NewGroupMVP {
 
 
         void removeMemberFromList(List<User> list, User user);
+
+        void editExistingGroup(String stringExtra);
+
+        void editNewGroup();
     }
 
     public interface NewGroupView {
 
         void finished();
-        void memberSuccesfullyRemoved(List<User> newlist);
+        void memberSuccesfullyRemoved(ArrayList<User> newlist);
+        void setGroup(Group group);
 
     }
 

@@ -212,7 +212,7 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
                 }
                 mAdapter.notifyDataSetChanged();
             } else {
-                startActivity(SelectedGroupActivity.newIntent(GroupsActivity.this, mSelectedGroup.getUUID()));
+                startActivity(SelectedGroupActivity.newIntent(GroupsActivity.this, mCurrentGroup.getUUID(), mCurrentGroup.getGroupTitle()));
             }
         }
     }

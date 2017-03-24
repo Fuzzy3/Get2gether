@@ -102,6 +102,13 @@ public class RealmDatabase implements BaseDatabase {
     }
 
     @Override
+    public void addParticipantToGroup(User user, Group group) {
+        mRealm.beginTransaction();
+        group.addParticipant(user);
+        mRealm.commitTransaction();
+    }
+
+    @Override
     public void setActiveGroup(User user, final Group group, final boolean active) {
         final User fUser = user;
         final Group fGroup = group;
@@ -118,30 +125,19 @@ public class RealmDatabase implements BaseDatabase {
 
     //------------GROUP FUNCTIONS--------------
     //If no such group exists, it creates one
-    public void updateOrAddGroup(Group group) {
+    public void updateOrAddGroup(Group group, String title, String description, List<User> participants) {
+        final String fTitle = title;
+        final String fDesc = description;
         final Group fGroup = group;
-        final RealmResults<Group> groupAlreadyExist = mRealm.where(Group.class).equalTo("mUUID", fGroup.getUUID()).findAll();
 
-        //Group already exists and we just need to update data
-        if(groupAlreadyExist.size() > 0) {
-            mRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    groupAlreadyExist.get(0).setGroupTitle(fGroup.getGroupTitle());
-                    groupAlreadyExist.get(0).setGroupDesc(fGroup.getGroupDesc());
-                    groupAlreadyExist.get(0).setParticipants(fGroup.getParticipants());
-                }
-            });
-        }
-        //Group doesn't exist and we need to create a new object in the database
-        else {
-            mRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    mRealm.copyToRealm(fGroup);
-                }
-            });
-        }
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                fGroup.setGroupTitle(fTitle);
+                fGroup.setGroupDesc(fDesc);
+                mRealm.copyToRealmOrUpdate(fGroup);
+            }
+        });
 
     }
 
@@ -156,6 +152,15 @@ public class RealmDatabase implements BaseDatabase {
                 }
             }
         });
+    }
+
+    public void removeGroupFromUser(Group group, User user) {
+        mRealm.beginTransaction();
+        group.removeMember(user);
+        user.removeGroup(group);
+        mRealm.copyToRealmOrUpdate(group);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
     }
 
     @Override
@@ -259,27 +264,6 @@ public class RealmDatabase implements BaseDatabase {
         u05.setPassword("1234");
         addUser(u05);
 
-
-        //Groups
-        Group g01 = new Group();
-        g01.setGroupTitle("Home");
-        g01.setGroupDesc("Class trip to the zoo");
-        updateOrAddGroup(g01);
-
-        Group g02 = new Group();
-        g02.setGroupTitle("The Beach");
-        g02.setGroupDesc("The friends are going to a Concert!");
-        updateOrAddGroup(g02);
-
-        Group g03 = new Group();
-        g03.setGroupTitle("London");
-        g03.setGroupDesc("Group to check up on students");
-        updateOrAddGroup(g03);
-
-        Group g04 = new Group();
-        g04.setGroupTitle("School Party");
-        g04.setGroupDesc("Group for the awesome school group");
-        updateOrAddGroup(g04);
     }
 
 }

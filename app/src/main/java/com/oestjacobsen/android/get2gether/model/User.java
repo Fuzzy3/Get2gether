@@ -162,6 +162,16 @@ public class User extends RealmObject  {
         setPendingInvites(newPendingList);
     }
 
+    public void removeGroup(Group removeGroup) {
+        RealmList<Group> newGroupList = new RealmList<>();
+        for(Group group : mGroups) {
+            if(!group.getUUID().equals(removeGroup.getUUID())) {
+                newGroupList.add(group);
+            }
+        }
+        mGroups = newGroupList;
+    }
+
     public void removePendingGroup(Group group) {
         RealmList<Group> newPendingList = new RealmList<>();
         for(Group pending : mPendingGroupInvites) {

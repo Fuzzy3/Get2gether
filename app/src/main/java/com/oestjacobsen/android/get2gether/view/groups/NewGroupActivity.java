@@ -46,8 +46,9 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
     private User mSelectedUser;
     private Group mCurrentGroup;
     private NewGroupAdapter mAdapter;
-    private List<User> mMembers = new ArrayList<>();
+    private ArrayList<User> mMembers = new ArrayList<>();
 
+    private static final String GROUPUUIDARGS = "GROUPUUIDARGS";
     private final String TAG = NewGroupActivity.class.getSimpleName();
 
 
@@ -56,10 +57,12 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_group);
         mPresenter = new NewGroupPresenterImpl(RealmDatabase.get(this), this);
-        mCurrentGroup = mPresenter.newGroup();
-        //mMembers.add(mCurrentGroup.getParticipants().first());
-        setupView();
-        updateUI();
+        if(getIntent().getStringExtra(GROUPUUIDARGS) != null) {
+            mPresenter.editExistingGroup(getIntent().getStringExtra(GROUPUUIDARGS));
+        } else {
+            mPresenter.editNewGroup();
+        }
+
     }
 
     @Override
@@ -74,6 +77,12 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         }
     }
 
+    @Override
+    public void setGroup(Group group) {
+        mCurrentGroup = group;
+        setupView();
+        updateUI();
+    }
 
     private void setupView() {
         ButterKnife.bind(this);
@@ -85,11 +94,14 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         }
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mNameEditText.setText(mCurrentGroup.getGroupTitle());
+        mAboutEditText.setText(mCurrentGroup.getGroupDesc());
+        mMembers = mCurrentGroup.getParticipantsInArrayList();
     }
 
     private void updateUI() {
         if (mAdapter == null) {
-            //mMembers = mPresenter.getUsersInGroup();
             mAdapter = new NewGroupAdapter(mMembers);
             mRecyclerView.setAdapter(mAdapter);
         } else {
@@ -100,6 +112,12 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
 
     public static Intent newIntent(Context packageContext) {
         Intent i = new Intent(packageContext, NewGroupActivity.class);
+        return i;
+    }
+
+    public static Intent newIntentWithGroup(Context packageContext, String groupUUID) {
+        Intent i = new Intent(packageContext, NewGroupActivity.class);
+        i.putExtra(GROUPUUIDARGS, groupUUID);
         return i;
     }
 
@@ -137,7 +155,7 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
     }
 
     @Override
-    public void memberSuccesfullyRemoved(List<User> newlist) {
+    public void memberSuccesfullyRemoved(ArrayList<User> newlist) {
         mMembers = newlist;
         mSelectedUser = null;
         mAdapter.setSelected_position(-1);

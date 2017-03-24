@@ -5,7 +5,7 @@ import com.oestjacobsen.android.get2gether.model.Group;
 
 public interface SelectedGroupInfoMVP {
     public interface SelectedGroupInfoPresenter {
-
+        void getCurrentGroup();
     }
 
     public interface SelectedGroupInfoView {

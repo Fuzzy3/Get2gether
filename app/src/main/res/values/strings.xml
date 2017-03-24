@@ -34,4 +34,5 @@
     <string name="add_new_friend_button_text">Add New Friend</string>
     <string name="create_new_group_button_text">Create Group</string>
     <string name="add_pending_group_button_text">Add Pending Group</string>
+    <string name="selected_group_edit_button_text">Edit Group</string>
 </resources>

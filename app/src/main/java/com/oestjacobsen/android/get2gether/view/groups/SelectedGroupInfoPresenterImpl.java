@@ -16,6 +16,4 @@ public class SelectedGroupInfoPresenterImpl extends SelectedGroupParentPresenter
     public void getCurrentGroup() {
         mView.setCurrentGroup(mCurrentGroup);
     }
-
-
 }

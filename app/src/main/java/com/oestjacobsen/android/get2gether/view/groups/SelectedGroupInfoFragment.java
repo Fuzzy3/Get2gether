@@ -1,20 +1,28 @@
 package com.oestjacobsen.android.get2gether.view.groups;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 
 import java.util.zip.Inflater;
 
+import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class SelectedGroupInfoFragment extends SelectedGroupParentView implements SelectedGroupInfoMVP.SelectedGroupInfoView {
+
+    @BindView(R.id.selected_group_description) TextView mDescription;
 
     private static String ARGS_GROUP_UUID = "ARGSGROUPUUID";
     private String groupUUID;
@@ -26,8 +34,23 @@ public class SelectedGroupInfoFragment extends SelectedGroupParentView implement
         View view = inflater.inflate(R.layout.fragment_group_info, container, false);
         ButterKnife.bind(this, view);
         mPresenter = new SelectedGroupInfoPresenterImpl(RealmDatabase.get(getContext()), this, getArguments().getString(ARGS_GROUP_UUID));
-
+        mPresenter.getCurrentGroup();
         return view;
+    }
+
+    @Override
+    public void setCurrentGroup(Group group) {
+        super.setCurrentGroup(group);
+        setupView();
+    }
+
+    private void setupView() {
+        mDescription.setText(mCurrentGroup.getGroupDesc());
+    }
+
+    @OnClick(R.id.selected_group_edit_button)
+    public void onClickEditGroupButton() {
+        startActivity(NewGroupActivity.newIntentWithGroup(getContext(), mCurrentGroup.getUUID()));
     }
 
     public static SelectedGroupInfoFragment newInstance(String groupUUID) {
@@ -40,8 +63,9 @@ public class SelectedGroupInfoFragment extends SelectedGroupParentView implement
         return infoFragment;
     }
 
-
-
-
-
+    @Override
+    public void onResume() {
+        super.onResume();
+        setupView();
+    }
 }

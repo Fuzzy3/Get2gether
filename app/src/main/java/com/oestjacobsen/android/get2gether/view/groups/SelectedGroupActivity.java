@@ -31,6 +31,7 @@ public class SelectedGroupActivity extends UserBaseActivity  {
     @BindView(R.id.selected_group_viewpager) ViewPager mViewPager;
     @BindView(R.id.selected_group_toolbar) Toolbar mToolbar;
     private static String groupUUIDExtra = "GROUPUUIDEXTRA";
+    private static String groupTitleExtra = "GROUPTITLEEXTRA";
     private String mCurrentGroupUUID;
 
     @Override
@@ -51,7 +52,7 @@ public class SelectedGroupActivity extends UserBaseActivity  {
             mTabs.setupWithViewPager(mViewPager);
         }
 
-        setToolbar(mToolbar, "Group - Title");
+        setToolbar(mToolbar, getIntent().getStringExtra(groupTitleExtra));
 
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -87,9 +88,10 @@ public class SelectedGroupActivity extends UserBaseActivity  {
 
 
 
-    public static Intent newIntent(Context packageContext, String uuid) {
+    public static Intent newIntent(Context packageContext, String groupUUID, String groupTitle) {
         Intent i = new Intent(packageContext, SelectedGroupActivity.class);
-        i.putExtra(groupUUIDExtra, uuid);
+        i.putExtra(groupUUIDExtra, groupUUID);
+        i.putExtra(groupTitleExtra, groupTitle);
         return i;
     }
 

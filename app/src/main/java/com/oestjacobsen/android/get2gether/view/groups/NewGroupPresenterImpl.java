@@ -60,23 +60,30 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
 
     @Override
     public void updateGroup(Group group, String title, String description, List<User> participants) {
+        mDatabase.addGroupToUser(group, mCurrentUser);
         List<User> oldParticipants = mDatabase.getParticipantsOfGroup(group.getUUID());
-        group.setGroupTitle(title);
-        group.setGroupDesc(description);
-        for(User participant : participants) {
-            if(!listContains(oldParticipants, participant)) {
-                group.addParticipant(participant);
-                mDatabase.addPendingGroupInvite(participant, group);
+        int count = oldParticipants.size();
+        for(int i = 0; i < count; i++) {
+            if(!listContains(participants, oldParticipants.get(i))) {
+                mDatabase.removeGroupFromUser(group, oldParticipants.get(i));
             }
         }
-        mDatabase.addGroupToUser(group, mCurrentUser);
-        mDatabase.updateOrAddGroup(group);
+        count = participants.size();
+        for(int i = 0; i < count; i++) {
+            if(!listContains(oldParticipants, participants.get(i))) {
+                mDatabase.addParticipantToGroup(participants.get(i), group);
+                mDatabase.addPendingGroupInvite(participants.get(i), group);
+            }
+        }
+
+
+        mDatabase.updateOrAddGroup(group, title, description, participants);
         mView.finished();
     }
 
     @Override
     public List<User> getUsersInGroup(Group group) {
-        return group.getParticipants();
+        return group.getParticipantsInArrayList();
     }
 
     @Override
@@ -100,7 +107,27 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
             }
         }
 
-        mView.memberSuccesfullyRemoved(newMembersList);
+        mView.memberSuccesfullyRemoved(UserListToArrayList(newMembersList));
+    }
 
+    @Override
+    public void editExistingGroup(String groupUUID) {
+        Group group = mDatabase.getGroupFromUUID(groupUUID);
+        mView.setGroup(group);
+    }
+
+    @Override
+    public void editNewGroup() {
+        Group group = new Group();
+        group.addParticipant(mCurrentUser);
+        mView.setGroup(group);
+    }
+
+    private ArrayList<User> UserListToArrayList(List<User> userlist) {
+        ArrayList<User> newList = new ArrayList<>();
+        for (User user : userlist) {
+            newList.add(user);
+        }
+        return newList;
     }
 }

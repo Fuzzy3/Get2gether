@@ -16,10 +16,12 @@ public interface BaseDatabase {
     List<User> getUsersMatchingString(String input);
     void addGroupToUser(Group group, User user);
     void removeGroup(Group group);
-    void updateOrAddGroup(Group group);
+    void updateOrAddGroup(Group group, String title, String description, List<User> participants);
     void addPendingInvite(User user, User friend);
     void addPendingFriend(User user, User friend);
     void addPendingGroupInvite(User user, Group group);
+    void removeGroupFromUser(Group group, User user);
+    void addParticipantToGroup(User user, Group group);
 
 
 
