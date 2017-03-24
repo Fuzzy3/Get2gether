@@ -238,6 +238,8 @@ public class RealmDatabase implements BaseDatabase {
         u01.setUsername("larstheman");
         u01.setFullName("Super man");
         u01.setPassword("1234");
+        u01.setLatitude(55.715637);
+        u01.setLongitude(12.476535);
         addUser(u01);
 
         User u02 = new User();
