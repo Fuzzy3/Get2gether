@@ -26,4 +26,6 @@ public interface BaseDatabase {
     List<User> getParticipantsOfGroup(String uuid);
 
     void addPendingGroup(User mCurrentUser, Group group);
+
+    Group getGroupFromUUID(String groupUIUD);
 }

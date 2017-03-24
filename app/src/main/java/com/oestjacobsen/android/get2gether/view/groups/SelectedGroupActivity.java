@@ -16,27 +16,29 @@ import android.view.MotionEvent;
 import android.view.View;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.Group;
+import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.view.BaseActivity;
 import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SelectedGroupActivity extends UserBaseActivity {
+public class SelectedGroupActivity extends UserBaseActivity  {
 
     private FragmentPagerAdapter mAdapter;
     @BindView(R.id.group_tablayout) TabLayout mTabs;
     @BindView(R.id.selected_group_viewpager) ViewPager mViewPager;
     @BindView(R.id.selected_group_toolbar) Toolbar mToolbar;
-
+    private static String groupUUIDExtra = "GROUPUUIDEXTRA";
+    private String mCurrentGroupUUID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_selected_group);
-
+        mCurrentGroupUUID = getIntent().getStringExtra(groupUUIDExtra);
         setupView();
-
     }
 
     private void setupView() {
@@ -85,12 +87,11 @@ public class SelectedGroupActivity extends UserBaseActivity {
 
 
 
-    public static Intent newIntent(Context packageContext) {
+    public static Intent newIntent(Context packageContext, String uuid) {
         Intent i = new Intent(packageContext, SelectedGroupActivity.class);
+        i.putExtra(groupUUIDExtra, uuid);
         return i;
     }
-
-
 
     public class SelectedGroupViewPagerAdapter extends FragmentPagerAdapter {
         private final int NUM_TABS = 4;
@@ -104,7 +105,7 @@ public class SelectedGroupActivity extends UserBaseActivity {
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return SelectedGroupInfoFragment.newInstance();
+                    return SelectedGroupInfoFragment.newInstance(mCurrentGroupUUID);
                 case 1:
                     return SelectedGroupMapFragment.newInstance();
                 case 2:

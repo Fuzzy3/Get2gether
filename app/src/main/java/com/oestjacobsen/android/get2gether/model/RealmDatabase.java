@@ -220,6 +220,12 @@ public class RealmDatabase implements BaseDatabase {
         return new RealmList<User>();
     }
 
+    @Override
+    public Group getGroupFromUUID(String groupUIUD) {
+        Group result = mRealm.where(Group.class).equalTo("mUUID", groupUIUD).findFirst();
+        return result;
+    }
+
     //TESTDATA
     private void addTestData() {
         //Users
