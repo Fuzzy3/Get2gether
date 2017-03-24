@@ -155,11 +155,11 @@ public class User extends RealmObject  {
         RealmList<User> newPendingList = new RealmList<>();
         for(User pending : mPendingInvites) {
             if(!pending.getUUID().equals(friend.getUUID())) {
-                newPendingList.add(friend);
+                newPendingList.add(pending);
             }
         }
 
-        mPendingInvites = newPendingList;
+        setPendingInvites(newPendingList);
     }
 
     public void removePendingGroup(Group group) {

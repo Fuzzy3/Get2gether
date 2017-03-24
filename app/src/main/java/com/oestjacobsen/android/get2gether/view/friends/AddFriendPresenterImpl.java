@@ -27,18 +27,21 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     @Override
     public List<User> getUsersMatchingString(String input) {
+        if(!input.equals("")) {
+            String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1); //First letter to uppercase before query
+            List<User> usersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
+            List<User> filterFriendsList = new ArrayList<>();
 
-        String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1); //First letter to uppercase before query
-        List<User> usersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
-        List<User> filterFriendsList = new ArrayList<>();
-
-        for(User friend : usersMatching) {
-            if(!listContains(mCurrentUser.getFriends(), friend) && (!friend.getUUID().equals(mCurrentUser.getUUID()))) {
-                filterFriendsList.add(friend);
+            for(User friend : usersMatching) {
+                if(!listContains(mCurrentUser.getFriends(), friend) && (!friend.getUUID().equals(mCurrentUser.getUUID()))) {
+                    filterFriendsList.add(friend);
+                }
             }
-        }
 
-        return filterFriendsList;
+            return filterFriendsList;
+        } else {
+            return getAllUsers();
+        }
     }
 
     private boolean listContains(List<User> list, User user) {

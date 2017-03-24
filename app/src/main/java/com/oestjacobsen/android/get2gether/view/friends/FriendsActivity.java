@@ -140,8 +140,9 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
             ButterKnife.bind(this, itemView);
         }
 
-        public void bindFriend(User friend, boolean isPending) {
+        public void bindFriend(User friend, int position, boolean isPending) {
             mIsPending = isPending;
+            mPosition = position;
             mFullname.setText(friend.getFullName());
             mUsername.setText(friend.getUsername());
             if(mIsPending) {
@@ -199,9 +200,9 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
         public void onBindViewHolder(FriendHolder holder, int position) {
             User friend = mFriends.get(position);
             if(position >= mPendingStartingPos) {
-                holder.bindFriend(friend, true);
+                holder.bindFriend(friend, position, true);
             } else {
-                holder.bindFriend(friend, false);
+                holder.bindFriend(friend, position, false);
             }
         }
 

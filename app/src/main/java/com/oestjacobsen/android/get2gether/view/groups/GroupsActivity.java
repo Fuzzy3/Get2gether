@@ -70,7 +70,6 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
         }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAddPendingGroupButton.setVisibility(View.INVISIBLE);
-        mPresenter.getGroupsAndPending();
     }
 
 
@@ -144,8 +143,9 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
             ButterKnife.bind(this, itemView);
         }
 
-        public void bindGroup(Group group, boolean isPending) {
+        public void bindGroup(Group group, int position, boolean isPending) {
             mIsPending = isPending;
+            mPosition = position;
             mTitle.setText(group.getGroupTitle());
             mActiveButton.setBackgroundColor(getActiveColor(group));
             mCurrentGroup = group;
@@ -198,7 +198,22 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
 
         @Override
         public void onClick(View view) {
-            startActivity(SelectedGroupActivity.newIntent(GroupsActivity.this));
+            if (mIsPending) {
+                mAdapter.notifyDataSetChanged();
+                if (mPosition == mAdapter.getPrevious_position()) {
+                    mAdapter.setSelected_position(-1);
+                    mAdapter.setPrevious_position(-1);
+                    mAddPendingGroupButton.setVisibility(View.INVISIBLE);
+
+                } else {
+                    mAdapter.setSelected_position(mPosition);
+                    mAdapter.setPrevious_position(mPosition);
+                    mAddPendingGroupButton.setVisibility(View.VISIBLE);
+                }
+                mAdapter.notifyDataSetChanged();
+            } else {
+                startActivity(SelectedGroupActivity.newIntent(GroupsActivity.this));
+            }
         }
     }
 
@@ -225,9 +240,9 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
         public void onBindViewHolder(GroupHolder holder, int position) {
             Group group = mGroups.get(position);
             if(position >= mPendingStartingPos) {
-                holder.bindGroup(group, true);
+                holder.bindGroup(group,position, true);
             } else {
-                holder.bindGroup(group, false);
+                holder.bindGroup(group, position, false);
             }
         }
 
@@ -259,15 +274,6 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
             this.previous_position = previous_position;
         }
     }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -322,6 +328,6 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
     @Override
     protected void onResume() {
         super.onResume();
-        updateUI();
+        mPresenter.getGroupsAndPending();
     }
 }
