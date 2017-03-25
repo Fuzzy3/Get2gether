@@ -190,4 +190,13 @@ public class User extends RealmObject  {
 
         mPendingGroupInvites = newPendingList;
     }
+
+    public boolean isGroupActive(Group group) {
+        for(GroupIdHelperClass active : mActiveGroups) {
+            if(group.getUUID().equals(active.getGroupUUID())) {
+                return active.isActive();
+            }
+        }
+        return false;
+    }
 }

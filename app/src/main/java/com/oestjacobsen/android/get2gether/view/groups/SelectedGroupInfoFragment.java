@@ -25,7 +25,6 @@ public class SelectedGroupInfoFragment extends SelectedGroupParentView implement
     @BindView(R.id.selected_group_description) TextView mDescription;
 
     private static String ARGS_GROUP_UUID = "ARGSGROUPUUID";
-    private String groupUUID;
     private SelectedGroupInfoMVP.SelectedGroupInfoPresenter mPresenter;
 
     @Nullable

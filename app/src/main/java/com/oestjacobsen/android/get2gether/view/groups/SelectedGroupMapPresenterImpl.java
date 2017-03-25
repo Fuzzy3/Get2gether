@@ -16,4 +16,6 @@ public class SelectedGroupMapPresenterImpl extends SelectedGroupParentPresenter 
     public void getCurrentGroup() {
 
     }
+
+
 }

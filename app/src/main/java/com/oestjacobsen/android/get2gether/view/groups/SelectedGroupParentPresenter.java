@@ -13,11 +13,11 @@ public abstract class SelectedGroupParentPresenter implements SelectedGroupMVP.S
     protected User mCurrentUser;
     protected Group mCurrentGroup;
 
-    public SelectedGroupParentPresenter(BaseDatabase database, String groupUIUD) {
+    public SelectedGroupParentPresenter(BaseDatabase database, String groupUUID) {
         mDatabase = database;
         mUserManager = UserManagerImpl.get();
         mCurrentUser = mUserManager.getUser();
-        mCurrentGroup = mDatabase.getGroupFromUUID(groupUIUD);
+        mCurrentGroup = mDatabase.getGroupFromUUID(groupUUID);
     }
 
     public abstract void getCurrentGroup();

@@ -113,7 +113,7 @@ public class SelectedGroupActivity extends UserBaseActivity  {
                 case 2:
                     return SelectedGroupIndoorFragment.newInstance();
                 case 3:
-                    return SelectedGroupMembersFragment.newInstance();
+                    return SelectedGroupMembersFragment.newInstance(mCurrentGroupUUID);
                 default:
                     return null;
             }
