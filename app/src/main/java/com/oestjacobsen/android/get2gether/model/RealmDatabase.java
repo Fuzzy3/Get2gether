@@ -2,6 +2,7 @@ package com.oestjacobsen.android.get2gether.model;
 
 
 import android.content.Context;
+import android.location.Location;
 
 import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.UserManagerImpl;
@@ -229,6 +230,15 @@ public class RealmDatabase implements BaseDatabase {
     public Group getGroupFromUUID(String groupUIUD) {
         Group result = mRealm.where(Group.class).equalTo("mUUID", groupUIUD).findFirst();
         return result;
+    }
+
+    @Override
+    public void updateUserPosition(User user, Location location) {
+        mRealm.beginTransaction();
+        user.setLatitude(location.getLatitude());
+        user.setLongitude(location.getLongitude());
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
     }
 
     //TESTDATA

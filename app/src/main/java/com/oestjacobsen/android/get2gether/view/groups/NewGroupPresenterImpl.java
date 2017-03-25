@@ -66,6 +66,8 @@ public class NewGroupPresenterImpl implements NewGroupMVP.NewGroupPresenter {
         for(int i = 0; i < count; i++) {
             if(!listContains(participants, oldParticipants.get(i))) {
                 mDatabase.removeGroupFromUser(group, oldParticipants.get(i));
+                i--;
+                count--;
             }
         }
         count = participants.size();

@@ -1,9 +1,16 @@
 package com.oestjacobsen.android.get2gether.view;
 
+import android.Manifest;
+import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Point;
+import android.os.Build;
 import android.support.annotation.BinderThread;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.services.LocationService;
 import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
 import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
 import com.oestjacobsen.android.get2gether.view.profile.ProfileActivity;
@@ -28,6 +36,8 @@ public class MainMenuActivity extends UserBaseActivity {
 
     String TAG = MainMenuActivity.class.getSimpleName();
     private AlphaAnimation imageButtonClickAnim = new AlphaAnimation(1F, 0.8F);
+    private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
+    private static final int FINE_PERMISSION_REQUEST_CODE = 2222;
 
     @BindView(R.id.profile_button) ImageButton mProfileButton;
     @BindView(R.id.friends_button) ImageButton mFriendsButton;
@@ -39,6 +49,7 @@ public class MainMenuActivity extends UserBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
+        checkPermission();
 
         setupView();
     }
@@ -48,6 +59,9 @@ public class MainMenuActivity extends UserBaseActivity {
 
         setToolbar(mToolbar, "");
         fitToScreen();
+
+        Intent i = new Intent(this, LocationService.class);
+        startService(i);
     }
 
     public static Intent newIntent(Context packageContext) {
@@ -55,6 +69,55 @@ public class MainMenuActivity extends UserBaseActivity {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return i;
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case COARSE_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
+            case FINE_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    //Permission granted
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
+        }
+    }
+
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            //int fineLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+            //int coarseLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        FINE_PERMISSION_REQUEST_CODE);
+
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        COARSE_PERMISSION_REQUEST_CODE);
+
+            }
+        }
+
+    }
+
 
     //Button interactions
     @OnClick(R.id.profile_button)
@@ -78,36 +141,7 @@ public class MainMenuActivity extends UserBaseActivity {
 
     }
 
-    /*
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.help_option:
-            {
-                Log.i(TAG, "HELP PRESSED");
-                return true;
-            }
-            case R.id.about_option:
-            {
-                Log.i(TAG, "ABOUT PRESSED");
-                return true;
-            }
-            case R.id.logoff_option:
-            {
-                Log.i(TAG, "LOG OFF PRESSED");
-                return true;
-            }
-            default:
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.main_menu, menu);
-        return true;
-    }
-    */
 
     private void fitToScreen() {
         //Get Screen size

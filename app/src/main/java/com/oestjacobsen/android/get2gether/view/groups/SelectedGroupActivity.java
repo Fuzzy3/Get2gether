@@ -109,7 +109,7 @@ public class SelectedGroupActivity extends UserBaseActivity  {
                 case 0:
                     return SelectedGroupInfoFragment.newInstance(mCurrentGroupUUID);
                 case 1:
-                    return SelectedGroupMapFragment.newInstance();
+                    return SelectedGroupMapFragment.newInstance(mCurrentGroupUUID);
                 case 2:
                     return SelectedGroupIndoorFragment.newInstance();
                 case 3:

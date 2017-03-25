@@ -19,7 +19,6 @@ public class SelectedGroupMembersPresenterImpl extends SelectedGroupParentPresen
     @Override
     public void getCurrentGroup() {
         mView.setCurrentGroup(mCurrentGroup);
-
     }
 
     @Override

@@ -2,6 +2,8 @@ package com.oestjacobsen.android.get2gether.model;
 
 
 
+import android.location.Location;
+
 import java.util.List;
 
 public interface BaseDatabase {
@@ -30,4 +32,6 @@ public interface BaseDatabase {
     void addPendingGroup(User mCurrentUser, Group group);
 
     Group getGroupFromUUID(String groupUIUD);
+
+    void updateUserPosition(User user, Location location);
 }
