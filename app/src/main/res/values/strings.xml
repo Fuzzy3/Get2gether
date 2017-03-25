@@ -35,4 +35,5 @@
     <string name="create_new_group_button_text">Create Group</string>
     <string name="add_pending_group_button_text">Add Pending Group</string>
     <string name="selected_group_edit_button_text">Edit Group</string>
+    <string name="selected_group_leave_group_button_text">Leave Group</string>
 </resources>

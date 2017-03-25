@@ -13,6 +13,12 @@ public class SelectedGroupInfoPresenterImpl extends SelectedGroupParentPresenter
     }
 
     @Override
+    public void removeUserFromGroup() {
+        mDatabase.removeGroupFromUser(mCurrentGroup, mCurrentUser);
+        mView.groupRemoved();
+    }
+
+    @Override
     public void getCurrentGroup() {
         mView.setCurrentGroup(mCurrentGroup);
     }

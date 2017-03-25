@@ -28,6 +28,14 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"/>
 
+    <Button
+        android:id="@+id/selected_group_leave_group_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/selected_group_leave_group_button_text"
+        android:layout_alignParentBottom="true"
+        android:layout_toLeftOf="@id/selected_group_edit_button"/>
+
 
 
 </RelativeLayout>

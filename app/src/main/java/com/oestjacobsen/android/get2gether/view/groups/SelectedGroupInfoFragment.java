@@ -1,9 +1,11 @@
 package com.oestjacobsen.android.get2gether.view.groups;
 
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -52,6 +54,30 @@ public class SelectedGroupInfoFragment extends SelectedGroupParentView implement
         startActivity(NewGroupActivity.newIntentWithGroup(getContext(), mCurrentGroup.getUUID()));
     }
 
+    @OnClick(R.id.selected_group_leave_group_button)
+    public void onClickLeaveGroupButton() {
+        DialogInterface.OnClickListener dialogClickListener = new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int which) {
+                switch (which) {
+                    case DialogInterface.BUTTON_POSITIVE: {
+                        //YES CLICKED
+                        mPresenter.removeUserFromGroup();
+                    }
+                    case DialogInterface.BUTTON_NEGATIVE: {
+                        //NO CLICKED
+                        return;
+                    }
+                }
+            }
+        };
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setMessage("Are you sure you want to leave the group " + mCurrentGroup.getGroupTitle() + "?")
+                .setPositiveButton("yes", dialogClickListener)
+                .setNegativeButton("no", dialogClickListener)
+                .show();
+    }
+
     public static SelectedGroupInfoFragment newInstance(String groupUUID) {
         SelectedGroupInfoFragment infoFragment = new SelectedGroupInfoFragment();
 
@@ -60,6 +86,12 @@ public class SelectedGroupInfoFragment extends SelectedGroupParentView implement
         infoFragment.setArguments(args);
 
         return infoFragment;
+    }
+
+    @Override
+    public void groupRemoved() {
+
+        getActivity().finish();
     }
 
     @Override
