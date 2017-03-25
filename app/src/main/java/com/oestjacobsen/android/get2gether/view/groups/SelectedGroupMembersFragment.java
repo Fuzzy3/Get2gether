@@ -1,9 +1,7 @@
 package com.oestjacobsen.android.get2gether.view.groups;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -12,8 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.google.android.gms.common.api.BooleanResult;
-import com.google.android.gms.vision.text.Text;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
@@ -70,13 +66,8 @@ public class SelectedGroupMembersFragment extends SelectedGroupParentView implem
     }
 
     private void updateUI() {
-        if (mAdapter == null) {
-            mAdapter = new MembersAdapter(mMembersList);
-            mRecyclerView.setAdapter(mAdapter);
-        } else {
-            mAdapter.setList(mMembersList);
-            mAdapter.notifyDataSetChanged();
-        }
+        mAdapter = new MembersAdapter(mMembersList);
+        mRecyclerView.setAdapter(mAdapter);
     }
 
     public void setActiveHashMap(HashMap<String, Boolean> map) {
