@@ -60,8 +60,6 @@ public class MainMenuActivity extends UserBaseActivity {
         setToolbar(mToolbar, "");
         fitToScreen();
 
-        Intent i = new Intent(this, LocationService.class);
-        startService(i);
     }
 
     public static Intent newIntent(Context packageContext) {
@@ -75,7 +73,8 @@ public class MainMenuActivity extends UserBaseActivity {
         switch (requestCode) {
             case COARSE_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    Intent i = new Intent(this, LocationService.class);
+                    startService(i);
                 } else {
                     //Permission denied do something
                 }
@@ -83,7 +82,8 @@ public class MainMenuActivity extends UserBaseActivity {
             }
             case FINE_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    //Permission granted
+                    Intent i = new Intent(this, LocationService.class);
+                    startService(i);
                 } else {
                     //Permission denied do something
                 }
@@ -113,6 +113,9 @@ public class MainMenuActivity extends UserBaseActivity {
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         COARSE_PERMISSION_REQUEST_CODE);
 
+            } else {
+                Intent i = new Intent(this, LocationService.class);
+                startService(i);
             }
         }
 

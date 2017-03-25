@@ -25,6 +25,10 @@ public interface BaseDatabase {
     void removeGroupFromUser(Group group, User user);
     void addParticipantToGroup(User user, Group group);
 
+    //MAYBE TO BE DELETED
+    void setLoginCallback(RealmDatabase.loginCallback loginCB);
+    void setupRealmSync();
+
 
 
     List<User> getParticipantsOfGroup(String uuid);
