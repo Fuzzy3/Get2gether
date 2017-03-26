@@ -264,5 +264,5 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
         super.onLowMemory();
         mMapView.onLowMemory();
     }
-    
+
 }

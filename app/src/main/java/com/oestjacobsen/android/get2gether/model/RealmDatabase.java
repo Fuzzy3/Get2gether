@@ -3,30 +3,75 @@ package com.oestjacobsen.android.get2gether.model;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
-import com.oestjacobsen.android.get2gether.UserManager;
-import com.oestjacobsen.android.get2gether.UserManagerImpl;
-
-import java.util.ArrayList;
 import java.util.List;
 
+import io.realm.ObjectServerError;
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
-import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.SyncConfiguration;
+import io.realm.SyncCredentials;
+import io.realm.SyncUser;
 
-public class RealmDatabase implements BaseDatabase {
+public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
 
+    //USERNAME AND PASSWORD
+    private static final String USERNAME = "soest@itu.dk";
+    private static final String PASSWORD = "soebach#Jac";
+
+    //ONLINE SERVER STUFF
+    private static final String HOST_ITU = "130.226.142.162";
+    private static final String HOST_LOCAL = "SOeXPS";
+    private static final String HOST= HOST_ITU;
+    private static final String DBNAME = "realmthings";
+    private static final String INITIALS = "soeo";
+
+    //Server URL
+    private static final String AUTH_URL = "http://" + HOST + ":9080/auth";
+    public static final String REALM_URL="realm://" + HOST + ":9080/~/" + DBNAME + INITIALS;
+
+
+    private static final String TAG = "RealmDatabase";
     private static Realm mRealm;
     private static RealmDatabase mRealmDatabase;
 
+    private loginCallback mLoginCallback;
+
+    public interface loginCallback {
+        void loginSucceded();
+    }
+
+
+    @Override
+    public void onSuccess(SyncUser user) {
+        setupSync(user);
+    }
+
+    @Override
+    public void onError(ObjectServerError error) {
+        Log.i(TAG, "Failed to login to Online server, Using offline instead");
+    }
 
     public RealmDatabase() {
         RealmResults results = mRealm.where(User.class).findAll();
         if(results.size() == 0) {
             addTestData();
         }
+    }
+
+    private void setupSync(SyncUser user) {
+        SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, REALM_URL).build();
+        Realm.setDefaultConfiguration(defaultConfig);
+        mLoginCallback.loginSucceded();
+        Log.i(TAG, "Logged in to server");
+    }
+
+    @Override
+    public void setLoginCallback(loginCallback loginCB) {
+        mLoginCallback = loginCB;
     }
 
     public static RealmDatabase get(Context context) {
@@ -36,6 +81,15 @@ public class RealmDatabase implements BaseDatabase {
             mRealmDatabase = new RealmDatabase();
         }
         return mRealmDatabase;
+    }
+
+    public void setupRealmSync() {
+        if(SyncUser.currentUser() == null) {
+            SyncCredentials myCredentials = SyncCredentials.usernamePassword(USERNAME, PASSWORD, false);
+            SyncUser.loginAsync(myCredentials, AUTH_URL, this);
+        } else {
+            setupSync(SyncUser.currentUser());
+        }
     }
 
     //----------USER FUNCTIONS------------

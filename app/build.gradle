@@ -21,6 +21,10 @@ android {
     }
 }
 
+realm {
+    syncEnabled = true;
+}
+
 repositories {
     maven {url "https://clojars.org/repo/"}
 }
