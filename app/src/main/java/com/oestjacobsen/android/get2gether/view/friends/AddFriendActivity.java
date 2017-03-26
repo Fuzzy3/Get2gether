@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import com.oestjacobsen.android.get2gether.R;
@@ -36,7 +37,7 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     private AddFriendMVP.AddFriendPresenter mPresenter;
     private AddFriendAdapter mAdapter;
-    private List<User> mSearchResult = new ArrayList<>();
+    private List<User> mSearchResult;
     private User mSelectedUser;
 
 
@@ -63,6 +64,7 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     public void updateUI() {
         if(mAdapter == null) {
+            mSearchResult = mPresenter.getAllUsers();
             mAdapter = new AddFriendAdapter(mSearchResult);
             mRecyclerView.setAdapter(mAdapter);
         } else {
@@ -93,7 +95,11 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
     @OnClick(R.id.floating_button_add_selected_friend)
     public void onClickAddSelectedFriend() {
-        mPresenter.addFriend(mSelectedUser);
+        if(mSelectedUser != null) {
+            mPresenter.addFriendInvite(mSelectedUser);
+        } else {
+            Toast.makeText(this, "No friend selected", Toast.LENGTH_SHORT).show();
+        }
     }
 
 
@@ -108,6 +114,11 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
     @Override
     public void finished() {
         finish();
+    }
+
+    @Override
+    public void showToast(String msg) {
+        Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
     }
 
 
@@ -142,9 +153,11 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
             if(mPosition == mAdapter.getPrevious_position()) {
                 mAdapter.setSelected_position(-1);
                 mAdapter.setPrevious_position(-1);
+                mSelectedUser = null;
             } else {
                 mAdapter.setSelected_position(mPosition);
                 mAdapter.setPrevious_position(mPosition);
+
             }
             mAdapter.notifyDataSetChanged();
         }

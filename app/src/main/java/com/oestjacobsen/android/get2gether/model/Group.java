@@ -42,6 +42,14 @@ public class Group extends RealmObject {
         return mParticipants;
     }
 
+    public ArrayList<User> getParticipantsInArrayList() {
+        ArrayList<User> newList = new ArrayList<>();
+        for(User user : mParticipants) {
+            newList.add(user);
+        }
+        return newList;
+    }
+
     public void addParticipant(User user) {
         mParticipants.add(user);
     }
@@ -53,4 +61,15 @@ public class Group extends RealmObject {
     public void setParticipants(RealmList<User> participants) {
         mParticipants = participants;
     }
+
+    public void removeMember(User removeUser) {
+        RealmList<User>  newParticipantsList = new RealmList<>();
+        for(User user : mParticipants) {
+            if(!user.getUUID().equals(removeUser.getUUID())) {
+                newParticipantsList.add(user);
+            }
+        }
+        mParticipants = newParticipantsList;
+    }
+
 }

@@ -27,18 +27,21 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     @Override
     public List<User> getUsersMatchingString(String input) {
+        if(!input.equals("")) {
+            String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1); //First letter to uppercase before query
+            List<User> usersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
+            List<User> filterFriendsList = new ArrayList<>();
 
-        String uppercaseInput = input.substring(0, 1).toUpperCase() + input.substring(1); //First letter to uppercase before query
-        List<User> usersMatching =  mDatabase.getUsersMatchingString(uppercaseInput);
-        List<User> filterFriendsList = new ArrayList<>();
-
-        for(User friend : usersMatching) {
-            if(!listContains(mCurrentUser.getFriends(), friend)) {
-                filterFriendsList.add(friend);
+            for(User friend : usersMatching) {
+                if(!listContains(mCurrentUser.getFriends(), friend) && (!friend.getUUID().equals(mCurrentUser.getUUID()))) {
+                    filterFriendsList.add(friend);
+                }
             }
-        }
 
-        return filterFriendsList;
+            return filterFriendsList;
+        } else {
+            return getAllUsers();
+        }
     }
 
     private boolean listContains(List<User> list, User user) {
@@ -53,19 +56,27 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
 
     @Override
     public List<User> getAllUsers() {
-        return TestData.getTestUsers();
+        List<User> filterFriendsList = new ArrayList<>();
+        for(User user : mDatabase.getAllUsers()) {
+            if(!listContains(mCurrentUser.getFriends(), user) && (!user.getUUID().equals(mCurrentUser.getUUID()))) {
+                filterFriendsList.add(user);
+            }
+        }
+        return filterFriendsList;
     }
 
     @Override
-    public void addFriend(User friend) {
+    public void addFriendInvite(User friend) {
         //Checking if friend is already a friend
         for(User friendInList : mCurrentUser.getFriends()) {
             if(friendInList.getUUID().equals(friend.getUUID())) {
+                mView.showToast("you are already friends with: " + friend.getFullName());
                 return;
             }
         }
-
-        mDatabase.addFriend(mCurrentUser, friend);
+        mDatabase.addPendingInvite(mCurrentUser, friend);
+        //mDatabase.addFriend(mCurrentUser, friend);
+        mView.showToast("Friend invite send to " + friend.getFullName());
         mView.finished();
     }
 

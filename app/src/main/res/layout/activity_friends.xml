@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="com.oestjacobsen.android.get2gether.view.friends.FriendsActivity"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    >
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/friends_toolbar"
@@ -25,19 +25,30 @@
         android:layout_height="match_parent"
         android:layout_below="@id/friends_toolbar"
         android:padding="16dp"
-        android:scrollbars="vertical" />
+        android:scrollbars="vertical"
+        android:layout_marginBottom="80dp"/>
 
-
-    <android.support.design.widget.FloatingActionButton
-        android:src="@drawable/ic_add_black_24dp"
-        app:backgroundTint="@color/colorFloatingButton"
-        app:fabSize="normal"
-        android:id="@+id/floating_button_add_friend"
+    <Button
+        android:id="@+id/add_friend_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="@string/add_new_friend_button_text"
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
-        android:layout_margin="30dp"/>
+        android:layout_margin="30dp" />
+
+    <Button
+        android:id="@+id/add_pending_friend_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/add_pending_friend_button_text"
+        android:paddingTop="14dp"
+        android:layout_toLeftOf="@id/add_friend_button"
+        android:layout_alignParentBottom="true"
+        android:layout_marginBottom="30dp"
+        />
+
+
 
 
 </RelativeLayout>

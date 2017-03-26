@@ -2,11 +2,17 @@ package com.oestjacobsen.android.get2gether.model;
 
 
 import android.content.Context;
+import android.location.Location;
 
+import com.oestjacobsen.android.get2gether.UserManager;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import io.realm.OrderedRealmCollection;
 import io.realm.Realm;
+import io.realm.RealmChangeListener;
 import io.realm.RealmList;
 import io.realm.RealmResults;
 
@@ -14,6 +20,7 @@ public class RealmDatabase implements BaseDatabase {
 
     private static Realm mRealm;
     private static RealmDatabase mRealmDatabase;
+
 
     public RealmDatabase() {
         RealmResults results = mRealm.where(User.class).findAll();
@@ -65,6 +72,7 @@ public class RealmDatabase implements BaseDatabase {
     public void addFriend(User user, User friend) {
         mRealm.beginTransaction();
         user.addFriend(friend);
+        mRealm.copyToRealmOrUpdate(user);
         mRealm.commitTransaction();
     }
 
@@ -95,21 +103,22 @@ public class RealmDatabase implements BaseDatabase {
     }
 
     @Override
-    public void setActiveGroup(User user, final Group group, boolean active) {
+    public void addParticipantToGroup(User user, Group group) {
+        mRealm.beginTransaction();
+        group.addParticipant(user);
+        mRealm.commitTransaction();
+    }
+
+    @Override
+    public void setActiveGroup(User user, final Group group, final boolean active) {
         final User fUser = user;
         final Group fGroup = group;
-        if(active) {
+        final GroupIdHelperClass fGroupHelper = fUser.getGroupHelper(fGroup.getUUID());
+        if (fGroupHelper != null) {
             mRealm.executeTransaction(new Realm.Transaction() {
                 @Override
                 public void execute(Realm realm) {
-                    fUser.addGroupToActiveGroups(group);
-                }
-            });
-        } else {
-            mRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    fUser.removeGroupFromActiveGroups(group);
+                        fGroupHelper.setActive(active);
                 }
             });
         }
@@ -117,30 +126,19 @@ public class RealmDatabase implements BaseDatabase {
 
     //------------GROUP FUNCTIONS--------------
     //If no such group exists, it creates one
-    public void updateOrAddGroup(Group group) {
+    public void updateOrAddGroup(Group group, String title, String description, List<User> participants) {
+        final String fTitle = title;
+        final String fDesc = description;
         final Group fGroup = group;
-        final RealmResults<Group> groupAlreadyExist = mRealm.where(Group.class).equalTo("mUUID", fGroup.getUUID()).findAll();
 
-        //Group already exists and we just need to update data
-        if(groupAlreadyExist.size() > 0) {
-            mRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    groupAlreadyExist.get(0).setGroupTitle(fGroup.getGroupTitle());
-                    groupAlreadyExist.get(0).setGroupDesc(fGroup.getGroupDesc());
-                    groupAlreadyExist.get(0).setParticipants(fGroup.getParticipants());
-                }
-            });
-        }
-        //Group doesn't exist and we need to create a new object in the database
-        else {
-            mRealm.executeTransaction(new Realm.Transaction() {
-                @Override
-                public void execute(Realm realm) {
-                    mRealm.copyToRealm(fGroup);
-                }
-            });
-        }
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                fGroup.setGroupTitle(fTitle);
+                fGroup.setGroupDesc(fDesc);
+                mRealm.copyToRealmOrUpdate(fGroup);
+            }
+        });
 
     }
 
@@ -157,16 +155,91 @@ public class RealmDatabase implements BaseDatabase {
         });
     }
 
+    public void removeGroupFromUser(Group group, User user) {
+        mRealm.beginTransaction();
+        group.removeMember(user);
+        user.removeGroup(group, user.getGroupHelper(group.getUUID()));
+        mRealm.copyToRealmOrUpdate(group);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+    }
+
     @Override
     public void addGroupToUser(Group group, User user) {
         final Group fGroup = group;
         final User fUser = user;
+        GroupIdHelperClass groupHelper = fUser.getGroupHelper(fGroup.getUUID());
+        if(groupHelper == null) {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    final GroupIdHelperClass fGroupHelper = new GroupIdHelperClass(fGroup);
+                    mRealm.copyToRealmOrUpdate(fGroupHelper);
+                    fUser.addGroup(fGroup,fGroupHelper);
+                }
+            });
+        }
+    }
+
+    @Override
+    public void addPendingInvite(User user, User friend) {
         mRealm.beginTransaction();
-        fUser.addGroup(fGroup);
+        friend.addPendingInvite(user);
+        mRealm.copyToRealmOrUpdate(friend);
         mRealm.commitTransaction();
     }
 
+    @Override
+    public void addPendingFriend(User user, User friend) {
+        mRealm.beginTransaction();
+        user.removePendingFriend(friend);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+        addFriend(friend, user);
+        addFriend(user, friend);
 
+    }
+
+    @Override
+    public void addPendingGroupInvite(User user, Group group) {
+        mRealm.beginTransaction();
+        user.addPendingGroupInvite(group);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+    }
+
+    @Override
+    public void addPendingGroup(User user, Group group) {
+        mRealm.beginTransaction();
+        user.removePendingGroup(group);
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+        addGroupToUser(group, user);
+    }
+
+    @Override
+    public List<User> getParticipantsOfGroup(String uuid) {
+        RealmResults<Group> result = mRealm.where(Group.class).equalTo("mUUID", uuid).findAll();
+        if(result.size() > 0) {
+            return result.get(0).getParticipants();
+        }
+        return new RealmList<User>();
+    }
+
+    @Override
+    public Group getGroupFromUUID(String groupUIUD) {
+        Group result = mRealm.where(Group.class).equalTo("mUUID", groupUIUD).findFirst();
+        return result;
+    }
+
+    @Override
+    public void updateUserPosition(User user, Location location) {
+        mRealm.beginTransaction();
+        user.setLatitude(location.getLatitude());
+        user.setLongitude(location.getLongitude());
+        mRealm.copyToRealmOrUpdate(user);
+        mRealm.commitTransaction();
+    }
 
     //TESTDATA
     private void addTestData() {
@@ -175,6 +248,8 @@ public class RealmDatabase implements BaseDatabase {
         u01.setUsername("larstheman");
         u01.setFullName("Super man");
         u01.setPassword("1234");
+        u01.setLatitude(55.715637);
+        u01.setLongitude(12.476535);
         addUser(u01);
 
         User u02 = new User();
@@ -201,27 +276,6 @@ public class RealmDatabase implements BaseDatabase {
         u05.setPassword("1234");
         addUser(u05);
 
-
-        //Groups
-        Group g01 = new Group();
-        g01.setGroupTitle("Home");
-        g01.setGroupDesc("Class trip to the zoo");
-        updateOrAddGroup(g01);
-
-        Group g02 = new Group();
-        g02.setGroupTitle("The Beach");
-        g02.setGroupDesc("The friends are going to a Concert!");
-        updateOrAddGroup(g02);
-
-        Group g03 = new Group();
-        g03.setGroupTitle("London");
-        g03.setGroupDesc("Group to check up on students");
-        updateOrAddGroup(g03);
-
-        Group g04 = new Group();
-        g04.setGroupTitle("School Party");
-        g04.setGroupDesc("Group for the awesome school group");
-        updateOrAddGroup(g04);
     }
 
 }

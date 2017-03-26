@@ -5,6 +5,7 @@ import com.oestjacobsen.android.get2gether.UserManagerImpl;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -25,8 +26,26 @@ public class FriendsPresenterImpl implements FriendsMVP.FriendsPresenter {
     }
 
 
-    public List<User> getFriends() {
-        return mCurrentUser.getFriends();
+    public void getFriendsAndPending() {
+        List<User> friendsAndPending = new ArrayList<>();
+        for(User friend : mCurrentUser.getFriends()) {
+            friendsAndPending.add(friend);
+        }
+        for(User pending : mCurrentUser.getPendingInvites()) {
+            friendsAndPending.add(pending);
+        }
+
+        mView.showFriendsAndPending(friendsAndPending, mCurrentUser.getFriends().size());
+    }
+
+    @Override
+    public void addPendingFriend(User friend) {
+        if (!mCurrentUser.getPendingInvites().contains(friend)) {
+            return;
+        }
+        mDatabase.addPendingFriend(mCurrentUser, friend);
+        mView.showToast(friend.getFullName() + " added to your friend list");
+        getFriendsAndPending();
     }
 
 

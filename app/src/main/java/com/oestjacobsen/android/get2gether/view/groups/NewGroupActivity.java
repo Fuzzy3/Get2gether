@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
@@ -45,8 +46,9 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
     private User mSelectedUser;
     private Group mCurrentGroup;
     private NewGroupAdapter mAdapter;
-    private List<User> mMembers = new ArrayList<>();
+    private ArrayList<User> mMembers = new ArrayList<>();
 
+    private static final String GROUPUUIDARGS = "GROUPUUIDARGS";
     private final String TAG = NewGroupActivity.class.getSimpleName();
 
 
@@ -55,9 +57,12 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_new_group);
         mPresenter = new NewGroupPresenterImpl(RealmDatabase.get(this), this);
-        mCurrentGroup = mPresenter.newGroup();
-        setupView();
-        updateUI();
+        if(getIntent().getStringExtra(GROUPUUIDARGS) != null) {
+            mPresenter.editExistingGroup(getIntent().getStringExtra(GROUPUUIDARGS));
+        } else {
+            mPresenter.editNewGroup();
+        }
+
     }
 
     @Override
@@ -72,6 +77,12 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         }
     }
 
+    @Override
+    public void setGroup(Group group) {
+        mCurrentGroup = group;
+        setupView();
+        updateUI();
+    }
 
     private void setupView() {
         ButterKnife.bind(this);
@@ -83,11 +94,14 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         }
 
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        mNameEditText.setText(mCurrentGroup.getGroupTitle());
+        mAboutEditText.setText(mCurrentGroup.getGroupDesc());
+        mMembers = mCurrentGroup.getParticipantsInArrayList();
     }
 
     private void updateUI() {
         if (mAdapter == null) {
-            //mMembers = mPresenter.getUsersInGroup();
             mAdapter = new NewGroupAdapter(mMembers);
             mRecyclerView.setAdapter(mAdapter);
         } else {
@@ -101,28 +115,63 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
         return i;
     }
 
+    public static Intent newIntentWithGroup(Context packageContext, String groupUUID) {
+        Intent i = new Intent(packageContext, NewGroupActivity.class);
+        i.putExtra(GROUPUUIDARGS, groupUUID);
+        return i;
+    }
+
     @OnClick(R.id.new_group_add_member_button)
     public void onClickGoToAddMember() {
-
-        startActivity(AddGroupMemberActivity.newIntent(this));
+        startActivityForResult(AddGroupMemberActivity.newIntent(this), 1);
     }
 
     @OnClick(R.id.new_group_remove_member_button)
     public void onClickRemoveSelectedFriend() {
-        Log.i(TAG, mSelectedUser.getFullName() + " Removed");
+        if(mSelectedUser != null) {
+            mPresenter.removeMemberFromList(mMembers, mSelectedUser);
+        } else {
+            Toast.makeText(this, "Select a user to delete", Toast.LENGTH_SHORT).show();
+        }
     }
+
+
 
     @OnClick(R.id.floating_button_new_group_done)
     public void onClickFinish() {
-        String groupTitle = mNameEditText.getText().toString();
-        String description = mAboutEditText.getText().toString();
-        mPresenter.updateGroup(mCurrentGroup, groupTitle, description, mMembers);
+        if(!mNameEditText.getText().toString().equals("")) {
+            String groupTitle = mNameEditText.getText().toString();
+            String description = mAboutEditText.getText().toString();
+            mPresenter.updateGroup(mCurrentGroup, groupTitle, description, mMembers);
+        } else {
+            Toast.makeText(this, "Group needs a name", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    @Override
+    public void finished() {
         finish();
     }
 
     @Override
-    public void finished(String groupUUID) {
+    public void memberSuccesfullyRemoved(ArrayList<User> newlist) {
+        mMembers = newlist;
+        mSelectedUser = null;
+        mAdapter.setSelected_position(-1);
+        updateUI();
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode == 1) {
+            Bundle extra = data.getExtras();
+            String UserUUID = extra.getString("UUID").trim();
+            mMembers.add(mPresenter.getUserFromUUID(UserUUID));
+            updateUI();
+        }
     }
 
 

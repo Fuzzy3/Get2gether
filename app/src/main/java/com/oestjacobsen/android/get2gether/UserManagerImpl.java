@@ -1,6 +1,9 @@
 package com.oestjacobsen.android.get2gether;
 
 
+import android.util.Log;
+
+import com.oestjacobsen.android.get2gether.model.GroupIdHelperClass;
 import com.oestjacobsen.android.get2gether.model.User;
 
 public class UserManagerImpl implements UserManager {

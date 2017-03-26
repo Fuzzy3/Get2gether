@@ -8,7 +8,7 @@ import io.realm.RealmList;
 import io.realm.RealmObject;
 import io.realm.annotations.PrimaryKey;
 
-public class User extends RealmObject {
+public class User extends RealmObject  {
 
     @PrimaryKey
     private String mUUID;
@@ -17,6 +17,7 @@ public class User extends RealmObject {
     private RealmList<User> mFriends;
     private RealmList<Group> mGroups;
     private RealmList<User> mPendingInvites;
+    private RealmList<Group> mPendingGroupInvites;
     private String mPassword;
     private double mLatitude;
     private double mLongitude;
@@ -27,12 +28,24 @@ public class User extends RealmObject {
         mFriends = new RealmList<>();
         mGroups = new RealmList<>();
         mPendingInvites = new RealmList<>();
+        mActiveGroups = new RealmList<>();
     }
 
     public String getUUID() {
         return mUUID;
     }
 
+    public RealmList<Group> getPendingGroupInvites() {
+        return mPendingGroupInvites;
+    }
+
+    public void setPendingGroupInvites(RealmList<Group> mPendingGroupInvites) {
+        this.mPendingGroupInvites = mPendingGroupInvites;
+    }
+
+    public void addPendingGroupInvite(Group group) {
+        mPendingGroupInvites.add(group);
+    }
 
     public String getUsername() {
         return mUsername;
@@ -74,6 +87,10 @@ public class User extends RealmObject {
         mPendingInvites = pendingInvites;
     }
 
+    public void addPendingInvite(User user) {
+        mPendingInvites.add(user);
+    }
+
     public String getPassword() {
         return mPassword;
     }
@@ -106,35 +123,78 @@ public class User extends RealmObject {
         mFriends.remove(friend);
     }
 
-    public void addGroup(Group group) {
+    public void addGroup(Group group, GroupIdHelperClass groupHelper) {
         mGroups.add(group);
-        mActiveGroups.add(new GroupIdHelperClass(group));
+        mActiveGroups.add(groupHelper);
     }
 
     public RealmList<GroupIdHelperClass> getActiveGroups() {
         return mActiveGroups;
     }
 
-    public void removeGroupFromActiveGroups(Group group) {
-        RealmList<GroupIdHelperClass> listWithoutGroup = new RealmList<>();
-
-        for(GroupIdHelperClass id : mActiveGroups) {
-            if(!group.getUUID().equals(id.toString())) {
-                listWithoutGroup.add(id);
+    public GroupIdHelperClass getGroupHelper(String mUUID) {
+        for(GroupIdHelperClass groupHelper : mActiveGroups) {
+            if (groupHelper.getGroupUUID().equals(mUUID)) {
+                return groupHelper;
             }
         }
-
-        mActiveGroups = listWithoutGroup;
-    }
-
-    public void addGroupToActiveGroups(Group group) {
-        mActiveGroups.add(new GroupIdHelperClass(group));
+        return null;
     }
 
     public boolean checkActive(Group group) {
         for(GroupIdHelperClass id : mActiveGroups) {
-            if (group.getUUID().equals(id.toString())) {
+            if (group.getUUID().equals(id.getGroupUUID())) {
                 return true;
+            }
+        }
+        return false;
+    }
+
+
+    public void removePendingFriend(User friend) {
+        RealmList<User> newPendingList = new RealmList<>();
+        for(User pending : mPendingInvites) {
+            if(!pending.getUUID().equals(friend.getUUID())) {
+                newPendingList.add(pending);
+            }
+        }
+
+        setPendingInvites(newPendingList);
+    }
+
+    public void removeGroup(Group removeGroup, GroupIdHelperClass groupHelper) {
+        RealmList<Group> newGroupList = new RealmList<>();
+        for(Group group : mGroups) {
+            if(!group.getUUID().equals(removeGroup.getUUID())) {
+                newGroupList.add(group);
+            }
+        }
+        mGroups = newGroupList;
+
+        RealmList<GroupIdHelperClass> newGroupHelperList = new RealmList<>();
+        for(GroupIdHelperClass oldGroupHelper : mActiveGroups) {
+            if(!oldGroupHelper.getUUID().equals(groupHelper.getUUID())) {
+                newGroupHelperList.add(oldGroupHelper);
+            }
+        }
+        mActiveGroups = newGroupHelperList;
+    }
+
+    public void removePendingGroup(Group group) {
+        RealmList<Group> newPendingList = new RealmList<>();
+        for(Group pending : mPendingGroupInvites) {
+            if(!pending.getUUID().equals(group.getUUID())) {
+                newPendingList.add(pending);
+            }
+        }
+
+        mPendingGroupInvites = newPendingList;
+    }
+
+    public boolean isGroupActive(Group group) {
+        for(GroupIdHelperClass active : mActiveGroups) {
+            if(group.getUUID().equals(active.getGroupUUID())) {
+                return active.isActive();
             }
         }
         return false;

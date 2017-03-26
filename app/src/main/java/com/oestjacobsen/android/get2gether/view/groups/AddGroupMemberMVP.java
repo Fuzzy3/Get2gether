@@ -8,19 +8,15 @@ import java.util.List;
 
 
 public interface AddGroupMemberMVP {
-
-
     public interface AddGroupMemberPresenter {
 
-        List<User> getUsersMatchingString(String input);
-
-        List<User> getAllUsers();
-
+        List<User> getFriendsMatchingString(String input);
+        List<User> getAllFriends();
         void addMember(Group group, User member);
+
     }
+    public interface AddGroupMemberView {
 
-        public interface AddGroupMemberView {
 
-
-        }
+    }
 }
