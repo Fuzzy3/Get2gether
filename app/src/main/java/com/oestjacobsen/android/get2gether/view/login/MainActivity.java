@@ -9,7 +9,10 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.facebook.login.LoginResult;
+import com.facebook.login.widget.LoginButton;
 import com.google.firebase.auth.FacebookAuthCredential;
+import com.oestjacobsen.android.get2gether.FacebookAuth;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
@@ -19,12 +22,13 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
+public class MainActivity extends BaseActivity implements LoginMVP.LoginView, SyncUser.Callback {
 
     private String TAG = MainActivity.class.getSimpleName();
     private LoginMVP.LoginPresenter mPresenter;
+    private FacebookAuth mFacebookAuth;
 
-
+    @BindView(R.id.login_facebook_button) LoginButton mFacebookButton;
     @BindView(R.id.login_toolbar) Toolbar mToolbar;
     @BindView(R.id.username_edit_text)
     EditText mUsernameInput;
@@ -35,6 +39,15 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         setContentView(R.layout.activity_main);
         mPresenter = new LoginPresenterImpl(RealmDatabase.get(this), this);
         setupView();
+
+
+        mFacebookAuth = new FacebookAuth(mFacebookButton) {
+            @Override
+            public void onRegistrationComplete(LoginResult loginResult) {
+                SyncCredentials credentials = SyncCredentials.facebook(loginResult.getAccessToken().getToken());
+                SyncUser.loginAsync(credentials, AUTH_URL, SignInActivity.this);
+            }
+        }
 
     }
 
