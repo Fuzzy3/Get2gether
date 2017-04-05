@@ -4,6 +4,8 @@ package com.oestjacobsen.android.get2gether.model;
 
 import android.location.Location;
 
+import com.facebook.AccessToken;
+
 import java.util.List;
 
 public interface BaseDatabase {
@@ -28,6 +30,7 @@ public interface BaseDatabase {
     //MAYBE TO BE DELETED
     void setLoginCallback(RealmDatabase.loginCallback loginCB);
     void setupRealmSync();
+    void setupRealmSyncWithFacebook(AccessToken token);
 
 
 

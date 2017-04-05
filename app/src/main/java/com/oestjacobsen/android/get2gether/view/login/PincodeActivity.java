@@ -47,6 +47,8 @@ public class PincodeActivity extends BaseActivity implements PincodeMVP.PincodeV
         return i;
     }
 
+
+
     @OnClick(R.id.login_button)
     public void onLoginClick(){
         mPresenter.authenticatePassword(getIntent().getStringExtra(ARGS_UUID), mPasswordInput.getText().toString());
