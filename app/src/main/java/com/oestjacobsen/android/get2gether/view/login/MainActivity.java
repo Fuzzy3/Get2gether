@@ -26,8 +26,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
 
     @BindView(R.id.login_toolbar) Toolbar mToolbar;
-    @BindView(R.id.username_edit_text)
-    EditText mUsernameInput;
+    @BindView(R.id.username_edit_text) EditText mUsernameInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
