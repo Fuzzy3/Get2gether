@@ -27,6 +27,7 @@ realm {
 
 repositories {
     maven {url "https://clojars.org/repo/"}
+    mavenCentral()
 }
 
 dependencies {
@@ -45,4 +46,5 @@ dependencies {
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.5.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
     compile 'com.google.android.gms:play-services:10.2.0'
+    compile 'com.facebook.android:facebook-android-sdk:4.15.0'
 }

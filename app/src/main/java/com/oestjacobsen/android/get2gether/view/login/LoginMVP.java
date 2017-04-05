@@ -1,6 +1,7 @@
 package com.oestjacobsen.android.get2gether.view.login;
 
 
+import com.facebook.AccessToken;
 import com.oestjacobsen.android.get2gether.model.User;
 
 public interface LoginMVP {
@@ -14,10 +15,7 @@ public interface LoginMVP {
 
         void authenticateUsername(String username);
 
-    }
-
-    public interface LoginModel {
-
+        void authenticateFacebook(AccessToken accessToken);
     }
 
 }

@@ -36,4 +36,7 @@
     <string name="add_pending_group_button_text">Add Pending Group</string>
     <string name="selected_group_edit_button_text">Edit Group</string>
     <string name="selected_group_leave_group_button_text">Leave Group</string>
+
+    <string name="facebook_app_id">130211184178695</string>
+
 </resources>

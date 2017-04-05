@@ -5,6 +5,8 @@ import android.content.Context;
 import android.location.Location;
 import android.util.Log;
 
+import com.facebook.AccessToken;
+
 import java.util.List;
 
 import io.realm.ObjectServerError;
@@ -65,8 +67,8 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
     private void setupSync(SyncUser user) {
         SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, REALM_URL).build();
         Realm.setDefaultConfiguration(defaultConfig);
+
         mLoginCallback.loginSucceded();
-        Log.i(TAG, "Logged in to server");
     }
 
     @Override
@@ -87,6 +89,16 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         if(SyncUser.currentUser() == null) {
             SyncCredentials myCredentials = SyncCredentials.usernamePassword(USERNAME, PASSWORD, false);
             SyncUser.loginAsync(myCredentials, AUTH_URL, this);
+        } else {
+            setupSync(SyncUser.currentUser());
+        }
+    }
+
+    @Override
+    public void setupRealmSyncWithFacebook(AccessToken token) {
+        if(SyncUser.currentUser() == null) {
+            SyncCredentials credentials = SyncCredentials.facebook(token.getToken());
+            SyncUser.loginAsync(credentials, AUTH_URL, this);
         } else {
             setupSync(SyncUser.currentUser());
         }
