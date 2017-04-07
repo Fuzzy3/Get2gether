@@ -31,6 +31,7 @@ import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.view.BaseActivity;
+import com.oestjacobsen.android.get2gether.view.MainMenuActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -46,7 +47,7 @@ import io.realm.ObjectServerError;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 
-public class MainActivity extends BaseActivity implements LoginMVP.LoginView, SyncUser.Callback {
+public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
     private String TAG = MainActivity.class.getSimpleName();
     private LoginMVP.LoginPresenter mPresenter;
@@ -76,6 +77,9 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
         setContentView(R.layout.activity_main);
 
         mPresenter = new LoginPresenterImpl(RealmDatabase.get(this), this);
+        if(isLoggedIn()) {
+            //Jump right into app.
+        }
 
         setupView();
 
@@ -98,8 +102,6 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
                 Log.i(TAG, "User id: " + loginResult.getAccessToken().getUserId());
                 Log.i(TAG, "AuthToken: " + loginResult.getAccessToken().getToken());
                 mAccessToken = loginResult.getAccessToken();
-
-                mPresenter.authenticateFacebook(mAccessToken);
                 loginComplete();
 
             }
@@ -111,7 +113,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
 
             @Override
             public void onError(FacebookException error) {
-                Log.i(TAG, "There was an error, incorrect password maybe");
+                Log.i(TAG, "There was an error, incorrect password maybe \nError: " + error.getMessage());
             }
         });
     }
@@ -138,7 +140,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
 
     @Override
     public void usernameAcquired(String userUUID) {
-        startActivity(PincodeActivity.newIntent(this, userUUID));
+        startActivity(MainMenuActivity.newIntent(this));
     }
 
     @Override
@@ -147,7 +149,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
 
     }
 
-    @Override
+    /*@Override
     public void onSuccess(SyncUser user) {
         loginComplete();
     }
@@ -166,7 +168,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
                 errorMsg = error.toString();
         }
         Log.i(TAG, errorMsg);
-    }
+    }*/
 
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -196,8 +198,9 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
             public void onCompleted(JSONObject object, GraphResponse response) {
                 Log.i("LoginActivity", response.toString());
                 // Get facebook data from login
-                Bundle bFacebookData = getFacebookData(object);
-                Log.i(bFacebookData.getString("first_name"), "name should be SØREN OEST JACOBSEN");
+                Bundle facebookData = getFacebookData(object);
+                Log.i(facebookData.getString("first_name"), "name should be SØREN OEST JACOBSEN");
+                mPresenter.authenticateFacebook(mAccessToken, facebookData);
             }
         });
         Bundle parameters = new Bundle();
@@ -211,16 +214,6 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
         try {
             Bundle bundle = new Bundle();
             String id = object.getString("id");
-
-            /*try {
-                URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=150");
-                Log.i("profile_pic", profile_pic + "");
-                bundle.putString("profile_pic", profile_pic.toString());
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }*/
 
             bundle.putString("idFacebook", id);
             if (object.has("first_name"))
@@ -236,10 +229,27 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView, Sy
             if (object.has("location"))
                 bundle.putString("location", object.getJSONObject("location").getString("name"));
 
+            //Collect facebook profile image - Not used in app
+            /*try {
+                URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=150");
+                Log.i("profile_pic", profile_pic + "");
+                bundle.putString("profile_pic", profile_pic.toString());
+
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return null;
+            }*/
+
             return bundle;
         } catch (JSONException e) {
             Log.d(TAG, "Error parsing JSON");
             return null;
         }
+    }
+
+    public boolean isLoggedIn() {
+        AccessToken accessToken = AccessToken.getCurrentAccessToken();
+        mAccessToken = accessToken;
+        return accessToken != null;
     }
 }

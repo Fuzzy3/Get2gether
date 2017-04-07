@@ -21,15 +21,18 @@ public class User extends RealmObject  {
     private String mPassword;
     private double mLatitude;
     private double mLongitude;
+    private String IndoorLocation;
     private RealmList<GroupIdHelperClass> mActiveGroups;
 
-    public User() {
-        mUUID = UUID.randomUUID().toString();
+    public User(String uuid) {
+        mUUID = uuid;
         mFriends = new RealmList<>();
         mGroups = new RealmList<>();
         mPendingInvites = new RealmList<>();
         mActiveGroups = new RealmList<>();
     }
+
+    public User(){}
 
     public String getUUID() {
         return mUUID;
@@ -198,5 +201,13 @@ public class User extends RealmObject  {
             }
         }
         return false;
+    }
+
+    public String getIndoorLocation() {
+        return IndoorLocation;
+    }
+
+    public void setIndoorLocation(String indoorLocation) {
+        IndoorLocation = indoorLocation;
     }
 }

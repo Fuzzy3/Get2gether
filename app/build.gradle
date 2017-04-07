@@ -47,4 +47,5 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.0-beta5'
     compile 'com.google.android.gms:play-services:10.2.0'
     compile 'com.facebook.android:facebook-android-sdk:4.15.0'
+    compile 'org.altbeacon:android-beacon-library:2+'
 }

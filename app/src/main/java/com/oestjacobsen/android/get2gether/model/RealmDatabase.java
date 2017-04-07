@@ -54,7 +54,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
 
     @Override
     public void onError(ObjectServerError error) {
-        Log.i(TAG, "Failed to login to Online server, Using offline instead");
+        Log.i(TAG, "Failed to login to Online server, Using offline instead \nError: " + error.getErrorMessage());
     }
 
     public RealmDatabase() {
@@ -96,12 +96,13 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
 
     @Override
     public void setupRealmSyncWithFacebook(AccessToken token) {
-        if(SyncUser.currentUser() == null) {
+
+        /*if(SyncUser.currentUser() == null) {
             SyncCredentials credentials = SyncCredentials.facebook(token.getToken());
             SyncUser.loginAsync(credentials, AUTH_URL, this);
         } else {
             setupSync(SyncUser.currentUser());
-        }
+        }*/
     }
 
     //----------USER FUNCTIONS------------
@@ -310,7 +311,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
     //TESTDATA
     private void addTestData() {
         //Users
-        User u01 = new User();
+        /*User u01 = new User();
         u01.setUsername("larstheman");
         u01.setFullName("Super man");
         u01.setPassword("1234");
@@ -341,7 +342,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         u05.setFullName("Batman");
         u05.setPassword("1234");
         addUser(u05);
-
+           */
     }
 
 }

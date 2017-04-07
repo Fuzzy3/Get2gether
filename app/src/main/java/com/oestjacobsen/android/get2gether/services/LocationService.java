@@ -11,9 +11,6 @@ import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
@@ -38,15 +35,15 @@ public class LocationService extends Service {
     UserManager mUserManager;
     User mCurrentUser;
 
-    Intent intent;
+    Intent mIntent;
     //int counter = 0;
 
     @Override
     public void onCreate() {
         super.onCreate();
         mDatabase = RealmDatabase.get(this);
-        intent = new Intent();
-        intent.setAction(BROADCAST_ACTION);
+        mIntent = new Intent();
+        mIntent.setAction(BROADCAST_ACTION);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new MyLocationListener();
     }
@@ -129,7 +126,7 @@ public class LocationService extends Service {
             Log.i(mCurrentUser.getFullName() , "Lat: " + location.getLatitude() + " - Lng: " + location.getLongitude());
             if(isBetterLocation(location)) {
                 mDatabase.updateUserPosition(mCurrentUser, location);
-                sendBroadcast(intent);
+                sendBroadcast(mIntent);
             }
         }
 

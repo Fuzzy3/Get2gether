@@ -1,21 +1,25 @@
 package com.oestjacobsen.android.get2gether.view.login;
 
 
+import android.os.Bundle;
+
 import com.facebook.AccessToken;
 import com.oestjacobsen.android.get2gether.model.User;
 
 public interface LoginMVP {
-    public interface LoginView {
+    interface LoginView {
         void usernameAcquired(String userUUID);
         void showToast(String msg);
 
     }
 
-    public interface LoginPresenter {
+    interface LoginPresenter {
 
         void authenticateUsername(String username);
 
-        void authenticateFacebook(AccessToken accessToken);
+        void authenticateFacebook(AccessToken accessToken, Bundle facebookData);
+
+
     }
 
 }

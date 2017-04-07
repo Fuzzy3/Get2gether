@@ -1,8 +1,11 @@
 package com.oestjacobsen.android.get2gether.view.login;
 
+import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.oestjacobsen.android.get2gether.UserManager;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
@@ -14,10 +17,13 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     BaseDatabase mDatabase;
     LoginMVP.LoginView mView;
     private String mUsername;
+    private Bundle mFacebookData;
+    private UserManager mUserManager;
 
     public LoginPresenterImpl(BaseDatabase database, LoginMVP.LoginView loginview) {
         mDatabase = database;
         mView = loginview;
+        mUserManager = UserManagerImpl.get();
     }
 
     @Override
@@ -28,22 +34,27 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     }
 
     @Override
-    public void authenticateFacebook(AccessToken accessToken) {
-        //mDatabase.setLoginCallback(this);
-        //mDatabase.setupRealmSync();
-        //mDatabase.setupRealmSyncWithFacebook(accessToken);
-        mView.showToast("Authenticate with facebook currently not working");
+    public void authenticateFacebook(AccessToken accessToken, Bundle facebookData) {
+        mFacebookData = facebookData;
+        mDatabase.setLoginCallback(this);
+        mDatabase.setupRealmSync();
+
     }
 
     @Override
     public void loginSucceded() {
         Log.i(TAG, "Logged in to server");
         //
-        User loginUser = mDatabase.getUserFromUsername(mUsername.trim());
-        if(loginUser != null) {
-            mView.usernameAcquired(loginUser.getUUID());
-        } else {
-            mView.showToast("Username not found");
+        String userId = mFacebookData.getString("idFacebook");
+        User newUser = mDatabase.getUserFromUUID(userId);
+        if(newUser == null) {
+            newUser = new User(userId);
+            String fullname = mFacebookData.getString("first_name") + " " + mFacebookData.getString("last_name");
+            newUser.setFullName(fullname);
+            mDatabase.addUser(newUser);
         }
+        mUserManager.setCurrentUser(newUser);
+        mView.usernameAcquired(newUser.getUUID());
     }
+
 }

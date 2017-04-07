@@ -38,6 +38,8 @@ public class MainMenuActivity extends UserBaseActivity {
     private AlphaAnimation imageButtonClickAnim = new AlphaAnimation(1F, 0.8F);
     private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
     private static final int FINE_PERMISSION_REQUEST_CODE = 2222;
+    private static final int BLUETOOTH_PERMISSION_REQUEST_CODE = 3333;
+    private static final int BLUETOOTHADMIN_PERMISSION_REQUEST_CODE = 4444;
 
     @BindView(R.id.profile_button) ImageButton mProfileButton;
     @BindView(R.id.friends_button) ImageButton mFriendsButton;
@@ -71,6 +73,24 @@ public class MainMenuActivity extends UserBaseActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (requestCode) {
+            case BLUETOOTH_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent i = new Intent(this, LocationService.class);
+                    startService(i);
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
+            case BLUETOOTHADMIN_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Intent i = new Intent(this, LocationService.class);
+                    startService(i);
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
             case COARSE_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Intent i = new Intent(this, LocationService.class);
@@ -96,6 +116,25 @@ public class MainMenuActivity extends UserBaseActivity {
         if (Build.VERSION.SDK_INT >= 23) {
             //int fineLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
             //int coarseLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH},
+                        BLUETOOTH_PERMISSION_REQUEST_CODE);
+
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH_ADMIN},
+                        BLUETOOTHADMIN_PERMISSION_REQUEST_CODE);
+
+            }
+
 
             if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                     != PackageManager.PERMISSION_GRANTED) {
