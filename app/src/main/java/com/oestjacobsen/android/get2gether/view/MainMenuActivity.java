@@ -23,6 +23,7 @@ import android.widget.ImageButton;
 import android.widget.ImageView;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.services.BeaconCollecterService;
 import com.oestjacobsen.android.get2gether.services.LocationService;
 import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
 import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
@@ -58,7 +59,10 @@ public class MainMenuActivity extends UserBaseActivity {
 
     private void setupView() {
         ButterKnife.bind(this);
-
+        Intent i = new Intent(this, LocationService.class);
+        startService(i);
+        Intent j = new Intent(this, BeaconCollecterService.class);
+        startService(j);
         setToolbar(mToolbar, "");
         fitToScreen();
 
@@ -75,8 +79,7 @@ public class MainMenuActivity extends UserBaseActivity {
         switch (requestCode) {
             case BLUETOOTH_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent i = new Intent(this, LocationService.class);
-                    startService(i);
+
                 } else {
                     //Permission denied do something
                 }
@@ -84,8 +87,7 @@ public class MainMenuActivity extends UserBaseActivity {
             }
             case BLUETOOTHADMIN_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent i = new Intent(this, LocationService.class);
-                    startService(i);
+
                 } else {
                     //Permission denied do something
                 }
@@ -93,8 +95,7 @@ public class MainMenuActivity extends UserBaseActivity {
             }
             case COARSE_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent i = new Intent(this, LocationService.class);
-                    startService(i);
+
                 } else {
                     //Permission denied do something
                 }
@@ -102,8 +103,7 @@ public class MainMenuActivity extends UserBaseActivity {
             }
             case FINE_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Intent i = new Intent(this, LocationService.class);
-                    startService(i);
+
                 } else {
                     //Permission denied do something
                 }

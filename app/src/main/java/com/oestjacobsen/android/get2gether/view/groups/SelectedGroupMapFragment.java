@@ -139,7 +139,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     }
 
     private void newLocationsAcquired() {
-        Log.i("BROADCAST RECIEVED", "TIME TO GET SOME UPDATES");
+        //Log.i("BROADCAST RECIEVED", "TIME TO GET SOME UPDATES");
         updateUI();
 
     }

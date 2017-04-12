@@ -7,11 +7,13 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -25,29 +27,29 @@ import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.google.firebase.auth.FacebookAuthCredential;
 import com.oestjacobsen.android.get2gether.FacebookAuth;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
-import com.oestjacobsen.android.get2gether.model.User;
+import com.oestjacobsen.android.get2gether.services.LocationService;
 import com.oestjacobsen.android.get2gether.view.BaseActivity;
 import com.oestjacobsen.android.get2gether.view.MainMenuActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.UUID;
+
+
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.realm.ObjectServerError;
-import io.realm.SyncCredentials;
-import io.realm.SyncUser;
 
 public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
+
+    private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
+    private static final int FINE_PERMISSION_REQUEST_CODE = 2222;
+    private static final int BLUETOOTH_PERMISSION_REQUEST_CODE = 3333;
+    private static final int BLUETOOTHADMIN_PERMISSION_REQUEST_CODE = 4444;
 
     private String TAG = MainActivity.class.getSimpleName();
     private LoginMVP.LoginPresenter mPresenter;
@@ -85,6 +87,13 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
         checkPermission();
 
+        mFacebookButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mProgressDialog = new ProgressDialog(MainActivity.this);
+                mProgressDialog.show();
+            }
+        });
         setupFacebookAuth();
 
     }
@@ -109,11 +118,13 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
             @Override
             public void onCancel() {
                 Log.i(TAG, "FacebookLogin cancelled");
+                mProgressDialog.dismiss();
             }
 
             @Override
             public void onError(FacebookException error) {
                 Log.i(TAG, "There was an error, incorrect password maybe \nError: " + error.getMessage());
+                mProgressDialog.dismiss();
             }
         });
     }
@@ -149,43 +160,6 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
     }
 
-    /*@Override
-    public void onSuccess(SyncUser user) {
-        loginComplete();
-    }
-
-    @Override
-    public void onError(ObjectServerError error) {
-        String errorMsg;
-        switch (error.getErrorCode()) {
-            case UNKNOWN_ACCOUNT:
-                errorMsg = "Account does not exists.";
-                break;
-            case INVALID_CREDENTIALS:
-                errorMsg = "The provided credentials are invalid!"; // This message covers also expired account token
-                break;
-            default:
-                errorMsg = error.toString();
-        }
-        Log.i(TAG, errorMsg);
-    }*/
-
-    private void checkPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            //int fineLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
-            //int coarseLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
-                    != PackageManager.PERMISSION_GRANTED) {
-
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.INTERNET},
-                        INTERNET_PERMISSION_REQUEST_CODE);
-
-            }
-        }
-    }
-
     void loginComplete() {
         Log.i(TAG, "Login complete, time to collect data");
         //mProgressDialog = new ProgressDialog(MainActivity.this);
@@ -193,18 +167,20 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         //mProgressDialog.show();
         Log.i("accessToken", mAccessToken.getToken());
 
-        GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+        final GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
                 Log.i("LoginActivity", response.toString());
                 // Get facebook data from login
                 Bundle facebookData = getFacebookData(object);
-                Log.i(facebookData.getString("first_name"), "name should be SØREN OEST JACOBSEN");
+                while(facebookData.getString("idFacebook") == null) {
+                    facebookData = getFacebookData(object);
+                }
                 mPresenter.authenticateFacebook(mAccessToken, facebookData);
             }
         });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, first_name, last_name, email,gender, birthday, location"); // Parámetros que pedimos a facebook
+        parameters.putString("fields", "id, first_name, last_name, email,gender, birthday, location");
         request.setParameters(parameters);
         request.executeAsync();
     }
@@ -251,5 +227,96 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
         mAccessToken = accessToken;
         return accessToken != null;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(mProgressDialog != null) {
+            mProgressDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (requestCode) {
+            case BLUETOOTH_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
+            case BLUETOOTHADMIN_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
+            case COARSE_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
+            case FINE_PERMISSION_REQUEST_CODE: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                } else {
+                    //Permission denied do something
+                }
+                return;
+            }
+        }
+    }
+
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            //int fineLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION);
+            //int coarseLocationPermission = ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_COARSE_LOCATION);
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH},
+                        BLUETOOTH_PERMISSION_REQUEST_CODE);
+
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_ADMIN)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.BLUETOOTH_ADMIN},
+                        BLUETOOTHADMIN_PERMISSION_REQUEST_CODE);
+
+            }
+
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        FINE_PERMISSION_REQUEST_CODE);
+
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
+                        COARSE_PERMISSION_REQUEST_CODE);
+
+            }
+        }
+
     }
 }

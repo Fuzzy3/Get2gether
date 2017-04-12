@@ -11,8 +11,11 @@ import android.app.Service;
 import android.widget.BaseAdapter;
 
 
+import com.oestjacobsen.android.get2gether.UserManager;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
+import com.oestjacobsen.android.get2gether.model.User;
 
 import org.altbeacon.beacon.Beacon;
 import org.altbeacon.beacon.BeaconConsumer;
@@ -24,14 +27,19 @@ import org.altbeacon.beacon.Region;
 
 import java.util.Collection;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 public class BeaconCollecterService extends Service implements BeaconConsumer {
 
-    public BeaconManager mBeaconManager;
+    private BeaconManager mBeaconManager;
     private static final String TAG = BeaconCollecterService.class.getCanonicalName();
-    private static final String BROADCAST_INDOOR_ACTION = "BROADCASTINDOORACTION";
+    public static final String BROADCAST_INDOOR_ACTION = "BROADCASTINDOORACTION";
     private BaseDatabase mDatabase;
+    UserManager mUserManager;
+    User mCurrentUser;
     private Intent mIntent;
-
+    private String fUUID;
     public BeaconCollecterService() {
     }
 
@@ -41,20 +49,39 @@ public class BeaconCollecterService extends Service implements BeaconConsumer {
         mDatabase = RealmDatabase.get(this);
         mIntent = new Intent();
         mIntent.setAction(BROADCAST_INDOOR_ACTION);
-        setupBeaconCollection();
-
     }
 
     private void setupBeaconCollection() {
-        mBeaconManager = BeaconManager.getInstanceForApplication(getApplicationContext());
+        mBeaconManager = BeaconManager.getInstanceForApplication(this);
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
         mBeaconManager.setForegroundScanPeriod(5000l);
+        mBeaconManager.setBackgroundScanPeriod(50001);
+        mBeaconManager.setBackgroundMode(true);
+        try {
+            mBeaconManager.updateScanPeriods();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         mBeaconManager.bind(this);
     }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mUserManager = UserManagerImpl.get();
+        mCurrentUser = mUserManager.getUser();
+        fUUID = mCurrentUser.getUUID();
+        setupBeaconCollection();
+
+        Log.i(TAG, "Beacon service started");
+
+
+        return START_NOT_STICKY;
+    }
 
     @Override
     public void onBeaconServiceConnect() {
+        Log.i(TAG, "Beacon connected to service ***************************** ");
         mBeaconManager.addMonitorNotifier(new MonitorNotifier() {
 
             @Override
@@ -85,7 +112,8 @@ public class BeaconCollecterService extends Service implements BeaconConsumer {
         mBeaconManager.addRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-                Log.i(TAG, "Number of beacons: " + collection.size());
+                Log.i(TAG, "Beacons are in region");
+                findNearestBeacon(collection);
 
             }
         });
@@ -101,61 +129,84 @@ public class BeaconCollecterService extends Service implements BeaconConsumer {
     private void findNearestBeacon(Collection<Beacon> beacons) {
         Beacon closestBeacon = null;
 
-        for(Beacon beacon : beacons) {
+        for (Beacon beacon : beacons) {
             if (closestBeacon == null) {
                 closestBeacon = beacon;
             }
             if (beacon.getDistance() < closestBeacon.getDistance()) {
-
-
-                mDatabase.updateUserIndoorPosition();
+                closestBeacon = beacon;
+            }
+        }
+        if (closestBeacon != null) {
+            //mDatabase.updateUserIndoorPosition(mCurrentUser, beaconLocationToITUArea(closestBeacon));
+            Realm realm = null;
+            try {
+                realm = Realm.getDefaultInstance();
+                final User fUser;
+                RealmResults<User> rows = realm.where(User.class).equalTo("mUUID", fUUID).findAll();
+                if (rows.size() > 0) {
+                    fUser = rows.get(0);
+                } else {
+                    fUser = null;
+                }
+                if (fUser != null) {
+                    realm.beginTransaction();
+                    fUser.setIndoorLocation(beaconLocationToITUArea(closestBeacon));
+                    realm.copyToRealmOrUpdate(fUser);
+                    realm.commitTransaction();
+                }
+            } finally {
+                if(realm != null) {
+                    realm.close(); // important
+                }
+                for(Beacon beacon : beacons)
+                Log.i(TAG, beacon.getId1().toString());
+                sendBroadcast(mIntent);
             }
         }
     }
+
 
     private String beaconLocationToITUArea(Beacon beacon) {
         String floor = beacon.getId2().toString();
         String minor = beacon.getId3().toString();
-        String area = minor.substring(0,1);
-        switch (area) {
-            case "1": {
-                area = "A";
-                break;
+        if (minor.length() >= 4) {
+            String area = minor.substring(0, 1);
+            Log.i(TAG, area);
+            switch (area) {
+                case "1": {
+                    area = "A";
+                    break;
+                }
+                case "2": {
+                    area = "B";
+                    break;
+                }
+                case "3": {
+                    area = "C";
+                    break;
+                }
+                case "4": {
+                    area = "D";
+                    break;
+                }
+                case "5": {
+                    area = "E";
+                    break;
+                }
             }
-            case "2": {
-                area = "B";
-                break;
-            }
-            case "3": {
-                area = "C";
-                break;
-            }
-            case "4": {
-                area = "D";
-                break;
-            }
-            case "5": {
-                area = "E";
-                break;
-            }
+            String room = minor.substring(1, 3);
+            return floor + area + room;
         }
-        String room = minor.substring(1,3);
-        return floor +
+        return "Custom beacon - major: " + floor + " minor: " + minor;
     }
 
     @Override
-    public Context getApplicationContext() {
-        return null;
-    }
+    public void onDestroy() {
+        super.onDestroy();
+        Log.i(TAG, "JUST GOT DESTROYED");
+        mBeaconManager.unbind(this);
 
-    @Override
-    public void unbindService(ServiceConnection serviceConnection) {
-
-    }
-
-    @Override
-    public boolean bindService(Intent intent, ServiceConnection serviceConnection, int i) {
-        return false;
     }
 
     @Override

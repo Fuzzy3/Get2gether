@@ -41,4 +41,9 @@ public interface BaseDatabase {
     Group getGroupFromUUID(String groupUIUD);
 
     void updateUserPosition(User user, Location location);
+
+    void updateUserIndoorPosition(User mCurrentUser, String s);
+
+    BaseDatabase getNew();
+    void close();
 }

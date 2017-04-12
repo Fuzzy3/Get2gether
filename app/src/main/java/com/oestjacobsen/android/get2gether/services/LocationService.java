@@ -21,6 +21,8 @@ import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 
+import org.altbeacon.beacon.BeaconManager;
+
 
 public class LocationService extends Service {
 
@@ -46,6 +48,7 @@ public class LocationService extends Service {
         mIntent.setAction(BROADCAST_ACTION);
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new MyLocationListener();
+
     }
 
     @Override
@@ -55,7 +58,6 @@ public class LocationService extends Service {
         checkPermission();
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, mLocationListener);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, mLocationListener);
-        Log.i("CREATED LOCATIONSERVICE", "FUCK YEAH");
 
         return START_NOT_STICKY;
     }
@@ -123,8 +125,8 @@ public class LocationService extends Service {
 
         @Override
         public void onLocationChanged(Location location) {
-            Log.i(mCurrentUser.getFullName() , "Lat: " + location.getLatitude() + " - Lng: " + location.getLongitude());
             if(isBetterLocation(location)) {
+                Log.i(mCurrentUser.getFullName() , "Lat: " + location.getLatitude() + " - Lng: " + location.getLongitude());
                 mDatabase.updateUserPosition(mCurrentUser, location);
                 sendBroadcast(mIntent);
             }

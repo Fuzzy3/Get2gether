@@ -21,7 +21,7 @@ public class User extends RealmObject  {
     private String mPassword;
     private double mLatitude;
     private double mLongitude;
-    private String IndoorLocation;
+    private String mIndoorLocation;
     private RealmList<GroupIdHelperClass> mActiveGroups;
 
     public User(String uuid) {
@@ -30,6 +30,7 @@ public class User extends RealmObject  {
         mGroups = new RealmList<>();
         mPendingInvites = new RealmList<>();
         mActiveGroups = new RealmList<>();
+        mIndoorLocation = "No location found";
     }
 
     public User(){}
@@ -204,10 +205,10 @@ public class User extends RealmObject  {
     }
 
     public String getIndoorLocation() {
-        return IndoorLocation;
+        return mIndoorLocation;
     }
 
     public void setIndoorLocation(String indoorLocation) {
-        IndoorLocation = indoorLocation;
+        mIndoorLocation = indoorLocation;
     }
 }

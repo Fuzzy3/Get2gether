@@ -10,15 +10,14 @@
         android:text="INDOOR"
         android:textSize="@dimen/large_text"/>
 
-    <ListView
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/listView"
-        android:layout_below="@+id/currentStatus"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentLeft="true"
-        android:layout_marginTop="48dp"
-        android:dividerHeight="10.0sp" />
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/selected_group_indoor_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingTop="@dimen/text_separation"
+        />
+
+
 
 
 </LinearLayout>

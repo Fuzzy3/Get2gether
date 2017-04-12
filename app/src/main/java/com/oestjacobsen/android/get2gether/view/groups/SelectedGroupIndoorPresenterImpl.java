@@ -8,13 +8,14 @@ public class SelectedGroupIndoorPresenterImpl extends SelectedGroupParentPresent
 
     SelectedGroupIndoorMVP.SelectedGroupIndoorView mView;
 
-    public SelectedGroupIndoorPresenterImpl(BaseDatabase database, String groupUIUD, SelectedGroupIndoorMVP.SelectedGroupIndoorView view) {
-        super(database, groupUIUD);
+    public SelectedGroupIndoorPresenterImpl(BaseDatabase database, SelectedGroupIndoorMVP.SelectedGroupIndoorView view, String groupUUID) {
+        super(database, groupUUID);
         mView = view;
     }
 
+
     @Override
     public void getCurrentGroup() {
-
+        mView.setCurrentGroup(mCurrentGroup);
     }
 }

@@ -57,11 +57,11 @@ public class AddFriendPresenterImpl implements AddFriendMVP.AddFriendPresenter {
     @Override
     public List<User> getAllUsers() {
         List<User> filterFriendsList = new ArrayList<>();
-        for(User user : mDatabase.getAllUsers()) {
-            if(!listContains(mCurrentUser.getFriends(), user) && (!user.getUUID().equals(mCurrentUser.getUUID()))) {
-                filterFriendsList.add(user);
+            for (User user : mDatabase.getAllUsers()) {
+                if (!listContains(mCurrentUser.getFriends(), user) && (!user.getUUID().equals(mCurrentUser.getUUID()))) {
+                    filterFriendsList.add(user);
+                }
             }
-        }
         return filterFriendsList;
     }
 

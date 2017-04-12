@@ -191,6 +191,18 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         }
     }
 
+    @Override
+    public void updateUserIndoorPosition(User user, final String indoorLocation) {
+        Realm separateThreadRealm = Realm.getDefaultInstance();
+        final User fUser = user;
+        separateThreadRealm.beginTransaction();
+        fUser.setIndoorLocation(indoorLocation);
+        separateThreadRealm.copyToRealmOrUpdate(fUser);
+        separateThreadRealm.commitTransaction();
+        separateThreadRealm.close();
+
+    }
+
     //------------GROUP FUNCTIONS--------------
     //If no such group exists, it creates one
     public void updateOrAddGroup(Group group, String title, String description, List<User> participants) {
@@ -308,6 +320,16 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         mRealm.commitTransaction();
     }
 
+    @Override
+    public BaseDatabase getNew() {
+        return new RealmDatabase();
+    }
+
+    @Override
+    public void close() {
+        mRealm.close();
+    }
+
     //TESTDATA
     private void addTestData() {
         //Users
@@ -341,8 +363,8 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         u05.setUsername("das_robot");
         u05.setFullName("Batman");
         u05.setPassword("1234");
-        addUser(u05);
-           */
+        addUser(u05);*/
+
     }
 
 }
