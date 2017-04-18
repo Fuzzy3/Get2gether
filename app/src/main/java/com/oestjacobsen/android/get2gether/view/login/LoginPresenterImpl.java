@@ -30,14 +30,24 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     public void authenticateUsername(String username) {
         mUsername = username;
         mDatabase.setLoginCallback(this);
-        mDatabase.setupRealmSync();
+        mDatabase.setupDatabaseSync();
     }
 
     @Override
     public void authenticateFacebook(AccessToken accessToken, Bundle facebookData) {
         mFacebookData = facebookData;
         mDatabase.setLoginCallback(this);
-        mDatabase.setupRealmSync();
+        mDatabase.setupDatabaseSync();
+
+    }
+
+    @Override
+    public void populateDatabase() {
+        String userID = "1234";
+        String userName = "Søren Oest Jacobsen";
+        User newUser = new User(userID);
+        newUser.setUsername(userName);
+        mDatabase.addUser(newUser);
 
     }
 

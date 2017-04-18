@@ -25,8 +25,10 @@ import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
 import com.facebook.GraphRequest;
 import com.facebook.GraphResponse;
+import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
+import com.oestjacobsen.android.get2gether.DatabasePicker;
 import com.oestjacobsen.android.get2gether.FacebookAuth;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
@@ -58,18 +60,11 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
     private FacebookAuth mFacebookAuth;
     private ProgressDialog mProgressDialog;
     private AccessToken mAccessToken;
-
-
-    private static final String HOST_ITU = "130.226.142.162";
-    private static final String HOST_LOCAL = "SOeXPS";
-    private static final String HOST= HOST_ITU;
-    private static final String AUTH_URL = "http://" + HOST + ":9080/auth";
-    private static final int INTERNET_PERMISSION_REQUEST_CODE = 3333;
+    private static final String JUST_LOGGED_OFF = "JUSTLOGGEDOFF";
 
 
     @BindView(R.id.login_facebook_button) LoginButton mFacebookButton;
     @BindView(R.id.login_toolbar) Toolbar mToolbar;
-    @BindView(R.id.username_edit_text) EditText mUsernameInput;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,13 +72,16 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         FacebookSdk.sdkInitialize(getApplicationContext());
         mCallbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_main);
-
-        mPresenter = new LoginPresenterImpl(RealmDatabase.get(this), this);
-        if(isLoggedIn()) {
-            //Jump right into app.
+        ButterKnife.bind(this);
+        mPresenter = new LoginPresenterImpl(DatabasePicker.getChosenDatabase(this), this);
+        if (getIntent().getStringExtra(JUST_LOGGED_OFF) == null) {
+            if(isLoggedIn()) {
+                //Jump right into app.
+                loginComplete();
+            }
+        } else {
+            LoginManager.getInstance().logOut();
         }
-
-        setupView();
 
         checkPermission();
 
@@ -131,22 +129,9 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
     public static Intent newIntent(Context packageContext) {
         Intent i = new Intent(packageContext, MainActivity.class);
+        i.putExtra(JUST_LOGGED_OFF, "TRUE");
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return i;
-    }
-
-    @OnClick(R.id.continue_button_login)
-    public void onClick(){
-        String username = mUsernameInput.getText().toString();
-        mPresenter.authenticateUsername(username);
-    }
-
-    private void setupView(){
-        ButterKnife.bind(this);
-
-        if(mUsernameInput.requestFocus()) {
-            getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-        }
     }
 
     @Override
@@ -167,7 +152,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         //mProgressDialog.show();
         Log.i("accessToken", mAccessToken.getToken());
 
-        final GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+        /*final GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
                 Log.i("LoginActivity", response.toString());
@@ -182,7 +167,8 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         Bundle parameters = new Bundle();
         parameters.putString("fields", "id, first_name, last_name, email,gender, birthday, location");
         request.setParameters(parameters);
-        request.executeAsync();
+        request.executeAsync();*/
+        mPresenter.populateDatabase();
     }
 
 

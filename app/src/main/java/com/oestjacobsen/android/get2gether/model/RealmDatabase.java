@@ -42,10 +42,6 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
 
     private loginCallback mLoginCallback;
 
-    public interface loginCallback {
-        void loginSucceded();
-    }
-
 
     @Override
     public void onSuccess(SyncUser user) {
@@ -85,24 +81,13 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         return mRealmDatabase;
     }
 
-    public void setupRealmSync() {
+    public void setupDatabaseSync() {
         if(SyncUser.currentUser() == null) {
             SyncCredentials myCredentials = SyncCredentials.usernamePassword(USERNAME, PASSWORD, false);
             SyncUser.loginAsync(myCredentials, AUTH_URL, this);
         } else {
             setupSync(SyncUser.currentUser());
         }
-    }
-
-    @Override
-    public void setupRealmSyncWithFacebook(AccessToken token) {
-
-        /*if(SyncUser.currentUser() == null) {
-            SyncCredentials credentials = SyncCredentials.facebook(token.getToken());
-            SyncUser.loginAsync(credentials, AUTH_URL, this);
-        } else {
-            setupSync(SyncUser.currentUser());
-        }*/
     }
 
     //----------USER FUNCTIONS------------
@@ -320,15 +305,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         mRealm.commitTransaction();
     }
 
-    @Override
-    public BaseDatabase getNew() {
-        return new RealmDatabase();
-    }
 
-    @Override
-    public void close() {
-        mRealm.close();
-    }
 
     //TESTDATA
     private void addTestData() {

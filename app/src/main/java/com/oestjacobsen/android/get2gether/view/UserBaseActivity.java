@@ -14,9 +14,6 @@ import com.oestjacobsen.android.get2gether.view.login.PincodeActivity;
 import com.oestjacobsen.android.get2gether.view.options.AboutActivity;
 import com.oestjacobsen.android.get2gether.view.options.HelpActivity;
 
-/**
- * Created by mr_oj on 13/02/2017.
- */
 
 public abstract class UserBaseActivity extends BaseActivity {
 

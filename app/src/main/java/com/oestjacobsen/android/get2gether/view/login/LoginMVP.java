@@ -20,6 +20,7 @@ public interface LoginMVP {
         void authenticateFacebook(AccessToken accessToken, Bundle facebookData);
 
 
+        void populateDatabase();
     }
 
 }

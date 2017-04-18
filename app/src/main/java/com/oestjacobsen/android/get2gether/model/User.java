@@ -29,6 +29,7 @@ public class User extends RealmObject  {
         mFriends = new RealmList<>();
         mGroups = new RealmList<>();
         mPendingInvites = new RealmList<>();
+        mPendingGroupInvites = new RealmList<>();
         mActiveGroups = new RealmList<>();
         mIndoorLocation = "No location found";
     }

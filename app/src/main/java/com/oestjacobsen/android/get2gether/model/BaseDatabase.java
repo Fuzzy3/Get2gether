@@ -28,9 +28,12 @@ public interface BaseDatabase {
     void addParticipantToGroup(User user, Group group);
 
     //MAYBE TO BE DELETED
-    void setLoginCallback(RealmDatabase.loginCallback loginCB);
-    void setupRealmSync();
-    void setupRealmSyncWithFacebook(AccessToken token);
+    void setLoginCallback(loginCallback loginCB);
+    void setupDatabaseSync();
+
+    public interface loginCallback {
+        void loginSucceded();
+    }
 
 
 
@@ -44,6 +47,4 @@ public interface BaseDatabase {
 
     void updateUserIndoorPosition(User mCurrentUser, String s);
 
-    BaseDatabase getNew();
-    void close();
 }
