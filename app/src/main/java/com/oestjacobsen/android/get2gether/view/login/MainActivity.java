@@ -152,7 +152,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         //mProgressDialog.show();
         Log.i("accessToken", mAccessToken.getToken());
 
-        /*final GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+        final GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
                 Log.i("LoginActivity", response.toString());
@@ -167,8 +167,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         Bundle parameters = new Bundle();
         parameters.putString("fields", "id, first_name, last_name, email,gender, birthday, location");
         request.setParameters(parameters);
-        request.executeAsync();*/
-        mPresenter.populateDatabase();
+        request.executeAsync();
     }
 
 

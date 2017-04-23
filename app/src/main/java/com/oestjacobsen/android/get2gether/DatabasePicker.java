@@ -11,6 +11,7 @@ public class DatabasePicker {
 
     public static BaseDatabase getChosenDatabase(Context context) {
 
-        return FirebaseDB.get();
+        return RealmDatabase.get(context);
+        //return FirebaseDB.get();
     }
 }

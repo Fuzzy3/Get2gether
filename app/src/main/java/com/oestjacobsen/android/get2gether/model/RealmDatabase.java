@@ -17,23 +17,37 @@ import io.realm.RealmResults;
 import io.realm.SyncConfiguration;
 import io.realm.SyncCredentials;
 import io.realm.SyncUser;
+import io.realm.log.RealmLog;
 
 public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
 
+    private static final String USERNAME= "test@itu.dk";
+    private static final String PASSWORD= "napoleon";
+
+    private static final String HOST_ITU= "130.226.142.162";
+    private static final String HOST_LOCAL= "JStXPS"; //localhost
+    private static final String HOST= HOST_ITU;
+    private static final String DBNAME= "realmthingsTEST";
+    private static final String INITIALS= "JSt";
+
+    //Url
+    public static final String AUTH_URL= "http://" + HOST + ":9080/auth";
+    public static final String REALM_URL= "realm://" + HOST + ":9080/~/" + DBNAME + INITIALS;
+
     //USERNAME AND PASSWORD
-    private static final String USERNAME = "soest@itu.dk";
-    private static final String PASSWORD = "soebach#Jac";
+    //private static final String USERNAME = "soest@itu.dk";
+    //private static final String PASSWORD = "soebach#Jac";
 
     //ONLINE SERVER STUFF
-    private static final String HOST_ITU = "130.226.142.162";
-    private static final String HOST_LOCAL = "SOeXPS";
-    private static final String HOST= HOST_ITU;
-    private static final String DBNAME = "realmthings";
-    private static final String INITIALS = "soeo";
+    //private static final String HOST_ITU = "130.226.142.162";
+    //private static final String HOST_LOCAL = "SOeXPS";
+    //private static final String HOST= HOST_ITU;
+    //private static final String DBNAME = "realmthings";
+    //private static final String INITIALS = "soeojac";
 
     //Server URL
-    private static final String AUTH_URL = "http://" + HOST + ":9080/auth";
-    public static final String REALM_URL="realm://" + HOST + ":9080/~/" + DBNAME + INITIALS;
+    //private static final String AUTH_URL = "http://" + HOST + ":9080/auth";
+    //public static final String REALM_URL="realm://" + HOST + ":9080/~/" + INITIALS + DBNAME;
 
 
     private static final String TAG = "RealmDatabase";
@@ -45,6 +59,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
 
     @Override
     public void onSuccess(SyncUser user) {
+        Log.i(TAG, "SUCCEDED WITH USER");
         setupSync(user);
     }
 
@@ -64,6 +79,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
         SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, REALM_URL).build();
         Realm.setDefaultConfiguration(defaultConfig);
 
+        Log.i(TAG, "Login succeded");
         mLoginCallback.loginSucceded();
     }
 

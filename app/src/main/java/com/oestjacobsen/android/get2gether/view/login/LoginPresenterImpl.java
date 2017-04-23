@@ -26,12 +26,12 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
         mUserManager = UserManagerImpl.get();
     }
 
-    @Override
+    /*@Override
     public void authenticateUsername(String username) {
         mUsername = username;
         mDatabase.setLoginCallback(this);
         mDatabase.setupDatabaseSync();
-    }
+    }*/
 
     @Override
     public void authenticateFacebook(AccessToken accessToken, Bundle facebookData) {
@@ -41,7 +41,7 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
 
     }
 
-    @Override
+    /*@Override
     public void populateDatabase() {
         String userID = "1234";
         String userName = "Søren Oest Jacobsen";
@@ -49,7 +49,7 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
         newUser.setUsername(userName);
         mDatabase.addUser(newUser);
 
-    }
+    }*/
 
     @Override
     public void loginSucceded() {

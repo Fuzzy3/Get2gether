@@ -15,12 +15,12 @@ public interface LoginMVP {
 
     interface LoginPresenter {
 
-        void authenticateUsername(String username);
+        //void authenticateUsername(String username);
 
         void authenticateFacebook(AccessToken accessToken, Bundle facebookData);
 
 
-        void populateDatabase();
+        //void populateDatabase();
     }
 
 }
