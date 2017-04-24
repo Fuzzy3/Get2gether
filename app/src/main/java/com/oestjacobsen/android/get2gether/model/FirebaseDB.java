@@ -144,7 +144,7 @@ public class FirebaseDB implements BaseDatabase {
 
     }
 
-    @Override
+    /*@Override
     public void setLoginCallback(loginCallback loginCB) {
         mLoginCallback = loginCB;
     }
@@ -154,7 +154,7 @@ public class FirebaseDB implements BaseDatabase {
     public void setupDatabaseSync() {
         //Setup authenticate process
         mLoginCallback.loginSucceded();
-    }
+    }*/
 
     @Override
     public List<User> getParticipantsOfGroup(String uuid) {

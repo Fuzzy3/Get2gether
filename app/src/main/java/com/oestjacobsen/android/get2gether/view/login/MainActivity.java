@@ -73,7 +73,7 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
         mCallbackManager = CallbackManager.Factory.create();
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
-        mPresenter = new LoginPresenterImpl(DatabasePicker.getChosenDatabase(this), this);
+        mPresenter = new LoginPresenterImpl(this, this);
         if (getIntent().getStringExtra(JUST_LOGGED_OFF) == null) {
             if(isLoggedIn()) {
                 //Jump right into app.

@@ -19,7 +19,7 @@ import io.realm.SyncCredentials;
 import io.realm.SyncUser;
 import io.realm.log.RealmLog;
 
-public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
+public class RealmDatabase implements BaseDatabase {
 
     private static final String USERNAME= "test@itu.dk";
     private static final String PASSWORD= "napoleon";
@@ -54,7 +54,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
     private static Realm mRealm;
     private static RealmDatabase mRealmDatabase;
 
-    private loginCallback mLoginCallback;
+    /*private loginCallback mLoginCallback;
 
 
     @Override
@@ -66,7 +66,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
     @Override
     public void onError(ObjectServerError error) {
         Log.i(TAG, "Failed to login to Online server, Using offline instead \nError: " + error.getErrorMessage());
-    }
+    }*/
 
     public RealmDatabase() {
         RealmResults results = mRealm.where(User.class).findAll();
@@ -74,7 +74,7 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
             addTestData();
         }
     }
-
+    /*
     private void setupSync(SyncUser user) {
         SyncConfiguration defaultConfig = new SyncConfiguration.Builder(user, REALM_URL).build();
         Realm.setDefaultConfiguration(defaultConfig);
@@ -87,24 +87,23 @@ public class RealmDatabase implements BaseDatabase, SyncUser.Callback {
     public void setLoginCallback(loginCallback loginCB) {
         mLoginCallback = loginCB;
     }
-
+    */
     public static RealmDatabase get(Context context) {
         if (mRealmDatabase == null) {
-            Realm.init(context);
             mRealm = Realm.getDefaultInstance();
             mRealmDatabase = new RealmDatabase();
         }
         return mRealmDatabase;
     }
 
-    public void setupDatabaseSync() {
+    /*public void setupDatabaseSync() {
         if(SyncUser.currentUser() == null) {
             SyncCredentials myCredentials = SyncCredentials.usernamePassword(USERNAME, PASSWORD, false);
             SyncUser.loginAsync(myCredentials, AUTH_URL, this);
         } else {
             setupSync(SyncUser.currentUser());
         }
-    }
+    }*/
 
     //----------USER FUNCTIONS------------
     public List<User> getAllUsers() {

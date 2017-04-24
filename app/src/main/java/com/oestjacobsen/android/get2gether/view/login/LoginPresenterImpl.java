@@ -1,15 +1,19 @@
 package com.oestjacobsen.android.get2gether.view.login;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
 
 import com.facebook.AccessToken;
+import com.oestjacobsen.android.get2gether.DatabasePicker;
 import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.UserManagerImpl;
+import com.oestjacobsen.android.get2gether.model.AuthRealm;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 
+import io.realm.Realm;
 
 
 public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabase.loginCallback {
@@ -17,13 +21,18 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     BaseDatabase mDatabase;
     LoginMVP.LoginView mView;
     private String mUsername;
+    private Context mLoginContext;
     private Bundle mFacebookData;
     private UserManager mUserManager;
+    private AuthRealm mAuthRealm;
 
-    public LoginPresenterImpl(BaseDatabase database, LoginMVP.LoginView loginview) {
-        mDatabase = database;
+
+    public LoginPresenterImpl(Context context, LoginMVP.LoginView loginview) {
+        Realm.init(context);
+        mLoginContext = context;
         mView = loginview;
         mUserManager = UserManagerImpl.get();
+        mAuthRealm = new AuthRealm();
     }
 
     /*@Override
@@ -36,8 +45,8 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     @Override
     public void authenticateFacebook(AccessToken accessToken, Bundle facebookData) {
         mFacebookData = facebookData;
-        mDatabase.setLoginCallback(this);
-        mDatabase.setupDatabaseSync();
+        mAuthRealm.setLoginCallback(this);
+        mAuthRealm.authenticateUser();
 
     }
 
@@ -54,6 +63,7 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     @Override
     public void loginSucceded() {
         Log.i(TAG, "Logged in to server");
+        mDatabase = DatabasePicker.getChosenDatabase(mLoginContext);
         //
         String userId = mFacebookData.getString("idFacebook");
         User newUser = mDatabase.getUserFromUUID(userId);

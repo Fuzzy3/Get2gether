@@ -28,8 +28,8 @@ public interface BaseDatabase {
     void addParticipantToGroup(User user, Group group);
 
     //MAYBE TO BE DELETED
-    void setLoginCallback(loginCallback loginCB);
-    void setupDatabaseSync();
+    //void setLoginCallback(loginCallback loginCB);
+    //void setupDatabaseSync();
 
     public interface loginCallback {
         void loginSucceded();
