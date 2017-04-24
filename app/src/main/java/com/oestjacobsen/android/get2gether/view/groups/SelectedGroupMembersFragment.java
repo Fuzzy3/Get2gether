@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,8 @@ import com.oestjacobsen.android.get2gether.model.User;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,6 +27,7 @@ import butterknife.ButterKnife;
 
 public class SelectedGroupMembersFragment extends SelectedGroupParentView implements SelectedGroupMembersMVP.SelectedGroupMembersView {
 
+    private static final String TAG = "MapFragment";
     @BindView(R.id.active_members_number) TextView mActiveTextView;
     @BindView(R.id.inactive_members_number) TextView mInActiveTextView;
     @BindView(R.id.selected_group_members_recyclerview) RecyclerView mRecyclerView;
@@ -75,10 +79,6 @@ public class SelectedGroupMembersFragment extends SelectedGroupParentView implem
         updateUI();
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
 
     @Override
     public void setNumberOfActive(int num) {

@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -41,6 +42,7 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
     @BindView(R.id.group_list_recyclerview) RecyclerView mRecyclerView;
     @BindView(R.id.groups_create_new_group_button) Button mCreateGroupButton;
     @BindView(R.id.button_add_pending_group) Button mAddPendingGroupButton;
+    @BindView(R.id.group_swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
 
     private GroupListAdapter mAdapter;
     private List<Group> mGroupsAndPending;
@@ -70,6 +72,13 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
         }
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAddPendingGroupButton.setVisibility(View.INVISIBLE);
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.getGroupsAndPending();
+            }
+        });
     }
 
 
@@ -125,6 +134,7 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
         mPendingStarting = pendingStartingPos;
         mSelectedGroup = null;
         mAddPendingGroupButton.setVisibility(View.INVISIBLE);
+        mSwipeRefreshLayout.setRefreshing(false);
         updateUI();
     }
 

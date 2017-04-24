@@ -41,6 +41,8 @@ import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.services.LocationService;
 
 import java.util.HashMap;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -74,7 +76,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
         ButterKnife.bind(this, view);
         mMapView.onCreate(savedInstanceState);
         mPresenter = new SelectedGroupMapPresenterImpl(RealmDatabase.get(getContext()), getArguments().getString(ARGS_GROUP_UUID), this);
-        createLocationBroadcastReciever();
+        setTimer();
         launchedMapFirstTime = true;
         Log.i(TAG, "Getting map async");
         mMapView.getMapAsync(new OnMapReadyCallback() {
@@ -129,7 +131,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
         }
     }
 
-    private void createLocationBroadcastReciever() {
+    /*private void createLocationBroadcastReciever() {
         mLocationReciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -142,6 +144,25 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
         //Log.i("BROADCAST RECIEVED", "TIME TO GET SOME UPDATES");
         updateUI();
 
+    }*/
+
+    private void setTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            updateUI();
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 1000);
     }
 
     private void setOwnLocation() {
@@ -242,7 +263,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     public void onResume() {
         super.onResume();
         mMapView.onResume();
-        getActivity().registerReceiver(mLocationReciever, new IntentFilter(LocationService.BROADCAST_ACTION));
+        //getActivity().registerReceiver(mLocationReciever, new IntentFilter(LocationService.BROADCAST_ACTION));
 
     }
 
@@ -250,7 +271,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     public void onPause() {
         super.onPause();
         mMapView.onPause();
-        getActivity().unregisterReceiver(mLocationReciever);
+        //getActivity().unregisterReceiver(mLocationReciever);
     }
 
     @Override
