@@ -7,24 +7,19 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
 import com.oestjacobsen.android.get2gether.R;
-import com.oestjacobsen.android.get2gether.model.Group;
-import com.oestjacobsen.android.get2gether.model.RealmDatabase;
-import com.oestjacobsen.android.get2gether.view.BaseActivity;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class SelectedGroupActivity extends UserBaseActivity  {
+public class SelectedGroupActivity extends OptionsBaseActivity {
 
     private FragmentPagerAdapter mAdapter;
     @BindView(R.id.group_tablayout) TabLayout mTabs;

@@ -20,16 +20,15 @@ import android.widget.Toast;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.AddFriendView {
+public class AddFriendActivity extends OptionsBaseActivity implements AddFriendMVP.AddFriendView {
 
     @BindView(R.id.friends_toolbar) Toolbar mToolbar;
     @BindView(R.id.add_friend_recyclerview) RecyclerView mRecyclerView;
@@ -126,7 +125,7 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
         private int mPosition;
 
         @BindView(R.id.friends_row_fullname) TextView mFullname;
-        @BindView(R.id.friends_row_username) TextView mUsername;
+        @BindView(R.id.friends_row_uuid) TextView mUUID;
 
         public UserHolder(View itemView) {
             super(itemView);
@@ -136,7 +135,7 @@ public class AddFriendActivity extends UserBaseActivity implements AddFriendMVP.
 
         public void bindUser(User user, int position) {
             mFullname.setText(user.getFullName());
-            mUsername.setText(user.getUsername());
+            mUUID.setText(user.getUUID());
             mPosition = position;
 
             if(mAdapter.getSelected_position() == mPosition) {

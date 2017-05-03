@@ -64,7 +64,7 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     public void loginSucceded() {
         Log.i(TAG, "Logged in to server");
         mDatabase = DatabasePicker.getChosenDatabase(mLoginContext);
-        //
+
         String userId = mFacebookData.getString("idFacebook");
         User newUser = mDatabase.getUserFromUUID(userId);
         if(newUser == null) {

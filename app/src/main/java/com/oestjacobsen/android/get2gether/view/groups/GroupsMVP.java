@@ -13,18 +13,12 @@ public interface GroupsMVP {
         void setActive(Group group, boolean active);
         boolean isActive(Group group);
         void showActiveGroups();
-
-
         void addPendingGroup(Group mSelectedGroup);
     }
 
     public interface GroupsView {
-
-
         void showToast(String s);
-
         void showGroupsAndPending(List<Group> groupsAndPending, int size);
     }
-
 
 }

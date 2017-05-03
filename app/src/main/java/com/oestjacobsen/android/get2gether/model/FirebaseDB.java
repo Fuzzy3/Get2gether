@@ -3,14 +3,9 @@ package com.oestjacobsen.android.get2gether.model;
 
 
 import android.location.Location;
-import android.util.Log;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +14,7 @@ import java.util.Map;
 
 public class FirebaseDB implements BaseDatabase {
 
-    private static final String TAG = "FirebaseDatabase";
+    private static final String TAG = "FirebaseDB";
     private static FirebaseDB mFirebaseDB;
     private static FirebaseDatabase mFirebase;
     private static DatabaseReference mFirebaseDatabase;
@@ -31,7 +26,7 @@ public class FirebaseDB implements BaseDatabase {
     }
 
     public static FirebaseDB get() {
-        if (mFirebaseDB == null) {
+        if (mFirebaseDatabase == null) {
             mFirebaseDB = new FirebaseDB();
             mFirebase = FirebaseDatabase.getInstance();
             mFirebaseDatabase = mFirebase.getReference();
@@ -52,9 +47,26 @@ public class FirebaseDB implements BaseDatabase {
 
     @Override
     public User getUserFromUUID(String UUID) {
-        DatabaseReference ref = mFirebaseDatabase.child("users");
+        DatabaseReference usersRef = mFirebaseDatabase.child("users");
 
-        Query userQuery = ref.equalTo(UUID);
+
+        usersRef.child(UUID + "01").setValue(new SimpleUser(UUID + "01", "Søren Oest Jacobsen", "5A12"));
+        usersRef.child(UUID + "02").setValue(new SimpleUser(UUID + "02", "Hans Hansen", "3A54"));
+
+        /*
+        Map<String, SimpleUser> users = new HashMap<>();
+
+        SimpleUser user01 = new SimpleUser(UUID + "1", "Søren Oest Jacobsen", "5A12");
+        users.put(user01.getUUID(), user01);
+
+        SimpleUser user02 = new SimpleUser(UUID + "2", "Hans Hansen", "3A54");
+        users.put(user02.getUUID(), user02);
+
+        usersRef.setValue(users);
+        */
+
+
+        /*Query userQuery = ref.equalTo(UUID);
         ref.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -66,23 +78,22 @@ public class FirebaseDB implements BaseDatabase {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        });
+        });*/
+
         return null;
     }
 
     @Override
     public void addUser(User user) {
+        DatabaseReference usersRef = mFirebaseDatabase.child("users");
 
-        Map<String, String> userData = new HashMap<>();
+        Map<String, User> users = new HashMap<>();
+        users.put(user.getUUID(), user);
 
-        userData.put("uuid", user.getUUID());
-        userData.put("FullName", user.getFullName());
-
-
-        mFirebaseDatabase.child("users").child(user.getUUID()).setValue(userData);
-
-        getUserFromUUID(user.getUUID());
+        usersRef.setValue(users);
     }
+
+
 
     @Override
     public void removeUser(User user) {

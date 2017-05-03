@@ -1,29 +1,23 @@
 package com.oestjacobsen.android.get2gether.view;
 
 import android.Manifest;
-import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Point;
 import android.os.Build;
-import android.support.annotation.BinderThread;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 
 import com.oestjacobsen.android.get2gether.R;
-import com.oestjacobsen.android.get2gether.services.BeaconCollecterService;
+import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceAltLib;
+import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceEstimoteLib;
 import com.oestjacobsen.android.get2gether.services.LocationService;
 import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
 import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
@@ -33,7 +27,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class MainMenuActivity extends UserBaseActivity {
+public class MainMenuActivity extends OptionsBaseActivity {
 
     String TAG = MainMenuActivity.class.getSimpleName();
     private AlphaAnimation imageButtonClickAnim = new AlphaAnimation(1F, 0.8F);
@@ -61,7 +55,7 @@ public class MainMenuActivity extends UserBaseActivity {
         ButterKnife.bind(this);
         Intent i = new Intent(this, LocationService.class);
         startService(i);
-        Intent j = new Intent(this, BeaconCollecterService.class);
+        Intent j = new Intent(this, BeaconCollecterServiceEstimoteLib.class);
         startService(j);
         setToolbar(mToolbar, "");
         fitToScreen();

@@ -1,15 +1,11 @@
 package com.oestjacobsen.android.get2gether.view.groups;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,9 +15,10 @@ import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
-import com.oestjacobsen.android.get2gether.services.BeaconCollecterService;
 
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -77,11 +74,34 @@ public class SelectedGroupIndoorFragment extends Fragment implements SelectedGro
     public void setCurrentGroup(Group group) {
         mCurrentGroup = group;
         mMembers = mCurrentGroup.getParticipants();
-        createLocationBroadcastReciever();
+        setTimer();
+        //createLocationBroadcastReciever();
         updateUI();
     }
 
-    private void createLocationBroadcastReciever() {
+    private void setTimer() {
+        Timer timer = new Timer();
+        timer.schedule(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    if(getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateUI();
+                            }
+                        });
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }, 0, 3000);
+    }
+
+
+    /*private void createLocationBroadcastReciever() {
         mIndoorReciever = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -93,19 +113,19 @@ public class SelectedGroupIndoorFragment extends Fragment implements SelectedGro
     private void newIndoorLocationsAcquired() {
         Log.i(getTag(), "Indoor broadcast recived, time to get some updates");
         updateUI();
-    }
+    }*/
 
     @Override
     public void onPause() {
         super.onPause();
-        getActivity().unregisterReceiver(mIndoorReciever);
+        //getActivity().unregisterReceiver(mIndoorReciever);
 
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        getActivity().registerReceiver(mIndoorReciever, new IntentFilter(BeaconCollecterService.BROADCAST_INDOOR_ACTION));
+        //getActivity().registerReceiver(mIndoorReciever, new IntentFilter(BeaconCollecterServiceAltLib.BROADCAST_INDOOR_ACTION));
 
     }
 

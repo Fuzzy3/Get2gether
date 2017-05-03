@@ -23,9 +23,12 @@ import com.oestjacobsen.android.get2gether.model.User;
 
 import org.altbeacon.beacon.BeaconManager;
 
+import io.realm.Realm;
+
 
 public class LocationService extends Service {
 
+    private static final String TAG = "LocationService";
     public LocationManager mLocationManager;
     public MyLocationListener mLocationListener;
     public static final String BROADCAST_ACTION = "LOCATIONUPDATE";
@@ -43,9 +46,11 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+        Realm.init(this);
         mDatabase = RealmDatabase.get(this);
         mIntent = new Intent();
         mIntent.setAction(BROADCAST_ACTION);
+        Log.i(TAG, "LOCATION TEST ONCREATE");
         mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new MyLocationListener();
 
@@ -59,7 +64,7 @@ public class LocationService extends Service {
         mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, mLocationListener);
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, mLocationListener);
 
-        return START_NOT_STICKY;
+        return START_STICKY;
     }
 
     protected boolean isBetterLocation(Location location) {

@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -19,8 +20,7 @@ import android.widget.Toast;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
-import com.oestjacobsen.android.get2gether.view.groups.NewGroupActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,11 +29,12 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class FriendsActivity extends UserBaseActivity implements FriendsMVP.FriendsView{
+public class FriendsActivity extends OptionsBaseActivity implements FriendsMVP.FriendsView{
 
     @BindView(R.id.friends_toolbar) Toolbar mToolbar;
     @BindView(R.id.friends_recycler_view) RecyclerView mRecyclerView;
     @BindView(R.id.add_pending_friend_button) Button mAddPendingFriendButton;
+    @BindView(R.id.friends_swipe_refresh_layout) SwipeRefreshLayout mSwipeRefreshLayout;
     private List<User> mFriendsAndPending = new ArrayList<>();
     private FriendsMVP.FriendsPresenter mPresenter;
     private FriendsAdapter mAdapter;
@@ -47,7 +48,6 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
         mPresenter = new FriendsPresenterImpl(RealmDatabase.get(this), this);
-
         setupView();
     }
 
@@ -64,6 +64,13 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
         mRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         mAddPendingFriendButton.setVisibility(View.INVISIBLE);
         mPresenter.getFriendsAndPending();
+
+        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                mPresenter.getFriendsAndPending();
+            }
+        });
     }
 
 
@@ -118,6 +125,7 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
         mPendingStarting = pendingStartingPosition;
         mSelectedUser = null;
         mAddPendingFriendButton.setVisibility(View.INVISIBLE);
+        mSwipeRefreshLayout.setRefreshing(false);
         updateUI();
     }
 
@@ -129,7 +137,7 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
     //Adapter and viewholder for recyclerview
     public class FriendHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         @BindView(R.id.friends_row_fullname) TextView mFullname;
-        @BindView(R.id.friends_row_username) TextView mUsername;
+        @BindView(R.id.friends_row_uuid) TextView mUUID;
         private boolean mIsPending;
         private int mPosition;
 
@@ -144,7 +152,7 @@ public class FriendsActivity extends UserBaseActivity implements FriendsMVP.Frie
             mIsPending = isPending;
             mPosition = position;
             mFullname.setText(friend.getFullName());
-            mUsername.setText(friend.getUsername());
+            mUUID.setText(friend.getUUID());
             if(mIsPending) {
                 if (mAdapter.getSelected_position() == mPosition) {
                     itemView.setBackgroundColor(ContextCompat.getColor(FriendsActivity.this, R.color.colorHighlight));

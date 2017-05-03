@@ -8,7 +8,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,9 +20,7 @@ import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
-import com.oestjacobsen.android.get2gether.view.friends.AddFriendActivity;
-import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +29,7 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.NewGroupView{
+public class NewGroupActivity extends OptionsBaseActivity implements NewGroupMVP.NewGroupView{
 
     @BindView(R.id.new_group_name_edit_text)
     EditText mNameEditText;
@@ -180,8 +177,8 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
 
         @BindView(R.id.friends_row_fullname)
         TextView mFullname;
-        @BindView(R.id.friends_row_username)
-        TextView mUsername;
+        @BindView(R.id.friends_row_uuid)
+        TextView mUUID;
 
         public UserHolder(View itemView) {
             super(itemView);
@@ -191,7 +188,7 @@ public class NewGroupActivity extends UserBaseActivity implements NewGroupMVP.Ne
 
         public void bindUser(User user, int position) {
             mFullname.setText(user.getFullName());
-            mUsername.setText(user.getUsername());
+            mUUID.setText(user.getUUID());
             mPosition = position;
 
             if (mAdapter.getSelected_position() == mPosition) {

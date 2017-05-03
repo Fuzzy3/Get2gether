@@ -11,18 +11,17 @@ import com.oestjacobsen.android.get2gether.UserManagerImpl;
 import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.User;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ProfileActivity extends UserBaseActivity  {
+public class ProfileActivity extends OptionsBaseActivity {
 
     @BindView(R.id.profile_toolbar) Toolbar mToolbar;
     @BindView(R.id.profile_user) TextView mProfileName;
-    @BindView(R.id.profile_username) TextView mProfileUsername;
-    @BindView(R.id.profile_password) TextView mProfilePassword;
+    @BindView(R.id.profile_uuid) TextView mUUID;
 
     private UserManager mSessionUser;
     private User mCurrentUser;
@@ -31,8 +30,6 @@ public class ProfileActivity extends UserBaseActivity  {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_profile);
-
-
         setupView();
     }
 
@@ -49,9 +46,8 @@ public class ProfileActivity extends UserBaseActivity  {
         mSessionUser = UserManagerImpl.get();
         mCurrentUser = mSessionUser.getUser();
 
+        mUUID.setText(mCurrentUser.getUUID());
         mProfileName.setText(mCurrentUser.getFullName());
-        mProfileUsername.setText(mCurrentUser.getUsername());
-        mProfilePassword.setText(mCurrentUser.getPassword());
     }
 
     public static Intent newIntent(Context packageContext) {
@@ -72,8 +68,8 @@ public class ProfileActivity extends UserBaseActivity  {
         }
     }
 
-    @OnClick(R.id.floating_button_editprofile)
+    /*@OnClick(R.id.floating_button_editprofile)
     public void onClickEdit() {
         startActivity(EditProfileActivity.newIntent(this));
-    }
+    }*/
 }

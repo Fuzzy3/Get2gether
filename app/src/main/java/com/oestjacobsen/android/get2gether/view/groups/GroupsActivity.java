@@ -26,7 +26,7 @@ import android.widget.Toast;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
 import java.util.List;
 
@@ -34,9 +34,9 @@ import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class GroupsActivity extends UserBaseActivity implements GroupsMVP.GroupsView{
+public class GroupsActivity extends OptionsBaseActivity implements GroupsMVP.GroupsView{
 
-    private final String TAG = UserBaseActivity.class.getSimpleName();
+    private final String TAG = OptionsBaseActivity.class.getSimpleName();
 
     @BindView(R.id.my_groups_toolbar) Toolbar mToolbar;
     @BindView(R.id.group_list_recyclerview) RecyclerView mRecyclerView;
@@ -46,11 +46,11 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
 
     private GroupListAdapter mAdapter;
     private List<Group> mGroupsAndPending;
-    private GroupsMVP.GroupsPresenter mPresenter;
     private Group mSelectedGroup;
     private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
     private static final int FINE_PERMISSION_REQUEST_CODE = 2222;
     private int mPendingStarting;
+    private GroupsMVP.GroupsPresenter mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -161,10 +161,12 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
             mCurrentGroup = group;
             if(mIsPending) {
                 if (mAdapter.getSelected_position() == mPosition) {
-                    itemView.setBackgroundColor(ContextCompat.getColor(GroupsActivity.this, R.color.colorHighlight));
+                    itemView.setBackgroundColor(ContextCompat.
+                            getColor(GroupsActivity.this,R.color.colorHighlight));
                     mSelectedGroup = group;
                 } else {
-                    itemView.setBackgroundColor(ContextCompat.getColor(GroupsActivity.this, R.color.colorPending));
+                    itemView.setBackgroundColor(ContextCompat.
+                            getColor(GroupsActivity.this, R.color.colorPending));
                 }
             } else {
                 itemView.setBackgroundColor(Color.TRANSPARENT);
@@ -198,10 +200,7 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
                 }
                 mAdapter.notifyDataSetChanged();
             } else {
-                Log.i(TAG, mCurrentGroup.getGroupTitle() + " Clicked");
-                Log.i(TAG, mPresenter.isActive(mCurrentGroup) + ": state of active");
                 mPresenter.setActive(mCurrentGroup, !mPresenter.isActive(mCurrentGroup));
-                mPresenter.showActiveGroups();
                 updateUI();
             }
         }
@@ -222,7 +221,8 @@ public class GroupsActivity extends UserBaseActivity implements GroupsMVP.Groups
                 }
                 mAdapter.notifyDataSetChanged();
             } else {
-                startActivity(SelectedGroupActivity.newIntent(GroupsActivity.this, mCurrentGroup.getUUID(), mCurrentGroup.getGroupTitle()));
+                startActivity(SelectedGroupActivity.newIntent(GroupsActivity.this,
+                        mCurrentGroup.getUUID(), mCurrentGroup.getGroupTitle()));
             }
         }
     }

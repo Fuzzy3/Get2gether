@@ -1,17 +1,13 @@
 package com.oestjacobsen.android.get2gether.view.groups;
 
 import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentFilter;
+
 import android.content.pm.PackageManager;
-import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -19,27 +15,19 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.Manifest;
 
-
-import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.LocationSettingsRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
-import com.oestjacobsen.android.get2gether.services.LocationService;
-
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -55,9 +43,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     @BindView(R.id.selected_group_mapview) MapView mMapView;
 
     private static final String TAG = "MAP_FRAGMENT";
-    private GoogleApiClient mGoogleApiClient;
     private LatLng mLatLon;
-    private LocationRequest mLocationRequest;
     private GoogleMap mGoogleMap;
     private MarkerOptions mCurrentLocationMarker;
     private boolean launchedMapFirstTime;
@@ -107,8 +93,6 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     }
 
     private void updateUI() {
-        Log.i(TAG, "UPDATE UI");
-
         if (mGoogleMap != null) {
             setOwnLocation();
             setParticipantsLocation();
@@ -152,12 +136,14 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
             @Override
             public void run() {
                 try {
-                    getActivity().runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            updateUI();
-                        }
-                    });
+                    if(getActivity() != null) {
+                        getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                updateUI();
+                            }
+                        });
+                    }
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

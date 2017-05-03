@@ -19,12 +19,12 @@ public class AuthRealm implements SyncUser.Callback {
     private static final String HOST_ITU = "130.226.142.162";
     private static final String HOST_LOCAL = "SOeXPS";
     private static final String HOST= HOST_ITU;
-    private static final String DBNAME = "realmthings";
-    private static final String INITIALS = "soeojac";
+    private static final String DBNAME = "get2gether";
+    private static final String TESTNUMBER = "2";
 
     //Server URL
     private static final String AUTH_URL = "http://" + HOST + ":9080/auth";
-    public static final String REALM_URL="realm://" + HOST + ":9080/~/" + INITIALS + DBNAME;
+    public static final String REALM_URL="realm://" + HOST + ":9080/~/" + DBNAME + TESTNUMBER;
 
     private static final String TAG = "AuthRealm";
     private BaseDatabase.loginCallback mLoginCallback;
@@ -51,11 +51,9 @@ public class AuthRealm implements SyncUser.Callback {
         }
     }
 
-
-
     @Override
     public void onSuccess(SyncUser user) {
-
+        setupSync(SyncUser.currentUser());
     }
 
     @Override

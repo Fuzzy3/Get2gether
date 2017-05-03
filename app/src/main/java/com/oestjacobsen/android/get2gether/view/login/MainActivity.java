@@ -12,10 +12,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
-import android.widget.EditText;
 import android.widget.Toast;
 
 import com.facebook.AccessToken;
@@ -28,11 +25,7 @@ import com.facebook.GraphResponse;
 import com.facebook.login.LoginManager;
 import com.facebook.login.LoginResult;
 import com.facebook.login.widget.LoginButton;
-import com.oestjacobsen.android.get2gether.DatabasePicker;
-import com.oestjacobsen.android.get2gether.FacebookAuth;
 import com.oestjacobsen.android.get2gether.R;
-import com.oestjacobsen.android.get2gether.model.RealmDatabase;
-import com.oestjacobsen.android.get2gether.services.LocationService;
 import com.oestjacobsen.android.get2gether.view.BaseActivity;
 import com.oestjacobsen.android.get2gether.view.MainMenuActivity;
 
@@ -44,7 +37,6 @@ import org.json.JSONObject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 
 public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
@@ -57,7 +49,6 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
     private LoginMVP.LoginPresenter mPresenter;
 
     private CallbackManager mCallbackManager;
-    private FacebookAuth mFacebookAuth;
     private ProgressDialog mProgressDialog;
     private AccessToken mAccessToken;
     private static final String JUST_LOGGED_OFF = "JUSTLOGGEDOFF";

@@ -2,18 +2,17 @@ package com.oestjacobsen.android.get2gether.view.options;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.MenuItem;
 
 import com.oestjacobsen.android.get2gether.R;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-public class HelpActivity extends UserBaseActivity {
+public class HelpActivity extends OptionsBaseActivity {
 
     @BindView(R.id.help_toolbar) Toolbar mToolbar;
 

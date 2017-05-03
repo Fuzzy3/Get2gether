@@ -38,5 +38,6 @@
     <string name="selected_group_leave_group_button_text">Leave Group</string>
 
     <string name="facebook_app_id">130211184178695</string>
+    <string name="profile_unique_id">Unique ID</string>
 
 </resources>

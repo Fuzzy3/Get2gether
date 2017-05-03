@@ -97,8 +97,8 @@ public class SelectedGroupMembersFragment extends SelectedGroupParentView implem
 
         @BindView(R.id.friends_row_fullname)
         TextView mFullname;
-        @BindView(R.id.friends_row_username)
-        TextView mUsername;
+        @BindView(R.id.friends_row_uuid)
+        TextView mUUID;
 
         public UserHolder(View itemView) {
             super(itemView);
@@ -107,7 +107,7 @@ public class SelectedGroupMembersFragment extends SelectedGroupParentView implem
 
         public void bindUser(User user, int position) {
             mFullname.setText(user.getFullName());
-            mUsername.setText(user.getUsername());
+            mUUID.setText(user.getUUID());
             if (mActiveMap.get(user.getUUID())) {
                 itemView.setBackgroundColor(ContextCompat.getColor(getContext(), R.color.colorGroupActive));
             } else {

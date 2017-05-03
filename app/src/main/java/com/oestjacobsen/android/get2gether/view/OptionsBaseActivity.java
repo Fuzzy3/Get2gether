@@ -2,6 +2,7 @@ package com.oestjacobsen.android.get2gether.view;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -15,7 +16,7 @@ import com.oestjacobsen.android.get2gether.view.options.AboutActivity;
 import com.oestjacobsen.android.get2gether.view.options.HelpActivity;
 
 
-public abstract class UserBaseActivity extends BaseActivity {
+public abstract class OptionsBaseActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

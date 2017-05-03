@@ -17,21 +17,17 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.oestjacobsen.android.get2gether.R;
-import com.oestjacobsen.android.get2gether.model.Group;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
-import com.oestjacobsen.android.get2gether.view.BaseActivity;
-import com.oestjacobsen.android.get2gether.view.UserBaseActivity;
-import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
+import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class AddGroupMemberActivity extends UserBaseActivity implements AddGroupMemberMVP.AddGroupMemberView{
+public class AddGroupMemberActivity extends OptionsBaseActivity implements AddGroupMemberMVP.AddGroupMemberView{
 
     @BindView(R.id.new_group_search_friend_edittext)
     EditText mSearchInput;
@@ -128,7 +124,7 @@ public class AddGroupMemberActivity extends UserBaseActivity implements AddGroup
 
         @BindView(R.id.friends_row_fullname)
         TextView mFullname;
-        @BindView(R.id.friends_row_username)
+        @BindView(R.id.friends_row_uuid)
         TextView mUsername;
 
         public UserHolder(View itemView) {

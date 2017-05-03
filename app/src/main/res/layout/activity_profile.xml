@@ -47,33 +47,16 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/profile_username"
+            android:text="@string/profile_unique_id"
             android:textSize="12sp"
             android:paddingTop="@dimen/text_separation"/>
 
         <TextView
-            android:id="@+id/profile_username"
+            android:id="@+id/profile_uuid"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="@string/clean"
             android:textSize="16sp"/>
-
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/profile_password"
-            android:textSize="12sp"
-            android:paddingTop="@dimen/text_separation"/>
-
-        <TextView
-            android:id="@+id/profile_password"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/clean"
-            android:inputType="textPassword"
-            android:textSize="16sp"/>
-
 
     </LinearLayout>
 

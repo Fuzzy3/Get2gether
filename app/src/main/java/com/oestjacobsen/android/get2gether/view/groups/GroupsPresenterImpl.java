@@ -20,7 +20,6 @@ public class GroupsPresenterImpl implements GroupsMVP.GroupsPresenter {
     private UserManager mUserManager;
     private User mCurrentUser;
 
-
     public GroupsPresenterImpl(BaseDatabase database, GroupsMVP.GroupsView view) {
         mDatabase = database;
         mView = view;

@@ -1,17 +1,22 @@
 package com.oestjacobsen.android.get2gether.model;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
+@IgnoreExtraProperties
 public class SimpleUser {
 
     private String UUID;
     private String FullName;
+    private String IndoorLocation;
 
     public SimpleUser() {
 
     }
 
-    public SimpleUser(String UUID, String fullName) {
+    public SimpleUser(String UUID, String fullName, String indoorLocation) {
         this.UUID = UUID;
         FullName = fullName;
+        IndoorLocation = indoorLocation;
     }
 
     public String getUUID() {
@@ -28,5 +33,13 @@ public class SimpleUser {
 
     public void setFullName(String fullName) {
         FullName = fullName;
+    }
+
+    public String getIndoorLocation() {
+        return IndoorLocation;
+    }
+
+    public void setIndoorLocation(String indoorLocation) {
+        IndoorLocation = indoorLocation;
     }
 }

@@ -16,7 +16,8 @@
         android:id="@+id/beacon_item_user_location"
         android:textSize="@dimen/large_text"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="@dimen/small_text"/>
 
 
 </LinearLayout>
