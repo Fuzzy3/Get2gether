@@ -31,7 +31,6 @@ public class LocationService extends Service {
     private static final String TAG = "LocationService";
     public LocationManager mLocationManager;
     public MyLocationListener mLocationListener;
-    public static final String BROADCAST_ACTION = "LOCATIONUPDATE";
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     public Location mPreviousBestLocation;
     //private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
@@ -39,6 +38,7 @@ public class LocationService extends Service {
     BaseDatabase mDatabase;
     UserManager mUserManager;
     User mCurrentUser;
+    private String mUserUUID;
 
     Intent mIntent;
     //int counter = 0;
@@ -46,25 +46,22 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        Realm.init(this);
         mDatabase = RealmDatabase.get(this);
-        mIntent = new Intent();
-        mIntent.setAction(BROADCAST_ACTION);
-        Log.i(TAG, "LOCATION TEST ONCREATE");
-        mLocationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        mLocationManager = (LocationManager)
+                getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new MyLocationListener();
-
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mUserManager = UserManagerImpl.get();
-        mCurrentUser = mUserManager.getUser();
+        mUserUUID = intent.getStringExtra("USERUUID");
         checkPermission();
-        mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 4000, 0, mLocationListener);
-        mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 4000, 0, mLocationListener);
+        mLocationManager.requestLocationUpdates(
+                LocationManager.NETWORK_PROVIDER, 4000, 0, mLocationListener);
+        mLocationManager.requestLocationUpdates
+                (LocationManager.GPS_PROVIDER, 4000, 0, mLocationListener);
 
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     protected boolean isBetterLocation(Location location) {
@@ -126,14 +123,39 @@ public class LocationService extends Service {
         mLocationManager.removeUpdates(mLocationListener);
     }
 
+    private void checkPermission() {
+        if (Build.VERSION.SDK_INT >= 23) {
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Get2Gether needs your permission to get locationUpdates", Toast.LENGTH_SHORT).show();
+            }
+
+            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(this, "Get2Gether needs your permission to get locationUpdates", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+    }
+
+
     public class MyLocationListener implements LocationListener {
 
         @Override
         public void onLocationChanged(Location location) {
             if(isBetterLocation(location)) {
-                Log.i(mCurrentUser.getFullName() , "Lat: " + location.getLatitude() + " - Lng: " + location.getLongitude());
-                mDatabase.updateUserPosition(mCurrentUser, location);
-                sendBroadcast(mIntent);
+                Realm realm = null;
+                try {
+                    realm = Realm.getDefaultInstance();
+                    Log.i(TAG, "Lat: " + location.getLatitude() + " - Lng: " + location.getLongitude());
+                    mDatabase.updateUserPosition(mUserUUID, location, realm);
+                } finally {
+                    if (realm != null) {
+                        realm.close();
+                    }
+                }
+
             }
         }
 
@@ -151,23 +173,5 @@ public class LocationService extends Service {
         public void onProviderDisabled(String s) {
 
         }
-    }
-
-
-
-    private void checkPermission() {
-        if (Build.VERSION.SDK_INT >= 23) {
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Get2Gether needs your permission to get locationUpdates", Toast.LENGTH_SHORT).show();
-            }
-
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(this, "Get2Gether needs your permission to get locationUpdates", Toast.LENGTH_SHORT).show();
-            }
-        }
-
     }
 }

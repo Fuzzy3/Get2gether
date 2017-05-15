@@ -19,6 +19,8 @@ import com.oestjacobsen.android.get2gether.model.User;
 
 import java.util.List;
 
+import io.realm.Realm;
+
 
 public class BeaconCollecterServiceEstimoteLib extends Service {
 
@@ -26,25 +28,27 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
     private BaseDatabase mDatabase;
     private UserManager mUserManager;
     private User mCurrentUser;
-    private Handler mHandler;
+    private String mUserUUID;
+    //private Handler mHandler;
     private BeaconManager mBeaconmanager;
     private Region mRegion;
 
     @Override
     public void onCreate() {
         super.onCreate();
-        mDatabase = DatabasePicker.getChosenDatabase(this);
-        mHandler = new Handler();
-        Log.i(TAG, "Beacon onCreate");
+
+        //mHandler = new Handler();
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mUserManager = UserManagerImpl.get();
-        mCurrentUser = mUserManager.getUser();
+        if(intent.getStringExtra("USERUUID") != null) {
+            mUserUUID = intent.getStringExtra("USERUUID");
+        }
+        mDatabase = DatabasePicker.getChosenDatabase(this);
         setupBeaconCollection();
         Log.i(TAG, "Beacon collecting started");
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     private void setupBeaconCollection() {
@@ -52,28 +56,25 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
         mBeaconmanager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
+                Log.i(TAG, "NONE Beacons found");
                 if (!list.isEmpty()) {
-                    Beacon nearestBeacon = list.get(0);
-                    final Beacon fClosestBeacon = nearestBeacon;
+                    final Beacon fClosestBeacon = list.get(0);
+                    Realm realm = null;
                     try {
-                        runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                mDatabase.updateUserIndoorPosition(mCurrentUser, beaconLocationToITUArea(fClosestBeacon));
-                            }
-                        });
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                    }
-                    // TODO: update the UI here
-                    for(Beacon beacon : list) {
-                        Log.i("Main", "major: " + beacon.getMajor() + " - minor: " + beacon.getMinor());
+                        realm = Realm.getDefaultInstance();
+                        Log.i(TAG, "Beacons found");
+                        mDatabase.updateUserIndoorPosition(mUserUUID,
+                                beaconLocationToITUArea(fClosestBeacon), realm);
+                    } finally {
+                        if (realm != null) {
+                            realm.close();
+                        }
                     }
                 }
             }
         });
-        mRegion = new Region("no specific region", null, null, null);
 
+        mRegion = new Region("no specific region", null, null, null);
         mBeaconmanager.connect(new BeaconManager.ServiceReadyCallback() {
             @Override
             public void onServiceReady() {
@@ -82,9 +83,9 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
         });
     }
 
-    private void runOnUiThread(Runnable runnable) {
+    /*private void runOnUiThread(Runnable runnable) {
         mHandler.post(runnable);
-    }
+    }*/
 
     private String beaconLocationToITUArea(Beacon beacon) {
         String floor = beacon.getMajor() + "";

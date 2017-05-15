@@ -14,8 +14,6 @@ public interface SelectedGroupMapMVP {
 
         void getActiveGroups();
 
-        void setLatLng(Location location);
-
         void getCurrentUser();
     }
 

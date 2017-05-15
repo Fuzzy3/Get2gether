@@ -97,6 +97,5 @@ public class SelectedGroupInfoFragment extends SelectedGroupParentView implement
     @Override
     public void onResume() {
         super.onResume();
-        setupView();
     }
 }

@@ -46,7 +46,7 @@ public class LoginPresenterImpl implements LoginMVP.LoginPresenter, RealmDatabas
     public void authenticateFacebook(AccessToken accessToken, Bundle facebookData) {
         mFacebookData = facebookData;
         mAuthRealm.setLoginCallback(this);
-        mAuthRealm.authenticateUser();
+        mAuthRealm.authenticateUser(mLoginContext);
 
     }
 

@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.realm.Realm;
+
 
 public class FirebaseDB implements BaseDatabase {
 
@@ -49,9 +51,18 @@ public class FirebaseDB implements BaseDatabase {
     public User getUserFromUUID(String UUID) {
         DatabaseReference usersRef = mFirebaseDatabase.child("users");
 
+        usersRef.child("0003").setValue(new SimpleUser("0003", "Søren Oest Jacobsen", "5A12"));
+        usersRef.child("0004").setValue(new SimpleUser("0004", "Hans Hansen", "3A54"));
 
-        usersRef.child(UUID + "01").setValue(new SimpleUser(UUID + "01", "Søren Oest Jacobsen", "5A12"));
-        usersRef.child(UUID + "02").setValue(new SimpleUser(UUID + "02", "Hans Hansen", "3A54"));
+        /*
+        Map<String, User> users = new HashMap<String, User>();
+        users.put("alanisawesome", new User("June 23, 1912", "Alan Turing"));
+        users.put("gracehop", new User("December 9, 1906", "Grace Hopper"));
+
+        usersRef.setValue(users);
+*/
+
+
 
         /*
         Map<String, SimpleUser> users = new HashMap<>();
@@ -183,12 +194,13 @@ public class FirebaseDB implements BaseDatabase {
     }
 
     @Override
-    public void updateUserPosition(User user, Location location) {
+    public void updateUserPosition(String userUUID, Location location, Realm realm) {
 
     }
 
     @Override
-    public void updateUserIndoorPosition(User mCurrentUser, String s) {
+    public void updateUserIndoorPosition(String userUUID, String s, Realm realm) {
 
     }
+
 }

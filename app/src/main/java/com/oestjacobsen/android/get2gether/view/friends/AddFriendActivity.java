@@ -77,8 +77,6 @@ public class AddFriendActivity extends OptionsBaseActivity implements AddFriendM
         return i;
     }
 
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {

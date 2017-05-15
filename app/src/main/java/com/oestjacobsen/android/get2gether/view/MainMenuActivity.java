@@ -1,6 +1,8 @@
 package com.oestjacobsen.android.get2gether.view;
 
 import android.Manifest;
+import android.app.ActivityManager;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +18,8 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
+import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceAltLib;
 import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceEstimoteLib;
 import com.oestjacobsen.android.get2gether.services.LocationService;
@@ -53,13 +57,38 @@ public class MainMenuActivity extends OptionsBaseActivity {
 
     private void setupView() {
         ButterKnife.bind(this);
-        Intent i = new Intent(this, LocationService.class);
-        startService(i);
-        Intent j = new Intent(this, BeaconCollecterServiceEstimoteLib.class);
-        startService(j);
+
+        UserManagerImpl mUserManager = UserManagerImpl.get();
+        User mCurrentUser = mUserManager.getUser();
+        if(mCurrentUser != null) {
+            String mUserUUID = mCurrentUser.getUUID();
+
+            /*if(!isMyServiceRunning(LocationService.class)) {
+                Intent i = new Intent(this, LocationService.class);
+                i.putExtra("USERUUID", mUserUUID);
+                startService(i);
+            }
+
+            if(!isMyServiceRunning(BeaconCollecterServiceEstimoteLib.class)) {
+                Intent j = new Intent(this, BeaconCollecterServiceEstimoteLib.class);
+                j.putExtra("USERUUID", mUserUUID);
+                startService(j);
+            }*/
+
+        }
         setToolbar(mToolbar, "");
         fitToScreen();
 
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Intent newIntent(Context packageContext) {
@@ -81,7 +110,10 @@ public class MainMenuActivity extends OptionsBaseActivity {
             }
             case BLUETOOTHADMIN_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                    if (!mBluetoothAdapter.isEnabled()) {
+                        mBluetoothAdapter.enable();
+                    }
                 } else {
                     //Permission denied do something
                 }
@@ -127,6 +159,11 @@ public class MainMenuActivity extends OptionsBaseActivity {
                         new String[]{Manifest.permission.BLUETOOTH_ADMIN},
                         BLUETOOTHADMIN_PERMISSION_REQUEST_CODE);
 
+            } else {
+                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (!mBluetoothAdapter.isEnabled()) {
+                    mBluetoothAdapter.enable();
+                }
             }
 
 
@@ -158,20 +195,20 @@ public class MainMenuActivity extends OptionsBaseActivity {
     //Button interactions
     @OnClick(R.id.profile_button)
     public void onProfileClick() {
-        mProfileButton.startAnimation(imageButtonClickAnim);
+        //mProfileButton.startAnimation(imageButtonClickAnim);
         startActivity(ProfileActivity.newIntent(this));
 
     }
     @OnClick(R.id.friends_button)
     public void onFriendsClicked() {
-        mFriendsButton.startAnimation(imageButtonClickAnim);
+        //mFriendsButton.startAnimation(imageButtonClickAnim);
         startActivity(FriendsActivity.newIntent(this));
         Log.i(TAG, "Friends Pressed");
     }
 
     @OnClick(R.id.my_groups_button)
     public void onMyGroupsClicked() {
-        mMyGroupsButton.startAnimation(imageButtonClickAnim);
+        //mMyGroupsButton.startAnimation(imageButtonClickAnim);
         startActivity(GroupsActivity.newIntent(this));
         Log.i(TAG, "My Groups Pressed");
 

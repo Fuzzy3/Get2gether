@@ -30,11 +30,6 @@ public class SelectedGroupMapPresenterImpl extends SelectedGroupParentPresenter 
     }
 
     @Override
-    public void setLatLng(Location location) {
-        mDatabase.updateUserPosition(mCurrentUser, location);
-    }
-
-    @Override
     public void getActiveGroups() {
         HashMap<String, Boolean> map = new HashMap<>();
 

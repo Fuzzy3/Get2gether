@@ -1,6 +1,7 @@
 package com.oestjacobsen.android.get2gether.model;
 
 
+import android.content.Context;
 import android.util.Log;
 
 import io.realm.ObjectServerError;
@@ -20,15 +21,15 @@ public class AuthRealm implements SyncUser.Callback {
     private static final String HOST_LOCAL = "SOeXPS";
     private static final String HOST= HOST_ITU;
     private static final String DBNAME = "get2gether";
-    private static final String TESTNUMBER = "2";
+    private static final String TESTNUMBER = "5";
 
     //Server URL
     private static final String AUTH_URL = "http://" + HOST + ":9080/auth";
     public static final String REALM_URL="realm://" + HOST + ":9080/~/" + DBNAME + TESTNUMBER;
 
+
     private static final String TAG = "AuthRealm";
     private BaseDatabase.loginCallback mLoginCallback;
-
 
     public void setLoginCallback(BaseDatabase.loginCallback callback) {
         mLoginCallback = callback;
@@ -42,7 +43,8 @@ public class AuthRealm implements SyncUser.Callback {
         mLoginCallback.loginSucceded();
     }
 
-    public void authenticateUser() {
+    public void authenticateUser(Context context) {
+        Realm.init(context);
         if(SyncUser.currentUser() == null) {
             SyncCredentials myCredentials = SyncCredentials.usernamePassword(USERNAME, PASSWORD, false);
             SyncUser.loginAsync(myCredentials, AUTH_URL, this);
