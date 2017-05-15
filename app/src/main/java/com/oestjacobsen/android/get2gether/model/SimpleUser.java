@@ -2,6 +2,9 @@ package com.oestjacobsen.android.get2gether.model;
 
 import com.google.firebase.database.IgnoreExtraProperties;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @IgnoreExtraProperties
 public class SimpleUser {
 
@@ -42,4 +45,5 @@ public class SimpleUser {
     public void setIndoorLocation(String indoorLocation) {
         IndoorLocation = indoorLocation;
     }
+
 }

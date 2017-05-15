@@ -27,22 +27,47 @@ public class FriendsPresenterImpl implements FriendsMVP.FriendsPresenter {
 
 
     public void getFriendsAndPending() {
+        updateUserInfo();
         List<User> friendsAndPending = new ArrayList<>();
         for(User friend : mCurrentUser.getFriends()) {
             friendsAndPending.add(friend);
         }
         for(User pending : mCurrentUser.getPendingInvites()) {
-            friendsAndPending.add(pending);
+            if(mCurrentUser.getFriends().isEmpty()) {
+                friendsAndPending.add(pending);
+            } else {
+                boolean duplicate = false;
+                for(User friend : mCurrentUser.getFriends()) {
+                    if(friend.getUUID().equals(pending.getUUID())) {
+                        duplicate = true;
+                        break;
+                    }
+                }
+                if(!duplicate){
+                    friendsAndPending.add(pending);
+                }
+            }
+
         }
 
         mView.showFriendsAndPending(friendsAndPending, mCurrentUser.getFriends().size());
     }
 
+    private void updateUserInfo() {
+        User user = mDatabase.getUserFromUUID(mCurrentUser.getUUID());
+        if(user != null) {
+            mSessionUser.setCurrentUser(user);
+        }
+    }
+
     @Override
     public void addPendingFriend(User friend) {
-        if (!mCurrentUser.getPendingInvites().contains(friend)) {
-            return;
+        for(User pending : mCurrentUser.getPendingInvites()) {
+            if(!pending.getUUID().equals(friend.getUUID())) {
+                return;
+            }
         }
+
         mDatabase.addPendingFriend(mCurrentUser, friend);
         mView.showToast(friend.getFullName() + " added to your friend list");
         getFriendsAndPending();

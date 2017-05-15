@@ -1,6 +1,7 @@
 package com.oestjacobsen.android.get2gether.view;
 
 import android.Manifest;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -16,6 +17,8 @@ import android.view.animation.AlphaAnimation;
 import android.widget.ImageButton;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.UserManagerImpl;
+import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceAltLib;
 import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceEstimoteLib;
 import com.oestjacobsen.android.get2gether.services.LocationService;
@@ -53,10 +56,22 @@ public class MainMenuActivity extends OptionsBaseActivity {
 
     private void setupView() {
         ButterKnife.bind(this);
-        Intent i = new Intent(this, LocationService.class);
-        startService(i);
-        Intent j = new Intent(this, BeaconCollecterServiceEstimoteLib.class);
-        startService(j);
+
+        UserManagerImpl mUserManager = UserManagerImpl.get();
+        User mCurrentUser = mUserManager.getUser();
+        if(mCurrentUser != null) {
+            String mUserUUID = mCurrentUser.getUUID();
+
+            Intent i = new Intent(this, LocationService.class);
+            i.putExtra("USERUUID", mUserUUID);
+            startService(i);
+
+            Intent j = new Intent(this, BeaconCollecterServiceEstimoteLib.class);
+            j.putExtra("USERUUID", mUserUUID);
+            startService(j);
+        }
+
+
         setToolbar(mToolbar, "");
         fitToScreen();
 
@@ -81,7 +96,10 @@ public class MainMenuActivity extends OptionsBaseActivity {
             }
             case BLUETOOTHADMIN_PERMISSION_REQUEST_CODE: {
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-
+                    BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                    if (!mBluetoothAdapter.isEnabled()) {
+                        mBluetoothAdapter.enable();
+                    }
                 } else {
                     //Permission denied do something
                 }
@@ -127,6 +145,11 @@ public class MainMenuActivity extends OptionsBaseActivity {
                         new String[]{Manifest.permission.BLUETOOTH_ADMIN},
                         BLUETOOTHADMIN_PERMISSION_REQUEST_CODE);
 
+            } else {
+                BluetoothAdapter mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+                if (!mBluetoothAdapter.isEnabled()) {
+                    mBluetoothAdapter.enable();
+                }
             }
 
 

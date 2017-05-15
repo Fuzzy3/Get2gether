@@ -43,8 +43,8 @@ public interface BaseDatabase {
 
     Group getGroupFromUUID(String groupUIUD);
 
-    void updateUserPosition(User user, Location location);
+    void updateUserPosition(String userUUID, Location location);
 
-    void updateUserIndoorPosition(User mCurrentUser, String s);
+    void updateUserIndoorPosition(String userUUID, String s);
 
 }

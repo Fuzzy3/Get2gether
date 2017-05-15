@@ -15,8 +15,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.Manifest;
 
-import com.google.android.gms.common.api.GoogleApiClient;
-import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -54,6 +52,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     private SelectedGroupMapMVP.SelectedGroupMapPresenter mPresenter;
     private static final String ARGS_GROUP_UUID = "ARGSGROUPUUID";
     private BroadcastReceiver mLocationReciever;
+    private Timer mTimer;
 
 
     @Override
@@ -131,8 +130,10 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     }*/
 
     private void setTimer() {
-        Timer timer = new Timer();
-        timer.schedule(new TimerTask() {
+        if(mTimer == null) {
+            mTimer = new Timer();
+        }
+        mTimer.schedule(new TimerTask() {
             @Override
             public void run() {
                 try {
@@ -140,7 +141,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
                         getActivity().runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                updateUI();
+                                mPresenter.getActiveGroups();
                             }
                         });
                     }
@@ -249,6 +250,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     public void onResume() {
         super.onResume();
         mMapView.onResume();
+        setTimer();
         //getActivity().registerReceiver(mLocationReciever, new IntentFilter(LocationService.BROADCAST_ACTION));
 
     }
@@ -257,6 +259,9 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     public void onPause() {
         super.onPause();
         mMapView.onPause();
+        if(mTimer != null) {
+            mTimer.cancel();
+        }
         //getActivity().unregisterReceiver(mLocationReciever);
     }
 

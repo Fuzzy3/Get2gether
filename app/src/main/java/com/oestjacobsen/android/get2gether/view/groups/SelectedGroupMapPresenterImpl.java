@@ -31,7 +31,7 @@ public class SelectedGroupMapPresenterImpl extends SelectedGroupParentPresenter 
 
     @Override
     public void setLatLng(Location location) {
-        mDatabase.updateUserPosition(mCurrentUser, location);
+        mDatabase.updateUserPosition(mCurrentUser.getUUID(), location);
     }
 
     @Override

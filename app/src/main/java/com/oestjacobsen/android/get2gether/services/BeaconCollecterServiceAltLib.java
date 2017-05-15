@@ -8,6 +8,7 @@ import android.util.Log;
 import android.app.Service;
 
 
+import com.google.android.gms.nearby.messages.IBeaconId;
 import com.oestjacobsen.android.get2gether.DatabasePicker;
 import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.UserManagerImpl;
@@ -33,8 +34,9 @@ public class BeaconCollecterServiceAltLib extends Service implements BeaconConsu
     private static final String TAG = "BeaconCollecterAlt";
     public static final String BROADCAST_INDOOR_ACTION = "BROADCASTINDOORACTION";
     private BaseDatabase mDatabase;
-    UserManager mUserManager;
-    User mCurrentUser;
+    private UserManager mUserManager;
+    private User mCurrentUser;
+    private String mUserUUID;
     //private Intent mIntent;
     //private String fUUID;
     private Handler mHandler;
@@ -46,6 +48,11 @@ public class BeaconCollecterServiceAltLib extends Service implements BeaconConsu
         Realm.init(this);
         mDatabase = DatabasePicker.getChosenDatabase(this);
         mHandler = new Handler();
+        //mUserManager = UserManagerImpl.get();
+        //mCurrentUser = mUserManager.getUser();
+        //if(mCurrentUser != null) {
+        //    mUserUUID = mCurrentUser.getUUID();
+        //}
 
         //mIntent = new Intent();
         //mIntent.setAction(BROADCAST_INDOOR_ACTION);
@@ -54,7 +61,10 @@ public class BeaconCollecterServiceAltLib extends Service implements BeaconConsu
     private void setupBeaconCollection() {
         mBeaconManager = BeaconManager.getInstanceForApplication(this);
         mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=0215,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
-        mBeaconManager.setBackgroundScanPeriod(5000l);
+        //mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:0-3=4c000215,i:4-19,i:20-21,i:22-23,p:24-24"));
+        //mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout(BeaconParser.URI_BEACON_LAYOUT));
+        //mBeaconManager.getBeaconParsers().add(new BeaconParser().setBeaconLayout("m:2-3=beac,i:4-19,i:20-21,i:22-23,p:24-24,d:25-25"));
+        //mBeaconManager.setBackgroundScanPeriod(5000l);
 
        /*try {
             mBeaconManager.updateScanPeriods();
@@ -71,25 +81,23 @@ public class BeaconCollecterServiceAltLib extends Service implements BeaconConsu
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        mUserManager = UserManagerImpl.get();
-        mCurrentUser = mUserManager.getUser();
-        //fUUID = mCurrentUser.getUUID();
+        if(intent.getStringExtra("USERUUID") != null) {
+            mUserUUID = intent.getStringExtra("USERUUID");
+        }
         setupBeaconCollection();
-
         Log.i(TAG, "Beacon service started");
-
-
-        return START_STICKY;
+        return START_REDELIVER_INTENT;
     }
 
     @Override
     public void onBeaconServiceConnect() {
-        Log.i(TAG, "Beacon connected to service ***************************** ");
-
         mBeaconManager.addRangeNotifier(new RangeNotifier() {
             @Override
             public void didRangeBeaconsInRegion(Collection<Beacon> collection, Region region) {
-                Log.i(TAG, "FOUND BEACONS");
+                Log.i("AltBeacon", "List of found beacons:");
+                for(Beacon beacon : collection) {
+                    Log.i("AltBeacon", "major: " + beacon.getId2() + " - minor: " + beacon.getId3());
+                }
                 findNearestBeacon(collection);
 
             }
@@ -98,45 +106,14 @@ public class BeaconCollecterServiceAltLib extends Service implements BeaconConsu
         try {
             mBeaconManager.startRangingBeaconsInRegion(new Region("myRangingUniqueId", null, null, null));
         } catch (RemoteException e) {    }
-
-        try {
-            mBeaconManager.startMonitoringBeaconsInRegion(new Region("myMonitoringUniqueId", null, null, null));
-        } catch (RemoteException e) {
-            //NOTING RIGHT NOW
-        }
-
-
-        mBeaconManager.addMonitorNotifier(new MonitorNotifier() {
-
-            @Override
-            public void didEnterRegion(Region region) {
-                Log.i(TAG, "I just saw an beacon for the first time!");
-
-            }
-
-            @Override
-            public void didExitRegion(Region region) {
-                Log.i(TAG, "I no longer see a beacon");
-
-            }
-
-            @Override
-            public void didDetermineStateForRegion(int i, Region region) {
-                Log.i(TAG, "I have just switched from seeing/not seeing beacons: " + i);
-
-            }
-        });
     }
 
     private void findNearestBeacon(Collection<Beacon> beacons) {
         Beacon closestBeacon = null;
-        Log.i(TAG, "Beacons are in region beaconsCollectionsize: " + beacons.size());
-
         for (Beacon beacon : beacons) {
             if (closestBeacon == null) {
                 closestBeacon = beacon;
-            }
-            if (beacon.getDistance() < closestBeacon.getDistance()) {
+            } else if (beacon.getDistance() < closestBeacon.getDistance()) {
                 closestBeacon = beacon;
             }
         }
@@ -146,7 +123,9 @@ public class BeaconCollecterServiceAltLib extends Service implements BeaconConsu
                 runOnUiThread(new Runnable() {
                     @Override
                     public void run() {
-                        mDatabase.updateUserIndoorPosition(mCurrentUser, beaconLocationToITUArea(fClosestBeacon));
+                        //if(mCurrentUser != null) {
+                        mDatabase.updateUserIndoorPosition(mUserUUID, beaconLocationToITUArea(fClosestBeacon));
+                        //}
                     }
                 });
             } catch (Exception e) {

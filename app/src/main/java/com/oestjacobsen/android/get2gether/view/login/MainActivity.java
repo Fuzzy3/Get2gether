@@ -89,8 +89,6 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         mCallbackManager.onActivityResult(requestCode, resultCode, data);
-
-
     }
 
     private void  setupFacebookAuth() {
@@ -136,19 +134,13 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
 
     }
 
-    void loginComplete() {
-        Log.i(TAG, "Login complete, time to collect data");
-        //mProgressDialog = new ProgressDialog(MainActivity.this);
-        //mProgressDialog.setMessage("WAITING FOR FACEBOOK :D");
-        //mProgressDialog.show();
-        Log.i("accessToken", mAccessToken.getToken());
-
-        final GraphRequest request = GraphRequest.newMeRequest(mAccessToken, new GraphRequest.GraphJSONObjectCallback() {
+    private void loginComplete() {
+        final GraphRequest request = GraphRequest.newMeRequest(mAccessToken,
+                        new GraphRequest.GraphJSONObjectCallback() {
             @Override
             public void onCompleted(JSONObject object, GraphResponse response) {
-                Log.i("LoginActivity", response.toString());
-                // Get facebook data from login
                 Bundle facebookData = getFacebookData(object);
+                //Try again if data wasn't obtained the first time
                 while(facebookData.getString("idFacebook") == null) {
                     facebookData = getFacebookData(object);
                 }
@@ -156,7 +148,8 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
             }
         });
         Bundle parameters = new Bundle();
-        parameters.putString("fields", "id, first_name, last_name, email,gender, birthday, location");
+        parameters.putString("fields", "id, first_name," +
+                "last_name, email,gender, birthday, location");
         request.setParameters(parameters);
         request.executeAsync();
     }
@@ -180,17 +173,6 @@ public class MainActivity extends BaseActivity implements LoginMVP.LoginView {
                 bundle.putString("birthday", object.getString("birthday"));
             if (object.has("location"))
                 bundle.putString("location", object.getJSONObject("location").getString("name"));
-
-            //Collect facebook profile image - Not used in app
-            /*try {
-                URL profile_pic = new URL("https://graph.facebook.com/" + id + "/picture?width=200&height=150");
-                Log.i("profile_pic", profile_pic + "");
-                bundle.putString("profile_pic", profile_pic.toString());
-
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                return null;
-            }*/
 
             return bundle;
         } catch (JSONException e) {

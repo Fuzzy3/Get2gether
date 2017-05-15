@@ -29,12 +29,9 @@ import butterknife.OnClick;
 
 public class AddGroupMemberActivity extends OptionsBaseActivity implements AddGroupMemberMVP.AddGroupMemberView{
 
-    @BindView(R.id.new_group_search_friend_edittext)
-    EditText mSearchInput;
-    @BindView(R.id.new_group_selectfriend_recyclerview)
-    RecyclerView mRecyclerView;
-    @BindView(R.id.add_group_member_toolbar)
-    Toolbar mToolbar;
+    @BindView(R.id.new_group_search_friend_edittext) EditText mSearchInput;
+    @BindView(R.id.new_group_selectfriend_recyclerview) RecyclerView mRecyclerView;
+    @BindView(R.id.add_group_member_toolbar) Toolbar mToolbar;
 
     private static final String GROUP_UUID_ARGS = "CURRENT_GROUP_UUID";
     private AddGroupMemberMVP.AddGroupMemberPresenter mPresenter;

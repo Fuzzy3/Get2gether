@@ -3,6 +3,7 @@ package com.oestjacobsen.android.get2gether.model;
 
 import android.content.Context;
 import android.location.Location;
+import android.util.Log;
 
 import java.util.List;
 
@@ -30,6 +31,7 @@ public class RealmDatabase implements BaseDatabase {
 
     public static RealmDatabase get(Context context) {
         if (mRealmDatabase == null) {
+            Realm.init(context);
             mRealm = Realm.getDefaultInstance();
             mRealmDatabase = new RealmDatabase();
         }
@@ -60,10 +62,8 @@ public class RealmDatabase implements BaseDatabase {
         mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<User> rows = mRealm.where(User.class).equalTo("mStringUUID", fUser.getUUID()).findAll();
-                if (rows.size() > 0) {
-                    rows.get(0).deleteFromRealm();
-                }
+                User user = mRealm.where(User.class).equalTo("mUUID", fUser.getUUID()).findFirst();
+                user.deleteFromRealm();
             }
         });
     }
@@ -81,11 +81,32 @@ public class RealmDatabase implements BaseDatabase {
         });
     }
 
+
+    /*
+    @Override
+    public void addFriend(User user, User friend) {
+        OrderedRealmCollection<User> findUser = mRealm.where(User.class).equalTo("mUUID", user.getUUID()).findAll();
+        final User fUser = findUser.first();
+
+        OrderedRealmCollection<User> findFriend = mRealm.where(User.class).equalTo("mUUID", friend.getUUID()).findAll();
+        final User fFriend = findFriend.first();
+
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                fUser.addFriend(fFriend);
+                mRealm.copyToRealmOrUpdate(fUser);
+            }
+        });
+    }*/
+
+
     @Override
     public List<User> getUsersMatchingString(String input) {
         final String fInput = input;
-        OrderedRealmCollection<User> results = mRealm.where(User.class).beginsWith("mFullName", fInput).findAll();
-        return mRealm.copyFromRealm(results);
+        OrderedRealmCollection<User> results =
+                mRealm.where(User.class).beginsWith("mFullName", fInput).findAll();
+        return results;
     }
 
 
@@ -135,17 +156,18 @@ public class RealmDatabase implements BaseDatabase {
     }
 
     @Override
-    public void updateUserIndoorPosition(User user, final String indoorLocation) {
-        final User fUser = user;
+    public void updateUserIndoorPosition(String uuid, final String indoorLocation) {
+        final User fUser = mRealm.where(User.class).equalTo("mUUID", uuid).findFirst();
 
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                fUser.setIndoorLocation(indoorLocation);
-                mRealm.copyToRealmOrUpdate(fUser);
-            }
-        });
-
+        if((fUser != null) && (indoorLocation != null)) {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    fUser.setIndoorLocation(indoorLocation);
+                    mRealm.copyToRealmOrUpdate(fUser);
+                }
+            });
+        }
     }
 
     //------------GROUP FUNCTIONS--------------
@@ -163,8 +185,6 @@ public class RealmDatabase implements BaseDatabase {
                 mRealm.copyToRealmOrUpdate(fGroup);
             }
         });
-
-
     }
 
     public void removeGroup(Group group) {
@@ -172,9 +192,10 @@ public class RealmDatabase implements BaseDatabase {
         mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
-                RealmResults<Group> rows = mRealm.where(Group.class).equalTo("mStringUUID", fGroup.getUUID()).findAll();
-                if(rows.size() > 0) {
-                    rows.get(0).deleteFromRealm();
+                Group removeGroup = mRealm.where(Group.class)
+                        .equalTo("mStringUUID", fGroup.getUUID()).findFirst();
+                if(removeGroup != null) {
+                    removeGroup.deleteFromRealm();
                 }
             }
         });
@@ -215,8 +236,9 @@ public class RealmDatabase implements BaseDatabase {
 
     @Override
     public void addPendingInvite(User user, User friend) {
-        final User fUser = user;
-        final User fFriend = friend;
+        final User fUser = mRealm.where(User.class).equalTo("mUUID", user.getUUID()).findFirst();
+        final User fFriend = mRealm.where(User.class).equalTo("mUUID", friend.getUUID()).findFirst();
+
         mRealm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
@@ -225,6 +247,24 @@ public class RealmDatabase implements BaseDatabase {
             }
         });
     }
+
+    /*@Override
+    public void addPendingInvite(User user, User friend) {
+        Realm realm = Realm.getDefaultInstance();
+        OrderedRealmCollection<User> findUser = mRealm.where(User.class).equalTo("mUUID", user.getUUID()).findAll();
+        final User fUser = findUser.first();
+
+        OrderedRealmCollection<User> findFriend = mRealm.where(User.class).equalTo("mUUID", friend.getUUID()).findAll();
+        final User fFriend = findFriend.first();
+
+        mRealm.executeTransaction(new Realm.Transaction() {
+            @Override
+            public void execute(Realm realm) {
+                fFriend.addPendingInvite(fUser);
+                mRealm.copyToRealmOrUpdate(fFriend);
+            }
+        });
+    }*/
 
     @Override
     public void addPendingFriend(User user, User friend) {
@@ -236,8 +276,9 @@ public class RealmDatabase implements BaseDatabase {
             public void execute(Realm realm) {
                 fUser.removePendingFriend(fFriend);
                 fUser.addFriend(fFriend);
-                mRealm.copyToRealmOrUpdate(fUser);
+                fFriend.removePendingFriend(fUser);
                 fFriend.addFriend(fUser);
+                mRealm.copyToRealmOrUpdate(fUser);
                 mRealm.copyToRealmOrUpdate(fFriend);
 
             }
@@ -255,7 +296,6 @@ public class RealmDatabase implements BaseDatabase {
                 mRealm.copyToRealmOrUpdate(fUser);
             }
         });
-
     }
 
     @Override
@@ -295,18 +335,20 @@ public class RealmDatabase implements BaseDatabase {
     }
 
     @Override
-    public void updateUserPosition(User user, Location location) {
-        final User fUser = user;
+    public void updateUserPosition(String uuid, Location location) {
+        final User fUser = mRealm.where(User.class).equalTo("mUUID", uuid).findFirst();
         final Location fLocation = location;
-        mRealm.executeTransaction(new Realm.Transaction() {
-            @Override
-            public void execute(Realm realm) {
-                fUser.setLatitude(fLocation.getLatitude());
-                fUser.setLongitude(fLocation.getLongitude());
-                mRealm.copyToRealmOrUpdate(fUser);
-            }
-        });
 
+        if(fUser != null) {
+            mRealm.executeTransaction(new Realm.Transaction() {
+                @Override
+                public void execute(Realm realm) {
+                    fUser.setLatitude(fLocation.getLatitude());
+                    fUser.setLongitude(fLocation.getLongitude());
+                    mRealm.copyToRealmOrUpdate(fUser);
+                }
+            });
+        }
     }
 
     //TESTDATA

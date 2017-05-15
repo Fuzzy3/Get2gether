@@ -55,7 +55,7 @@ public class FriendsActivity extends OptionsBaseActivity implements FriendsMVP.F
     private void setupView() {
         ButterKnife.bind(this);
 
-        setToolbar(mToolbar, "Add Friend");
+        setToolbar(mToolbar, "Friends");
         if(getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setDisplayShowHomeEnabled(true);
