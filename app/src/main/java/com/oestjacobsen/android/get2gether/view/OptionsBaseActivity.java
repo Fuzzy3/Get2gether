@@ -9,14 +9,18 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.oestjacobsen.android.get2gether.R;
+import com.oestjacobsen.android.get2gether.model.AuthRealm;
+import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.view.BaseActivity;
 import com.oestjacobsen.android.get2gether.view.login.MainActivity;
 import com.oestjacobsen.android.get2gether.view.login.PincodeActivity;
 import com.oestjacobsen.android.get2gether.view.options.AboutActivity;
 import com.oestjacobsen.android.get2gether.view.options.HelpActivity;
 
+import io.realm.SyncUser;
 
-public abstract class OptionsBaseActivity extends AppCompatActivity {
+
+public abstract class OptionsBaseActivity extends AppCompatActivity implements BaseDatabase.loginCallback {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,4 +63,27 @@ public abstract class OptionsBaseActivity extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        AuthRealm auth = new AuthRealm();
+        auth.setLoginCallback(this);
+        auth.authenticateUser(this);
+
+    }
+
+    @Override
+    public void loginSucceded() {
+        setupViewFirst();
+    }
+
+    protected void setupViewFirst() {
+
+    }
 }

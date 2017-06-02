@@ -35,7 +35,6 @@ public class LocationService extends Service {
     public Location mPreviousBestLocation;
     //private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
     //private static final int FINE_PERMISSION_REQUEST_CODE = 2222;
-    BaseDatabase mDatabase;
     UserManager mUserManager;
     User mCurrentUser;
     private String mUserUUID;
@@ -46,7 +45,6 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        mDatabase = RealmDatabase.get(this);
         mLocationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new MyLocationListener();
@@ -145,11 +143,27 @@ public class LocationService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             if(isBetterLocation(location)) {
-                //Log.i(TAG, "HELLOOO LOCATION!");
-                //if(mCurrentUser != null) {
                 Log.i(TAG, "Lat: " + location.getLatitude() + " - Lng: " + location.getLongitude());
-                mDatabase.updateUserPosition(mUserUUID, location);
-                //}
+                Realm realm = Realm.getDefaultInstance();
+                if(realm != null) {
+                    try {
+                        final User fUser = realm.where(User.class).equalTo("mUUID", mUserUUID).findFirst();
+                        final Location fLocation = location;
+
+                        if (fUser != null) {
+                            realm.executeTransactionAsync(new Realm.Transaction() {
+                                @Override
+                                public void execute(Realm realm) {
+                                    fUser.setLatitude(fLocation.getLatitude());
+                                    fUser.setLongitude(fLocation.getLongitude());
+                                    realm.copyToRealmOrUpdate(fUser);
+                                }
+                            });
+                        }
+                    } finally {
+                        realm.close();
+                    }
+                }
             }
         }
 

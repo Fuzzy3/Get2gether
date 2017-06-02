@@ -44,6 +44,11 @@ public class AddFriendActivity extends OptionsBaseActivity implements AddFriendM
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_friend);
+    }
+
+    @Override
+    protected void setupViewFirst() {
+        super.setupViewFirst();
         mPresenter = new AddFriendPresenterImpl(RealmDatabase.get(this), this);
         setupView();
         updateUI();

@@ -47,7 +47,7 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
         }
         mDatabase = DatabasePicker.getChosenDatabase(this);
         setupBeaconCollection();
-        Log.i(TAG, "Beacon collecting started");
+        //Log.i(TAG, "Beacon collecting started");
         return START_REDELIVER_INTENT;
     }
 
@@ -56,14 +56,14 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
         mBeaconmanager.setRangingListener(new BeaconManager.RangingListener() {
             @Override
             public void onBeaconsDiscovered(Region region, List<Beacon> list) {
-                Log.i(TAG, "NONE Beacons found");
+                //Log.i(TAG, "NONE Beacons found");
                 if (!list.isEmpty()) {
                     final Beacon fClosestBeacon = list.get(0);
                     try {
                         runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Log.i(TAG, "Beacons found");
+                                //Log.i(TAG, "Beacons found");
                                 mDatabase.updateUserIndoorPosition(mUserUUID,
                                         beaconLocationToITUArea(fClosestBeacon));
                             }
@@ -122,6 +122,11 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
         return "Beacon - major: " + floor + " minor: " + minor;
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        mBeaconmanager.disconnect();
+    }
 
     @Override
     public IBinder onBind(Intent intent) {

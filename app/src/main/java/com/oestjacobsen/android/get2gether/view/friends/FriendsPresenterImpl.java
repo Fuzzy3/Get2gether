@@ -1,7 +1,10 @@
 package com.oestjacobsen.android.get2gether.view.friends;
 
+import android.content.Context;
+
 import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.UserManagerImpl;
+import com.oestjacobsen.android.get2gether.model.AuthRealm;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 
@@ -15,12 +18,12 @@ public class FriendsPresenterImpl implements FriendsMVP.FriendsPresenter {
     private FriendsMVP.FriendsView mView;
     private UserManager mSessionUser;
     private User mCurrentUser;
+    private AuthRealm mAuth;
 
 
-    public FriendsPresenterImpl(BaseDatabase database, FriendsMVP.FriendsView view) {
+    public FriendsPresenterImpl(BaseDatabase database, FriendsMVP.FriendsView view, Context context) {
         mDatabase = database;
         mView = view;
-
         mSessionUser = UserManagerImpl.get();
         mCurrentUser = mSessionUser.getUser();
     }
@@ -72,6 +75,5 @@ public class FriendsPresenterImpl implements FriendsMVP.FriendsPresenter {
         mView.showToast(friend.getFullName() + " added to your friend list");
         getFriendsAndPending();
     }
-
 
 }

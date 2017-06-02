@@ -3,6 +3,7 @@ package com.oestjacobsen.android.get2gether.model;
 
 import android.content.Context;
 import android.location.Location;
+import android.os.SystemClock;
 import android.util.Log;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import io.realm.Realm;
 import io.realm.Realm.Transaction.Callback;
 import io.realm.RealmList;
 import io.realm.RealmResults;
+import io.realm.SyncUser;
 
 public class RealmDatabase implements BaseDatabase {
 
@@ -19,7 +21,8 @@ public class RealmDatabase implements BaseDatabase {
     private static final String TAG = "RealmDatabase";
     private static Realm mRealm;
     private static RealmDatabase mRealmDatabase;
-
+    private static Context mContext;
+    private static loginCallback mLoginCallback;
 
 
     private RealmDatabase() {
@@ -29,14 +32,50 @@ public class RealmDatabase implements BaseDatabase {
         }
     }
 
+    public static RealmDatabase get(Context context, loginCallback loginc) {
+        if (mRealmDatabase == null) {
+            mLoginCallback = loginc;
+            Realm.init(context);
+            mContext = context;
+            //setRealmInstance();
+            mRealmDatabase = new RealmDatabase();
+        }
+
+        return mRealmDatabase;
+    }
+
+
+
     public static RealmDatabase get(Context context) {
         if (mRealmDatabase == null) {
             Realm.init(context);
+            mContext = context;
+            if (SyncUser.currentUser() == null) {
+                Log.i("SYNCUSER", "SYNCUSER IS NULL BEFORE DEFAULTINSTANCE-----------------");
+            }
             mRealm = Realm.getDefaultInstance();
             mRealmDatabase = new RealmDatabase();
         }
         return mRealmDatabase;
     }
+
+    /*
+    private static void setRealmInstance() {
+        if(mContext != null) {
+            AuthRealm auth = new AuthRealm();
+            auth.setLoginCallback(new loginCallback() {
+                @Override
+                public void loginSucceded() {
+                    if(mRealm != null) {
+                        mRealm = Realm.getDefaultInstance();
+                    }
+                }
+            });
+            auth.authenticateUser(mContext);
+        } else {
+            Log.i("REALMCONTEXT", "CONTEXT IS NULL???");
+        }
+    }*/
 
 
 

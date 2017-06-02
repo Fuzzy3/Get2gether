@@ -18,10 +18,12 @@ import android.widget.ImageButton;
 
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.UserManagerImpl;
+import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
 import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceAltLib;
 import com.oestjacobsen.android.get2gether.services.BeaconCollecterServiceEstimoteLib;
 import com.oestjacobsen.android.get2gether.services.LocationService;
+import com.oestjacobsen.android.get2gether.view.friends.AddFriendPresenterImpl;
 import com.oestjacobsen.android.get2gether.view.friends.FriendsActivity;
 import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
 import com.oestjacobsen.android.get2gether.view.profile.ProfileActivity;
@@ -49,15 +51,21 @@ public class MainMenuActivity extends OptionsBaseActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_menu);
-        checkPermission();
 
+    }
+
+    @Override
+    protected void setupViewFirst() {
+        super.setupViewFirst();
+        //checkPermission();
         setupView();
     }
 
     private void setupView() {
         ButterKnife.bind(this);
 
-        UserManagerImpl mUserManager = UserManagerImpl.get();
+
+        /*UserManagerImpl mUserManager = UserManagerImpl.get();
         User mCurrentUser = mUserManager.getUser();
         if(mCurrentUser != null) {
             String mUserUUID = mCurrentUser.getUUID();
@@ -69,7 +77,11 @@ public class MainMenuActivity extends OptionsBaseActivity {
             Intent j = new Intent(this, BeaconCollecterServiceEstimoteLib.class);
             j.putExtra("USERUUID", mUserUUID);
             startService(j);
-        }
+        }*/
+
+
+        Intent i = new Intent(this, LocationService.class);
+        startService(i);
 
 
         setToolbar(mToolbar, "");
@@ -82,6 +94,7 @@ public class MainMenuActivity extends OptionsBaseActivity {
         i.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         return i;
     }
+
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
@@ -123,6 +136,7 @@ public class MainMenuActivity extends OptionsBaseActivity {
             }
         }
     }
+
 
     private void checkPermission() {
         if (Build.VERSION.SDK_INT >= 23) {
@@ -169,14 +183,10 @@ public class MainMenuActivity extends OptionsBaseActivity {
                         new String[]{Manifest.permission.ACCESS_COARSE_LOCATION},
                         COARSE_PERMISSION_REQUEST_CODE);
 
-            } else {
-                Intent i = new Intent(this, LocationService.class);
-                startService(i);
             }
         }
 
     }
-
 
     //Button interactions
     @OnClick(R.id.profile_button)
@@ -199,7 +209,6 @@ public class MainMenuActivity extends OptionsBaseActivity {
         Log.i(TAG, "My Groups Pressed");
 
     }
-
 
 
     private void fitToScreen() {

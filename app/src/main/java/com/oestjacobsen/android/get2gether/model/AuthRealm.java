@@ -12,6 +12,8 @@ import io.realm.SyncUser;
 
 public class AuthRealm implements SyncUser.Callback {
 
+    private Context mContext;
+
     //USERNAME AND PASSWORD
     private static final String USERNAME = "soest@itu.dk";
     private static final String PASSWORD = "soebach#Jac";
@@ -45,6 +47,10 @@ public class AuthRealm implements SyncUser.Callback {
 
     public void authenticateUser(Context context) {
         Realm.init(context);
+        if(mContext == null) {
+            mContext = context;
+        }
+
         if(SyncUser.currentUser() == null) {
             SyncCredentials myCredentials = SyncCredentials.usernamePassword(USERNAME, PASSWORD, false);
             SyncUser.loginAsync(myCredentials, AUTH_URL, this);
@@ -61,5 +67,6 @@ public class AuthRealm implements SyncUser.Callback {
     @Override
     public void onError(ObjectServerError error) {
         Log.i(TAG, "Failed to login to Online server, Using offline instead \nError: " + error.getErrorMessage());
+        authenticateUser(mContext);
     }
 }

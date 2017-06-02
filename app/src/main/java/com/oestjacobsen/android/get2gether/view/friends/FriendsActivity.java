@@ -20,7 +20,9 @@ import android.widget.Toast;
 import com.oestjacobsen.android.get2gether.R;
 import com.oestjacobsen.android.get2gether.model.RealmDatabase;
 import com.oestjacobsen.android.get2gether.model.User;
+import com.oestjacobsen.android.get2gether.view.MainMenuActivity;
 import com.oestjacobsen.android.get2gether.view.OptionsBaseActivity;
+import com.oestjacobsen.android.get2gether.view.groups.GroupsActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +49,12 @@ public class FriendsActivity extends OptionsBaseActivity implements FriendsMVP.F
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_friends);
-        mPresenter = new FriendsPresenterImpl(RealmDatabase.get(this), this);
+    }
+
+    @Override
+    protected void setupViewFirst() {
+        super.setupViewFirst();
+        mPresenter = new FriendsPresenterImpl(RealmDatabase.get(this), this, getApplicationContext());
         setupView();
     }
 
@@ -110,7 +117,7 @@ public class FriendsActivity extends OptionsBaseActivity implements FriendsMVP.F
 
     @OnClick(R.id.add_friend_button)
     public void onClickAddFriend() {
-        startActivity(AddFriendActivity.newIntent(this));
+        startActivity(MainMenuActivity.newIntent(this));
     }
 
     @OnClick(R.id.add_pending_friend_button)
