@@ -117,7 +117,7 @@ public class FriendsActivity extends OptionsBaseActivity implements FriendsMVP.F
 
     @OnClick(R.id.add_friend_button)
     public void onClickAddFriend() {
-        startActivity(MainMenuActivity.newIntent(this));
+        startActivity(AddFriendActivity.newIntent(this));
     }
 
     @OnClick(R.id.add_pending_friend_button)

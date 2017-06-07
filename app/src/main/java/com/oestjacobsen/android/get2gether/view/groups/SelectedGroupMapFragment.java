@@ -130,9 +130,7 @@ public class SelectedGroupMapFragment extends SelectedGroupParentView implements
     }*/
 
     private void setTimer() {
-        if(mTimer == null) {
-            mTimer = new Timer();
-        }
+        mTimer = new Timer();
         mTimer.schedule(new TimerTask() {
             @Override
             public void run() {

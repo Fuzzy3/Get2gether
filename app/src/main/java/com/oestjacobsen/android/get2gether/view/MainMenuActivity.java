@@ -64,8 +64,7 @@ public class MainMenuActivity extends OptionsBaseActivity {
     private void setupView() {
         ButterKnife.bind(this);
 
-
-        /*UserManagerImpl mUserManager = UserManagerImpl.get();
+        UserManagerImpl mUserManager = UserManagerImpl.get();
         User mCurrentUser = mUserManager.getUser();
         if(mCurrentUser != null) {
             String mUserUUID = mCurrentUser.getUUID();
@@ -74,14 +73,11 @@ public class MainMenuActivity extends OptionsBaseActivity {
             i.putExtra("USERUUID", mUserUUID);
             startService(i);
 
-            Intent j = new Intent(this, BeaconCollecterServiceEstimoteLib.class);
+            Intent j = new Intent(this, BeaconCollecterServiceAltLib.class);
             j.putExtra("USERUUID", mUserUUID);
             startService(j);
-        }*/
 
-
-        Intent i = new Intent(this, LocationService.class);
-        startService(i);
+        }
 
 
         setToolbar(mToolbar, "");

@@ -36,8 +36,9 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-
         mHandler = new Handler();
+        mDatabase = DatabasePicker.getChosenDatabase(this);
+
     }
 
     @Override
@@ -45,7 +46,6 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
         if(intent.getStringExtra("USERUUID") != null) {
             mUserUUID = intent.getStringExtra("USERUUID");
         }
-        mDatabase = DatabasePicker.getChosenDatabase(this);
         setupBeaconCollection();
         //Log.i(TAG, "Beacon collecting started");
         return START_REDELIVER_INTENT;
@@ -59,18 +59,18 @@ public class BeaconCollecterServiceEstimoteLib extends Service {
                 //Log.i(TAG, "NONE Beacons found");
                 if (!list.isEmpty()) {
                     final Beacon fClosestBeacon = list.get(0);
-                    try {
+                    /*try {
                         runOnUiThread(new Runnable() {
                             @Override
-                            public void run() {
+                            public void run() {*/
                                 //Log.i(TAG, "Beacons found");
                                 mDatabase.updateUserIndoorPosition(mUserUUID,
                                         beaconLocationToITUArea(fClosestBeacon));
-                            }
+                      /*      }
                         });
                     } catch (Exception e) {
                         e.printStackTrace();
-                    }
+                    }*/
                 }
             }
         });

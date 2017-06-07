@@ -10,11 +10,13 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.oestjacobsen.android.get2gether.DatabasePicker;
 import com.oestjacobsen.android.get2gether.UserManager;
 import com.oestjacobsen.android.get2gether.UserManagerImpl;
 import com.oestjacobsen.android.get2gether.model.BaseDatabase;
@@ -33,8 +35,13 @@ public class LocationService extends Service {
     public MyLocationListener mLocationListener;
     private static final int TWO_MINUTES = 1000 * 60 * 2;
     public Location mPreviousBestLocation;
+    private BaseDatabase mDatabase;
+    private Handler mHandler;
+
+
     //private static final int COARSE_PERMISSION_REQUEST_CODE = 1111;
     //private static final int FINE_PERMISSION_REQUEST_CODE = 2222;
+
     UserManager mUserManager;
     User mCurrentUser;
     private String mUserUUID;
@@ -45,21 +52,31 @@ public class LocationService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
+
         mLocationManager = (LocationManager)
                 getSystemService(Context.LOCATION_SERVICE);
         mLocationListener = new MyLocationListener();
+        mHandler = new Handler();
+        mDatabase = DatabasePicker.getChosenDatabase(this);
+
+
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         mUserUUID = intent.getStringExtra("USERUUID");
         checkPermission();
+
         mLocationManager.requestLocationUpdates(
                 LocationManager.NETWORK_PROVIDER, 4000, 0, mLocationListener);
         mLocationManager.requestLocationUpdates
                 (LocationManager.GPS_PROVIDER, 4000, 0, mLocationListener);
 
         return START_REDELIVER_INTENT;
+    }
+
+    private void runOnUiThread(Runnable runnable) {
+        mHandler.post(runnable);
     }
 
     protected boolean isBetterLocation(Location location) {
@@ -144,7 +161,21 @@ public class LocationService extends Service {
         public void onLocationChanged(Location location) {
             if(isBetterLocation(location)) {
                 Log.i(TAG, "Lat: " + location.getLatitude() + " - Lng: " + location.getLongitude());
-                Realm realm = Realm.getDefaultInstance();
+                try {
+                    final Location fLocation = location;
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            mDatabase.updateUserPosition(mUserUUID, fLocation);
+                        }
+                    });
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+
+
+                /*Realm realm = Realm.getDefaultInstance();
                 if(realm != null) {
                     try {
                         final User fUser = realm.where(User.class).equalTo("mUUID", mUserUUID).findFirst();
@@ -163,7 +194,7 @@ public class LocationService extends Service {
                     } finally {
                         realm.close();
                     }
-                }
+                }*/
             }
         }
 
